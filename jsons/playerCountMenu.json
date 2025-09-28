@@ -1,0 +1,9 @@
+{
+    "playerCountMenu": [
+        {
+            "label": "2",
+            "numPlayers": 2,
+            "layoutId": "standard"
+        }
+    ]
+}

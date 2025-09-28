@@ -1,0 +1,47 @@
+{
+    "prompts": {
+        "startGame": {
+            "args": [],
+            "message": "Once players are seated, press Start Game.",
+            "options": [
+                {
+                    "label": "Start Game",
+                    "hotkey": "Enter",
+                    "code": ["LOAD_CARDS", "standard"]
+                }
+            ]
+        },
+        "gameOver": {
+            "args": ["$MESSAGE"],
+            "message": "{{$MESSAGE}}",
+            "options": [
+                {
+                    "label": "OK",
+                    "hotkey": "Enter",
+                    "code": []
+                }
+            ]
+        },
+        "selectNewBase": {
+            "args": ["$PLAYER_I"],
+            "message": "Select a new base.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["LOG", "{{$ALIAS_N}} selected a new base: ", "$GAME.cardById.{{$PROMPT_INPUT.[0]}}.sides.A.name", "."],
+                        ["MOVE_CARD", "$PROMPT_INPUT.[0]", "{{$PLAYER_I}}Base", 0],
+                        ["STOP_LOOKING", "$PLAYER_I"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "hotkey": "X"
+                }
+            ]
+        }
+    }
+}

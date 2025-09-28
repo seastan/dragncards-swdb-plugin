@@ -1,0 +1,16 @@
+{
+    "phases": {
+        "empireTurn": {
+            "label" : "Empire Turn",
+            "height" : "50%"
+        },
+        "rebelTurn": {
+            "label" : "Rebel Turn",
+            "height" : "50%"
+        }
+    },
+    "phaseOrder": [
+        "empireTurn",
+        "rebelTurn"
+    ]
+}

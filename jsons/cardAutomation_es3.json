@@ -1,0 +1,52 @@
+{
+    "automation": {
+        "cards": {
+            "es3": {
+                "_comment": "Inquisitor",
+                "rules": {
+                    "entersPlayChoice": {
+                        "_comment": "Choose to have this card gain 1 attack, 1 resource, or 1 force.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── ", "Added 1 attack until the end of the round."],
+                            ["PROMPT", "$PLAYER_N", "es3", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "es3": {
+            "args": ["$CARD"],
+            "message": "Choose to have Inquisitor gain 1 attack, 1 resource, or 1 force.",
+            "options": [
+                {
+                    "label": "Gain 1 Attack",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── ", "Added 1 attack until the end of the round."],
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Resource",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── ", "Gained 1 resource."],
+                        ["INCREASE_VAL", "/playerById/{{$CARD.controller}}/resources", 1]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Force",
+                    "hotkey": "3",
+                    "code": [
+                        ["LOG", "└── ", "Gained 1 force."],
+                        ["GAIN_N_FORCE", "$CARD.controller", 1]
+                    ]
+                }
+            ]
+        }
+    }
+}

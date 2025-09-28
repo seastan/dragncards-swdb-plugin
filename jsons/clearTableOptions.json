@@ -1,0 +1,7 @@
+{
+    "clearTableOptions": [
+        {"label": "id:labelMarkAsEmpireVictory", "actionList": ["SET", "/victoryState", "Empire"]},
+        {"label": "id:labelMarkAsRebelVictory", "actionList": ["SET", "/victoryState", "Rebel"]},
+        {"label": "id:labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
+    ]
+}

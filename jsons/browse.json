@@ -1,0 +1,7 @@
+{
+    "browse": {
+        "filterPropertySideA": "type",
+        "filterValuesSideA": ["Unit", "CapitalShip", "Base"],
+        "textPropertiesSideA": ["name", "faction", "text", "traits"]
+    }
+}

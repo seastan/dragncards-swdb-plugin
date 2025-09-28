@@ -1,0 +1,24 @@
+{
+    "hotkeys": {
+        "token": [
+            {"key": "1", "tokenType": "damage", "label": "id:damageIcon"},
+            {"key": "2", "tokenType": "attackModifier", "label": "id:attackModifierIcon"}
+        ],
+        "game": [
+            {"key": "D", "actionList": "drawCard", "label": "id:drawCard"},
+            {"key": "Shift+D", "actionList": ["END_TURN", "$PLAYER_N"], "label": "id:endTurn"},
+            {"key": "Shift+W", "actionList": ["PLAY_ALL_CARDS", "$PLAYER_N"], "label": "id:playAllCards"},
+            {"key": "F", "actionList": ["GAIN_N_FORCE", "$PLAYER_N", 1], "label": "id:gain1Force"}
+        ],
+        "card": [
+            {"key": "L", "actionList": ["FLIP_CARD", "$ACTIVE_CARD"], "label": "id:flip"},
+            {"key": "X", "actionList": ["DISCARD_CARD", "$ACTIVE_CARD"], "label": "id:discard"},
+            {"key": "E", "actionList": ["EXILE_CARD", "$ACTIVE_CARD"], "label": "id:exileCard"},
+            {"key": "Q", "actionList": ["USE_CARD_ABILITY", "$ACTIVE_CARD"], "label": "id:useAbility"},
+            {"key": "A", "actionList": ["ATTACK_WITH_CARD", "$ACTIVE_CARD"], "label": "id:attackWithCard"},
+            {"key": "S", "actionList": ["ATTACK_ON_CARD", "$ACTIVE_CARD"], "label": "id:attackOnCard"},
+            {"key": "B", "actionList": ["BUY_CARD", "$ACTIVE_CARD"], "label": "id:buyCard"},
+            {"key": "W", "actionList": ["PLAY_CARD", "$ACTIVE_CARD"], "label": "id:playCard"}
+        ]
+    }
+}

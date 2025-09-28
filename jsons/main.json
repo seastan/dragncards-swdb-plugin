@@ -1,0 +1,6 @@
+{
+    "pluginName": "Star Wars Deckbuilding Game",
+    "tutorialUrl": "youtube.com",
+    "backgroundUrl": "https://dragncards-swdb.s3.us-east-1.amazonaws.com/background/swdb_background.jpg",
+    "vacantSeatOnNewGame": false
+}

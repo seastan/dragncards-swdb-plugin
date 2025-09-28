@@ -1,0 +1,27 @@
+
+{
+    "labels": {
+        "flip": {"English": "Flip"},
+        "drawCard": {"English": "Draw Card"},
+        "useAbility": {"English": "Use Ability"},
+        "commitToAttack": {"English": "Commit To Attack"},
+        "labelMarkAsIncomplete": {"English": "Label Mark As Incomplete"},
+        "labelMarkAsRebelVictory": {"English": "Label Mark As Rebel Victory"},
+        "labelMarkAsEmpireVictory": {"English": "Label Mark As Empire Victory"},
+        "myDeck": {"English": "My Deck"},
+        "damage": {"English": "Damage"},
+        "round": {"English": "Round"},
+        "exileCard": {"English": "Exile card"},
+        "endTurn": {"English": "End turn"},
+        "damageIcon": {"English": "icon(https://dragncards-swdb.s3.amazonaws.com/tokens/damage.png)"},
+        "attackModifierIcon": {"English": "icon(https://dragncards-swdb.s3.amazonaws.com/tokens/attackModifier.png)"},
+        "standard": {"English": "Standard"},
+        "attackOnCard": {"English": "Attack on card"},
+        "attackWithCard": {"English": "Attack with card"},
+        "discard": {"English": "Discard"},
+        "buyCard": {"English": "Buy card"},
+        "playCard": {"English": "Play card"},
+        "playAllCards": {"English": "Play all the cards in your hand"},
+        "gain1Force": {"English": "Gain1 Force"}
+    }
+}

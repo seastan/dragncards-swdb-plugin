@@ -1,0 +1,40 @@
+{
+    "layouts": {
+        "standard": {
+            "cardSize": 16,
+            "rowSpacing": 3,
+            "chat": {"left": "70%", "top": "80%", "width": "30%", "height": "20%"},
+            "regions": {
+                "playerN+1Hand": {"groupId": "{playerN+1}Hand", "type": "fan", "direction": "horizontal", "left": "0%", "top": "0%", "width": "60%", "height": "20%", "style": {"background": "rgba(0, 0, 0, 0.3)"}, "showMenu": true, "disableDroppableAttachments": true},
+                "playerN+1Deck": {"groupId": "{playerN+1}Deck", "type": "pile", "direction": "horizontal", "left": "60%", "top": "0%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "playerN+1Discard": {"groupId": "{playerN+1}Discard", "type": "pile", "direction": "horizontal", "left": "70%", "top": "0%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "playerN+1Base": {"groupId": "{playerN+1}Base", "type": "pile", "direction": "horizontal", "left": "80%", "top": "0%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "playerN+1VictoryPile": {"groupId": "{playerN+1}VictoryPile", "type": "pile", "direction": "horizontal", "left": "90%", "top": "0%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+
+                "playerN+1Play": {"groupId": "{playerN+1}Play", "type": "row", "direction": "horizontal", "left": "0%", "top":  "20%", "width": "80%", "height": "20%", "disableDroppableAttachments": true},
+
+                "sharedGalaxyDiscard": {"groupId": "sharedGalaxyDiscard", "type": "pile", "direction": "horizontal", "left":  "0%", "top": "40%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "sharedGalaxyDeck": {"groupId": "sharedGalaxyDeck", "type": "pile", "direction": "horizontal", "left":  "10%", "top": "40%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "sharedGalaxyRow": {"groupId": "sharedGalaxyRow", "type": "row", "direction": "horizontal", "left":  "20%", "top": "40%", "width": "60%", "height": "20%", "disableDroppableAttachments": true},
+                "sharedOuterRimPilotDeck": {"groupId": "sharedOuterRimPilotDeck", "type": "pile", "direction": "horizontal", "left":  "80%", "top": "40%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+
+                "playerNPlay": {"groupId": "{playerN}Play", "type": "row", "direction": "horizontal", "left": "0%", "top":  "60%", "width": "80%", "height": "20%", "disableDroppableAttachments": true},
+                "playerNBase": {"groupId": "{playerN}Base", "type": "pile", "direction": "horizontal", "left": "80%", "top":  "60%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "playerNVictoryPile": {"groupId": "{playerN}VictoryPile", "type": "pile", "direction": "horizontal", "left": "90%", "top": "60%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+
+                "playerNHand": {"groupId": "{playerN}Hand", "type": "fan", "direction": "horizontal", "left": "0%", "top": "80%", "width": "50%", "height": "20%", "style": {"background": "rgba(0, 0, 0, 0.3)"}, "showMenu": true, "disableDroppableAttachments": true},
+                "playerNDeck": {"groupId": "{playerN}Deck", "type": "pile", "direction": "horizontal", "left": "50%", "top": "80%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+                "playerNDiscard": {"groupId": "{playerN}Discard", "type": "pile", "direction": "horizontal", "left": "60%", "top": "80%", "width": "10%", "height": "20%", "disableDroppableAttachments": true},
+
+                "sharedTracker": {"groupId": "sharedTracker", "type": "row", "direction": "vertical", "left": "90%", "top": "20%", "width": "10%", "height": "40%", "disableDroppableAttachments": true},
+                "sharedExiled": {"groupId": "sharedExiled", "type": "fan", "direction": "vertical", "left": "90%", "top": "20%", "width": "10%", "height": "40%", "disableDroppableAttachments": true},
+                "sharedRules": {"groupId": "sharedRules", "type": "fan", "direction": "vertical", "left": "90%", "top": "20%", "width": "10%", "height": "40%", "disableDroppableAttachments": true}
+            },
+            "tableButtons": {
+            },
+            "textBoxes": {
+            }
+        }
+        
+    }
+}

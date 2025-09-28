@@ -1,0 +1,23 @@
+{
+    "topBarCounters": {
+        "shared": [
+            {
+                "label": "id:round",
+                "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
+                "gameProperty": "roundNumber"
+            }
+        ],
+        "player": [
+            {
+                "label": "Resources",
+                "imageUrl": "https://dragncards-swdb.s3.amazonaws.com/tokens/resource.png",
+                "playerProperty": "resources"
+            },
+            {
+                "label": "Score",
+                "imageUrl": "https://dragncards-swdb.s3.amazonaws.com/tokens/baseicon.png",
+                "playerProperty": "score"
+            }
+        ]
+    }
+}

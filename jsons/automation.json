@@ -1,0 +1,157 @@
+{
+    "automation": {
+        "postNewGameActionList": [
+            ["SET", "/playerData/player1/label", "Empire"],
+            ["SET", "/playerData/player2/label", "Rebels"],
+            ["PROMPT", "player1", "startGame"]
+        ],
+        "postLoadActionList": [
+            ["DRAW_STARTING_HANDS"],
+            ["SET", "/started", true],
+            ["REFILL_GALAXY_ROW"],
+            ["LOG", ["GET_ALIAS", "$GAME.currentPlayer"], " begins their turn."],
+            ["SET_TRACKER_VALUE", 3]
+        ],
+        "gameRules": {
+            "addResourcesWhenCardEntersPlay": {
+                "_comment": "Add card's resource property to player's resources when card enters Play group",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/groupId"],
+                "condition": ["AND",
+                    ["IN_STRING", "$TARGET.groupId", "Play"],
+                    ["NOT", ["PREV", ["IN_STRING", "$TARGET.groupId", "Play"]]],
+                    ["DEFINED", "$TARGET.currentFace.resources"],
+                    ["GREATER_THAN", "$TARGET.currentFace.resources", 0]
+                ],
+                "then": [
+                    ["INCREASE_VAL", "/playerData/$TARGET.controller/resources", "$TARGET.currentFace.resources"],
+                    ["LOG", "└── {{$TARGET.controller}} gained {{$TARGET.currentFace.resources}} resources from {{$TARGET.currentFace.name}}."]
+                ]
+            },
+            "refillGalaxyRow": {
+                "_comment": "Refill galaxy row when cards are removed and deck is not empty",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/groupId"],
+                "condition": ["AND",
+                    ["LESS_THAN", ["LENGTH", "$GAME.groupById.sharedGalaxyRow.stackIds"], 6],
+                    ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
+                    ["EQUAL", "$GAME.started", true]
+                ],
+                "then": ["REFILL_GALAXY_ROW"]
+            },
+            "destroyDamagedCards": {
+                "_comment": "Destroy cards when damage equals or exceeds hit points",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/tokens/damage"],
+                "condition": ["AND",
+                    ["DEFINED", "$TARGET.currentFace.hitPoints"],
+                    ["GREATER_THAN", "$TARGET.currentFace.hitPoints", 0],
+                    ["GREATER_EQUAL", "$TARGET.tokens.damage", "$TARGET.currentFace.hitPoints"],
+                    ["DEFINED", "$TARGET.discardGroupId"]
+                ],
+                "then": [
+                    ["LOG", "└── {{$TARGET.currentFace.name}} has been destroyed."],
+                    ["MOVE_CARD", "$TARGET.id", "$TARGET.discardGroupId", 0]
+                ]
+            },
+            "updatePlayerScores": {
+                "_comment": "Update player scores based on victory pile size",
+                "type": "trigger",
+                "listenTo": ["/groupById/player1VictoryPile/stackIds", "/groupById/player2VictoryPile/stackIds"],
+                "condition": ["TRUE"],
+                "then": [
+                    ["SET", "/playerData/player1/score", ["LENGTH", "$GAME.groupById.player1VictoryPile.stackIds"]],
+                    ["SET", "/playerData/player2/score", ["LENGTH", "$GAME.groupById.player2VictoryPile.stackIds"]]
+                ]
+            },
+            "checkGameOver": {
+                "_comment": "Check for game over when player scores change",
+                "type": "trigger",
+                "listenTo": ["/playerData/*/score"],
+                "condition": ["OR",
+                    ["GREATER_EQUAL", "$GAME.playerData.player1.score", 3],
+                    ["GREATER_EQUAL", "$GAME.playerData.player2.score", 3]
+                ],
+                "then": [
+                    ["COND",
+                        ["GREATER_EQUAL", "$GAME.playerData.player1.score", 3],
+                        ["PROMPT", "$PLAYER_ORDER", "gameOver", "The Empire has won the game!"],
+                        ["GREATER_EQUAL", "$GAME.playerData.player2.score", 3],
+                        ["PROMPT", "$PLAYER_ORDER", "gameOver", "The Rebels have won the game!"]
+                    ]
+                ]
+            },
+            "highlightAttackingCards": {
+                "_comment": "Set attacking cards border color to green",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/isAttacking"],
+                "condition": ["TRUE"],
+                "then": [
+                    ["COND",
+                        ["EQUAL", "$TARGET.isAttacking", true],
+                        ["SET", "/cardById/$TARGET_ID/borderColor", "green"],
+                        ["TRUE"],
+                        ["SET", "/cardById/$TARGET_ID/borderColor", null]
+                    ]
+                ]
+            },
+            "highlightAttackedCards": {
+                "_comment": "Set cards that attacked this turn border color to red",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/hasAttackedThisTurn"],
+                "condition": ["TRUE"],
+                "then": [
+                    ["COND",
+                        ["EQUAL", "$TARGET.hasAttackedThisTurn", true],
+                        ["SET", "/cardById/$TARGET_ID/borderColor", "red"],
+                        ["TRUE"],
+                        ["SET", "/cardById/$TARGET_ID/borderColor", null]
+                    ]
+                ]
+            },
+            "gainForceWhenCardPlayed": {
+                "_comment": "Gain force when a card with force property is played",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/groupId"],
+                "condition": ["AND",
+                    ["IN_STRING", "$TARGET.groupId", "Play"],
+                    ["NOT", ["PREV", ["IN_STRING", "$TARGET.groupId", "Play"]]],
+                    ["NOT_EQUAL", "$TARGET.controller", "shared"],
+                    ["DEFINED", "$TARGET.currentFace.force"],
+                    ["GREATER_THAN", "$TARGET.currentFace.force", 0]
+                ],
+                "then": [
+                    ["GAIN_N_FORCE", "$TARGET.controller", "$TARGET.currentFace.force"]
+                ]
+            },
+            "rotateFactionCards": {
+                "_comment": "Rotate cards in galaxy row based on faction",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/groupId"],
+                "condition": ["AND",
+                    ["EQUAL", "$TARGET.groupId", "sharedGalaxyRow"],
+                    ["DEFINED", "$TARGET.currentFace.faction"]
+                ],
+                "then": [
+                    ["COND",
+                        ["EQUAL", "$TARGET.currentFace.faction", "Rebel"],
+                        [
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 180],
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 0]
+                        ],
+                        ["EQUAL", "$TARGET.currentFace.faction", "Empire"],
+                        [
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 0],
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 180]
+                        ],
+                        ["EQUAL", "$TARGET.currentFace.faction", "Neutral"],
+                        [
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 90],
+                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 90]
+                        ]
+                    ]
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "gameProperties": {
+        "forceBalance": {
+            "type": "integer",
+            "default": 0
+        },
+        "victoryState": {
+            "type": "string",
+            "default": ""
+        },
+        "currentPlayer": {
+            "type": "string",
+            "default": "player1"
+        },
+        "started": {
+            "type": "boolean",
+            "default": false
+        }
+    }
+}

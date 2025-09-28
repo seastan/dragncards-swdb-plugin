@@ -1,0 +1,7 @@
+{
+    "playerProperties": {    
+        "score": {"type": "integer", "default": 0, "min": 0},
+        "resources": {"type": "integer", "default": 0, "min": 0},
+        "attack": {"type": "integer", "default": 0, "min": 0}
+    }
+}

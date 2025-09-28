@@ -1,0 +1,15 @@
+{
+    "deckbuilder": {
+        "addButtons": [1,2,3],
+        "colorKey": "cardBack",
+        "colorValues": {
+        },
+        "columns": [
+            {"propName": "name", "label": "Name"},
+            {"propName": "type", "label": "Type"}
+        ],
+        "spawnGroups": [
+            {"loadGroupId": "playerNDeck", "label": "id:myDeck"}
+        ]
+    }
+}

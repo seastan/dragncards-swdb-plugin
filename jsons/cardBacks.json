@@ -1,0 +1,8 @@
+{
+    "cardBacks": {
+        "card":       {"width": 0.72, "height": 1.0, "imageUrl": "https://ik.imagekit.io/cardtable/star_wars_deckbuilding_game/tr:w-500/misc/card_back.png"},
+        "rebelBase":  {"width": 1.0, "height": 0.72, "imageUrl": "https://ik.imagekit.io/cardtable/star_wars_deckbuilding_game/tr:w-500/misc/rebel_base_back.png"},
+        "empireBase": {"width": 1.0, "height": 0.72, "imageUrl": "https://ik.imagekit.io/cardtable/star_wars_deckbuilding_game/tr:w-500/misc/empire_base_back.png"},
+        "tracker":    {"width": 1.0, "height": 3.0, "imageUrl": "https://ik.imagekit.io/cardtable/star_wars_deckbuilding_game/tr:w-500/misc/force_tracker.png"}
+    }
+}

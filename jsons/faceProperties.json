@@ -1,0 +1,10 @@
+{
+    "faceProperties": {
+        "cost": {"type": "integer", "default": 0},
+        "attack": {"type": "integer", "default": 0},
+        "force": {"type": "integer", "default": 0},
+        "resources": {"type": "integer", "default": 0},
+        "hitPoints": {"type": "integer", "default": 0},
+        "unique": {"type": "boolean", "default": false}
+    }
+}

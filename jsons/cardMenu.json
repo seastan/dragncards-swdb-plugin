@@ -1,0 +1,15 @@
+{
+    "cardMenu": {
+        "moveToGroupIds": [],
+        "options": [
+            {
+                "label": "id:commitToAttack",
+                "actionList": "commitToAttack"
+            },
+            {
+                "label": "id:useAbility",
+                "actionList": "useAbility"
+            }
+        ]
+    }
+}

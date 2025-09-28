@@ -1,0 +1,9 @@
+{
+    "cardTypes": {
+        "Unit":          {"width": 0.72, "height": 1.0, "tokens": ["damage", "attackModifier"]},
+        "CapitalShip":   {"width": 1.0, "height": 0.72, "tokens": ["damage", "attackModifier"]},
+        "Base":          {"width": 1.0, "height": 0.72, "tokens": ["damage"]},
+        "Rules":      {"width": 1.00, "height": 1.25, "tokens": [], "zoomFactor": 1.0},
+        "Tracker":      {"width": 0.72, "height": 2.16, "tokens": ["force0","forceE1","forceE2","forceE3","forceR1","forceR2","forceR3"]}
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "cardProperties": {
+        "abilityUsed": {
+            "type": "boolean",
+            "default": false
+        },
+        "attackUsed": {
+            "type": "boolean",
+            "default": false
+        },
+        "isAttacking": {
+            "type": "boolean",
+            "default": false
+        }
+    }
+}
