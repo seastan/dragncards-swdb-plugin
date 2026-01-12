@@ -27,7 +27,8 @@
                     "hotkey": "1",
                     "code": [
                         ["LOG", "└── ", "Added 1 attack until the end of the round."],
-                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1]
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1],
+                        ["FADE_TEXT_CARD", "$CARD.id", "+1 token:attackModifier"]
                     ]
                 },
                 {
@@ -35,7 +36,8 @@
                     "hotkey": "2",
                     "code": [
                         ["LOG", "└── ", "Gained 1 resource."],
-                        ["INCREASE_VAL", "/playerById/{{$CARD.controller}}/resources", 1]
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+1 token:resource"]
                     ]
                 },
                 {

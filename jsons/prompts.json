@@ -7,7 +7,115 @@
                 {
                     "label": "Start Game",
                     "hotkey": "Enter",
-                    "code": ["LOAD_CARDS", "standard"]
+                    "code": [
+                        ["LOAD_CARDS", "standard"],
+                        ["START_TURN", "player1"]
+                    ]
+                }
+            ]
+        },
+        "restartGame": {
+            "args": ["$MESSAGE"],
+            "message": "$MESSAGE",
+            "options": [
+                {
+                    "label": "OK",
+                    "hotkey": "K"
+                },
+                {
+                    "label": "Ask for rematch",
+                    "hotkey": "R",
+                    "code": [
+                        ["LOG", "{{$ALIAS_N}} has requested a rematch."],
+                        ["SET", "/playerData/$PLAYER_N/wantsRematch", true],
+                        ["COND",
+                            ["AND",
+                                ["EQUAL", "$GAME.playerData.player1.wantsRematch", true],
+                                ["EQUAL", "$GAME.playerData.player2.wantsRematch", true]
+                            ],
+                            ["RESET_GAME"]
+                        ]
+                    ]
+                }
+            ]
+        },
+        "tutorial": {
+            "args": [],
+            "message": "Welcome to Star Wars: The Deckbuilding Game in DragnCards. Would you like a tutorial to help you through your first round? The tutorial assumes you know the rules of the game and just need help with the controls.",
+            "options": [
+                {
+                    "label": "Yes, start the tutorial",
+                    "code": ["PROMPT", "$PLAYER_N", "playACard"]
+                },
+                {
+                    "label": "Skip tutorial this time"
+                },
+                {
+                    "label": "Skip tutorial forever",
+                    "dontShowAgain": true
+                }
+            ]
+        },
+        "playACard": {
+            "args": [],
+            "message": "To play a card, hover over it and press W. To play all the cards in your hand at once, use Shift+W. Press \"Next\" when you've done this and would like to learn how to buy a card.",
+            "options": [
+                {
+                    "label": "Next",
+                    "code": ["PROMPT", "$PLAYER_N", "buyACard"]
+                }
+            ]
+        },
+        "buyACard": {
+            "args": [],
+            "message": "To buy a card, hover over it and press B. Purchasable cards are highlighted with an orange border. Press \"Next\" when you'd like to learn how to attack.",
+            "options": [
+                {
+                    "label": "Next",
+                    "code": ["PROMPT", "$PLAYER_N", "attackWithCard"]
+                }
+            ]
+        },
+        "attackWithCard": {
+            "args": [],
+            "message": "To attack with a card, hover over it and press A. It will gain a green border, indicating it is part of the attack. You can attack with multiple cards by repeating this process. To remove a card from the attack, hover over it and press A again. Press \"Next\" when you'd like to learn how to target a card.",
+            "options": [
+                {
+                    "label": "Next",
+                    "code": ["PROMPT", "$PLAYER_N", "attackOnCard"]
+                }
+            ]
+        },
+        "attackOnCard": {
+            "args": [],
+            "message": "To target a card with your attackers, hover over it and press S. It will take the damage, and your attackers will gain a red border, indicating that they can no longer attack. Press \"Next\" when you'd like to learn how to end your turn.",
+            "options": [
+                {
+                    "label": "Next",
+                    "code": ["PROMPT", "$PLAYER_N", "endTurn"]
+                }
+            ]
+        },
+        "endTurn": {
+            "args": [],
+            "message": "To end your turn, press Shift+D.",
+            "options": [
+                {
+                    "label": "End Turn",
+                    "hotkey": "Shift+D",
+                    "code": [
+                        ["END_TURN", "$PLAYER_N"],
+                        ["PROMPT", "$PLAYER_N", "otherHotkeys"]
+                    ]
+                }
+            ]
+        },
+        "otherHotkeys": {
+            "args": [],
+            "message": "Your turn is over. You now know the basics of playing Star Wars: The Deckbuilding Game in DragnCards. Note that while most effects occur automatically, manual intervention may sometimes be required. So while your opponent takes their turn, check out the full hotkey list by holding Tab. Good luck, and may the F hotkey be with you!",
+            "options": [
+                {
+                    "label": "Finish Tutorial"
                 }
             ]
         },
@@ -32,7 +140,8 @@
                     "code": [
                         ["LOG", "{{$ALIAS_N}} selected a new base: ", "$GAME.cardById.{{$PROMPT_INPUT.[0]}}.sides.A.name", "."],
                         ["MOVE_CARD", "$PROMPT_INPUT.[0]", "{{$PLAYER_I}}Base", 0],
-                        ["STOP_LOOKING", "$PLAYER_I"]
+                        ["STOP_LOOKING", "$PLAYER_I"],
+                        ["START_TURN", "$PLAYER_I"]
                     ]
                 }
             },
@@ -40,6 +149,150 @@
                 {
                     "label": "Cancel",
                     "hotkey": "X"
+                }
+            ]
+        },
+        "exileUpto3": {
+            "args": [],
+            "message": "Select up to 3 cards from your hand or discard to exile.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 3,
+                    "code": [
+                        ["EXILE_CARD_IDS", "$PROMPT_INPUT"],
+                        ["STOP_LOOKING", "$PLAYER_N"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Exile selected cards",
+                    "hotkey": "E",
+                    "code": [
+                        ["EXILE_CARD_IDS", "$PROMPT_INPUT"],
+                        ["STOP_LOOKING", "$PLAYER_N"]
+                    ]
+                },
+                {
+                    "label": "Cancel",
+                    "code": ["STOP_LOOKING", "$PLAYER_N"]
+                }
+            ]
+        },
+        "exileUpto2": {
+            "args": [],
+            "message": "Select up to 2 cards from your hand or discard to exile.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 2,
+                    "code": [
+                        ["EXILE_CARD_IDS", "$PROMPT_INPUT"],
+                        ["STOP_LOOKING", "$PLAYER_N"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Exile selected cards",
+                    "hotkey": "E",
+                    "code": [
+                        ["EXILE_CARD_IDS", "$PROMPT_INPUT"],
+                        ["STOP_LOOKING", "$PLAYER_N"]
+                    ]
+                },
+                {
+                    "label": "Cancel",
+                    "code": ["STOP_LOOKING", "$PLAYER_N"]
+                }
+            ]
+        },
+        "exileUpto1": {
+            "args": [],
+            "message": "Select up to 1 card from your hand or discard to exile.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["EXILE_CARD_IDS", "$PROMPT_INPUT"],
+                        ["STOP_LOOKING", "$PLAYER_N"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": ["STOP_LOOKING", "$PLAYER_N"]
+                }
+            ]
+        },
+        "purchaseFreeCardFromGroupId": {
+            "args": ["$GROUP_ID", "$FACTION", {"$PLACE_ON_TOP_OF_DECK": false}],
+            "message": "Select a {{$FACTION}} card in the galaxy row to purchase for free.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$PURCHASED_CARD", "$GAME.cardById.{{$PROMPT_INPUT.[0]}}"],
+                        ["LOG", "{{$ALIAS_N}} purchased {{$PURCHASED_CARD.sides.A.name}} for free."],
+                        ["COND",
+                            ["EQUAL", "$PLACE_ON_TOP_OF_DECK", true],
+                            [
+                                ["LOG", "{{$ALIAS_N}} placed it on top of their deck."],
+                                ["MOVE_CARD", "$PURCHASED_CARD.id", "{{$PLAYER_I}}Deck", 0]
+                            ],
+                            ["TRUE"],
+                            ["MOVE_CARD", "$PURCHASED_CARD.id", "{{$PLAYER_I}}Discard", 0]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel"
+                }
+            ]
+        },
+        "millennium_falcon_bounty": {
+            "args": ["$PLAYER"],
+            "message": "Select a card of your faction from the galaxy row to purchase for free.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$PLAYER_FACTION", "Empire"],
+                        ["COND",
+                            ["EQUAL", "$PLAYER", "player2"],
+                            ["UPDATE_VAR", "$PLAYER_FACTION", "Rebel"]
+                        ],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "$PLAYER_FACTION"],
+                            ["LOG", "└── Selected card is not a {{$PLAYER_FACTION}} card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Purchased {{$TARGET_CARD.currentFace.name}} for free."],
+                                ["GOT_PURCHASED", "$TARGET_CARD"],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$PLAYER}}Discard"],
+                                ["STOP_LOOKING", "$PLAYER"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$PLAYER"]
+                    ]
                 }
             ]
         }

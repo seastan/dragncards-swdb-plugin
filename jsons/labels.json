@@ -10,6 +10,7 @@
         "labelMarkAsEmpireVictory": {"English": "Label Mark As Empire Victory"},
         "myDeck": {"English": "My Deck"},
         "damage": {"English": "Damage"},
+        "resource": {"English": "Resource"},
         "round": {"English": "Round"},
         "exileCard": {"English": "Exile card"},
         "endTurn": {"English": "End turn"},
@@ -22,6 +23,6 @@
         "buyCard": {"English": "Buy card"},
         "playCard": {"English": "Play card"},
         "playAllCards": {"English": "Play all the cards in your hand"},
-        "gain1Force": {"English": "Gain1 Force"}
+        "gain1Force": {"English": "Gain 1 Force"}
     }
 }

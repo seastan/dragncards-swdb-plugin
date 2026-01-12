@@ -3,12 +3,44 @@
         "moveToGroupIds": [],
         "options": [
             {
-                "label": "id:commitToAttack",
-                "actionList": "commitToAttack"
+                "label": "Move toward Empire",
+                "actionList": [
+                    ["LOG", "{{$ALIAS_N}} moved the force tracker toward Empire."],
+                    ["FADE_TEXT_PLAYER", "player1", "+1 force"],
+                    ["SET_TRACKER_VALUE", ["MAX", ["LIST", ["SUBTRACT", "$GAME.trackerValue", 1], -3]]]
+                ],
+                "showIf": ["EQUAL", "$ACTIVE_FACE.name", "Force Tracker"]
             },
             {
-                "label": "id:useAbility",
-                "actionList": "useAbility"
+                "label": "Move toward Rebels",
+                "actionList": [
+                    ["LOG", "{{$ALIAS_N}} moved the force tracker toward Rebels."],
+                    ["FADE_TEXT_PLAYER", "player2", "+1 force"],
+                    ["SET_TRACKER_VALUE", ["MIN", ["LIST", ["ADD", "$GAME.trackerValue", 1], 3]]]
+                ],
+                "showIf": ["EQUAL", "$ACTIVE_FACE.name", "Force Tracker"]
+            },
+            {
+                "label": "Attack with card",
+                "actionList": [
+                    ["ATTACK_WITH_CARD_ID", "$ACTIVE_CARD_ID"]
+                ]
+            },
+            {
+                "label": "Attack on card",
+                "actionList": [
+                    ["ATTACK_ON_CARD_ID", "$ACTIVE_CARD_ID"]
+                ]
+            },
+            {
+                "label": "Buy card",
+                "actionList": [
+                    ["BUY_CARD_ID", "$ACTIVE_CARD_ID"]
+                ],
+                "showIf": ["OR",
+                    ["EQUAL", "$ACTIVE_CARD.groupId", "sharedGalaxyRow"],
+                    ["EQUAL", "$ACTIVE_CARD.groupId", "sharedOuterRimPilotDeck"]
+                ]
             }
         ]
     }

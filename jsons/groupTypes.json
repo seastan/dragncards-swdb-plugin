@@ -55,8 +55,16 @@
             "shuffleOnLoad": false,
             "onCardEnter": {
                 "currentSide": "A",
-                "inPlay": true,
-                "support": false
+                "inPlay": true
+            }
+        },
+        "outOfPlay": {
+            "canHaveAttachments": true,
+            "canHaveTokens": true,
+            "shuffleOnLoad": false,
+            "onCardEnter": {
+                "currentSide": "A",
+                "inPlay": false
             }
         }
     }

@@ -24,13 +24,22 @@
         "EXILE_CARD_ID": {
           "args": ["$CARD_ID"],
           "code": [
-            ["LOG", "{{$ALIAS_N}} exiled {{$CARD.sides.A.name}}."],
-            ["MOVE_CARD", "$CARD.id", "sharedExiled", 0]
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["EXILE_CARD", "$CARD"]
           ]
         },
         "EXILE_CARD": {
           "args": ["$CARD"],
-          "code": ["EXILE_CARD_ID", "$CARD.id"]
+          "code": [
+            ["LOG", "{{$ALIAS_N}} exiled {{$CARD.sides.A.name}}."],
+            ["MOVE_CARD", "$CARD.id", "sharedExiled", 0]
+          ]
+        },
+        "EXILE_CARD_IDS": {
+          "args": ["$CARD_IDS"],
+          "code": ["FOR_EACH_VAL", "$CARD_ID", "$CARD_IDS", [
+            ["EXILE_CARD_ID", "$CARD_ID"]
+          ]]
         },
         "FLIP_CARD_ID": {
           "args": ["$CARD_ID"],
@@ -52,30 +61,38 @@
           "args": ["$CARD"],
           "code": ["FLIP_CARD_ID", "$CARD.id"]
         },
-        "USE_CARD_ID_ABILITY": {
-          "args": ["$CARD_ID"],
+        "USE_CARD_ABILITY": {
+          "args": ["$CARD"],
           "code": [
             ["COND",
-              ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -20], "$ACTIVE_CARD.inPlay"],
+              ["AND", ["EQUAL", "$CARD.rotation", -20], "$CARD.inPlay"],
               [
-                ["LOG", "$ALIAS_N", " unused the ability of ", "$ACTIVE_FACE.name", "."],
-                ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", 0]
+                ["LOG", "$ALIAS_N", " unused the ability of ", "$CARD.currentFace.name", "."],
+                ["SET", "/cardById/$CARD.id/rotation", 0]
               ],
-              ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
+              ["AND", ["EQUAL", "$CARD.rotation", 0], "$CARD.inPlay"],
               [
-                ["LOG", "$ALIAS_N", " used the ability of ", "$ACTIVE_FACE.name", "."],
-                ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", -20]
+                ["LOG", "$ALIAS_N", " used the ability of ", "$CARD.currentFace.name", "."],
+                ["COND",
+                  ["NOT_EQUAL", "$CARD.type", "CapitalShip"],
+                  ["SET", "/cardById/$CARD.id/rotation", -20]
+                ],
+                ["ABILITY", "$CARD.id", "$CARD.currentSide"]
               ]
             ]
           ]
         },
-        "USE_CARD_ABILITY": {
-          "args": ["$CARD"],
-          "code": ["USE_CARD_ID_ABILITY", "$CARD.id"]
+        "USE_CARD_ID_ABILITY": {
+          "args": ["$CARD_ID"],
+          "code": [
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["USE_CARD_ABILITY", "$CARD"]
+          ]
         },
         "DRAW_UP_TO_HAND_SIZE": {
           "args": ["$PLAYER_I"],
           "code": [
+            ["VAR", "$ALIAS_I", ["GET_ALIAS", "$PLAYER_I"]],
             ["VAR", "$CURRENT_HAND_SIZE", ["LENGTH", "$GAME.groupById.{{$PLAYER_I}}Hand.stackIds"]],
             ["VAR", "$CURRENT_DECK_SIZE", ["LENGTH", "$GAME.groupById.{{$PLAYER_I}}Deck.stackIds"]],
             ["VAR", "$MAX_HAND_SIZE", 5],
@@ -83,15 +100,15 @@
             ["COND", 
               ["GREATER_THAN", "$CARDS_TO_DRAW", "$CURRENT_DECK_SIZE"],
               [
-                ["LOG", "{{$ALIAS_N}} shuffles their discard pile and places it on the bottom of their deck."],
+                ["LOG", "{{$ALIAS_I}} shuffles their discard pile and places it on the bottom of their deck."],
                 ["SHUFFLE_GROUP", "{{$PLAYER_I}}Discard"],
-                ["MOVE_STACKS", "{{$PLAYER_I}}Discard", "{{$PLAYER_I}}Deck", "$CURRENT_DECK_SIZE", "bottom"]
+                ["MOVE_STACKS", "{{$PLAYER_I}}Discard", "{{$PLAYER_I}}Deck", -1, "bottom"]
               ]
             ],
             ["COND",
               ["GREATER_THAN", "$CARDS_TO_DRAW", 0],
               [
-                ["LOG", "{{$ALIAS_N}} draws up to their hand size of {{$MAX_HAND_SIZE}} cards."],
+                ["LOG", "{{$ALIAS_I}} draws up to their hand size of {{$MAX_HAND_SIZE}} cards."],
                 ["DRAW_CARD", "$CARDS_TO_DRAW", "$PLAYER_I"]
               ]
             ]
@@ -107,7 +124,8 @@
         "ATTACK_WITH_CARD_ID": {
           "args": ["$CARD_ID"],
           "code": [
-            ["ATTACK_WITH_CARD", "$CARD_ID"]
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["ATTACK_WITH_CARD", "$CARD"]
           ]
         },
         "ATTACK_WITH_CARD": {
@@ -117,7 +135,13 @@
               ["NOT_EQUAL", "$GAME.currentPlayer", "$PLAYER_N"],
               ["LOG", "{{$ALIAS_N}} tried to attack but it is not their turn."],
               ["EQUAL", "$CARD.isAttacking", true],
-              ["LOG", "{{$ALIAS_N}} tried to attack with {{$CARD.currentFace.name}} but it is already attacking."],
+              [
+                ["LOG", "{{$ALIAS_N}} is no longer attacking with {{$CARD.currentFace.name}}."],
+                ["SET", "/cardById/$CARD.id/isAttacking", false],
+                ["VAR", "$THIS_CARDS_ATTACK", ["ADD", "$CARD.currentFace.attack", "$CARD.tokens.attackModifier"]],
+                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/attack", "$THIS_CARDS_ATTACK"],
+                ["LOG", "└── Total attack is now {{$GAME.playerData.$PLAYER_N.attack}}."]
+              ],
               ["EQUAL", "$CARD.hasAttackedThisTurn", true],
               ["LOG", "{{$ALIAS_N}} tried to attack with {{$CARD.currentFace.name}} but it has already attacked this turn."],
               ["NOT_EQUAL", "$CARD.controller", "$PLAYER_N"],
@@ -130,6 +154,7 @@
                 ["SET", "/cardById/$CARD.id/isAttacking", true],
                 ["VAR", "$THIS_CARDS_ATTACK", ["ADD", "$CARD.currentFace.attack", "$CARD.tokens.attackModifier"]],
                 ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/attack", "$THIS_CARDS_ATTACK"],
+                ["FADE_TEXT_PLAYER", "$PLAYER_N", "Total attack: {{$GAME.playerData.$PLAYER_N.attack}}"],
                 ["LOG", "└── Total attack is now {{$GAME.playerData.$PLAYER_N.attack}}."]
               ]
             ]
@@ -138,15 +163,131 @@
         "ATTACK_ON_CARD_ID": {
           "args": ["$CARD_ID"],
           "code": [
-            ["ATTACK_ON_CARD", "$CARD_ID"]
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["ATTACK_ON_CARD", "$CARD"]
           ]
         },
         "ATTACK_ON_CARD": {
           "args": ["$CARD"],
           "code": [
-            ["LOG", "{{$ALIAS_N}} attacked {{$CARD.currentFace.name}} with a total of {{$GAME.playerData.$PLAYER_N.attack}}."],
-            ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/damage", "$GAME.playerData.$PLAYER_N.attack"],
-            ["CLEAR_ATTACKERS", "$PLAYER_N"]
+            ["VAR", "$TOTAL_ATTACK", "$GAME.playerData.$PLAYER_N.attack"],
+            ["COND",
+              ["NOT_EQUAL", "$GAME.currentPlayer", "$PLAYER_N"],
+              ["LOG", "{{$ALIAS_N}} tried to attack but it is not their turn."],
+              ["EQUAL", "$TOTAL_ATTACK", 0],
+              ["LOG", "{{$ALIAS_N}} tried to attack a card but their total attack is 0."],
+              ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"],
+              ["BOUNTY_HUNT", "$CARD"],
+              ["EQUAL", "$CARD.controller", "shared"],
+              ["LOG", "{{$ALIAS_N}} tried to attack {{$CARD.currentFace.name}} but it is not a valid target."],
+              ["EQUAL", "$CARD.controller", "$PLAYER_N"],
+              ["LOG", "{{$ALIAS_N}} tried to attack {{$CARD.currentFace.name}} but it is not a valid target."],
+              ["TRUE"],
+              [
+                ["LOG", "{{$ALIAS_N}} attacked {{$CARD.currentFace.name}} with a total of {{$TOTAL_ATTACK}}."],
+                ["COND",
+                  ["AND",
+                    ["DEFINED", "$CARD.currentFace.hitPoints"],
+                    ["GREATER_THAN", "$CARD.currentFace.hitPoints", 0],
+                    ["GREATER_EQUAL", "$TOTAL_ATTACK", "$CARD.currentFace.hitPoints"],
+                    ["DEFINED", "$CARD.discardGroupId"]
+                  ],
+                  ["DESTROY_CARD_WITH_ATTACK", "$CARD"],
+                  ["TRUE"],
+                  [
+                    ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/damage", "$TOTAL_ATTACK"],
+                    ["FADE_TEXT_CARD", "$CARD.id", "+{{$TOTAL_ATTACK}} token:damage"]
+                  ]
+                ],
+                ["CLEAR_ATTACKERS", "$PLAYER_N"]
+              ]
+            ]
+          ]
+        },
+        "BOUNTY_HUNT": {
+          "args": ["$CARD"],
+          "code": [
+            ["VAR", "$NAME", "$CARD.currentFace.name"],
+            ["LOG", "{{$ALIAS_N}} started a bounty hunt on {{$NAME}}."],
+            ["SET", "/playerData/{{$PLAYER_N}}/bountyHunting", true],
+            ["VAR", "$TOTAL_ATTACK", "$GAME.playerData.$PLAYER_N.attack"],
+            ["VAR", "$ATTACKING_WITH_CAPITAL_SHIP", false],
+            ["VAR", "$PLAYER_BASE", "$GAME.playerData.$PLAYER_N.baseCard"],
+            ["VAR", "$IS_ORD_MANTELL", ["EQUAL", "$PLAYER_BASE.sides.A.name", "Ord Mantell"]],
+            ["VAR", "$TARGET_VALUE", "$CARD.currentFace.hitPoints"],
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+              ["COND",
+                ["AND",
+                  ["EQUAL", "$CARD.isAttacking", true],
+                  ["EQUAL", "$CARD.currentFace.cardType", "CapitalShip"]
+                ],
+                ["UPDATE_VAR", "$ATTACKING_WITH_CAPITAL_SHIP", true]
+              ]
+            ]],
+            ["COND",
+              "$IS_ORD_MANTELL",
+              ["UPDATE_VAR", "$TARGET_VALUE", "$CARD.currentFace.cost"]
+            ],
+            ["COND",
+
+              ["EQUAL", "$ATTACKING_WITH_CAPITAL_SHIP", true],
+              ["LOG", "└── Cannot bounty hunt with a Capital Ship."],
+
+              ["AND",
+                ["EQUAL", "$PLAYER_N", "player1"],
+                ["NOT_EQUAL", "$CARD.currentFace.faction", "Rebel"],
+                ["NOT",
+                  ["AND",
+                    "$IS_ORD_MANTELL",
+                    ["EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                  ]
+                ]
+              ],
+              ["LOG", "└── {{$CARD.currentFace.name}} is not a valid target."],
+
+              ["AND",
+                ["EQUAL", "$PLAYER_N", "player2"],
+                ["NOT_EQUAL", "$CARD.currentFace.faction", "Empire"]
+              ],
+              ["LOG", "└── {{$CARD.currentFace.name}} is not a valid target."],
+
+              ["LESS_THAN", "$TOTAL_ATTACK", "$TARGET_VALUE"],
+              ["LOG", "└── Total attack of {{$TOTAL_ATTACK}} is less than its hit points of {{$CARD.currentFace.hitPoints}}."],
+
+              ["TRUE"],
+              [
+                ["LOG", "└── Successfully bounty hunted {{$NAME}}."],
+                ["GET_BOUNTY", "$CARD"],
+                ["DESTROY_CARD_WITH_ATTACK", "$CARD"],
+                ["CLEAR_ATTACKERS", "$PLAYER_N"]
+              ]
+            ],
+            ["SET", "/playerData/{{$PLAYER_N}}/bountyHunting", false]
+
+          ]
+        },
+        "DESTROY_CARD": {
+          "args": ["$CARD"],
+          "code": [
+            ["LOG", "{{$ALIAS_N}} destroyed {{$CARD.sides.A.name}}."],
+            ["COND",
+              ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"],
+              ["MOVE_FROM_GALAXY_ROW", "$CARD.id", "sharedGalaxyDiscard"],
+              ["TRUE"],
+              ["MOVE_CARD", "$CARD.id", "$CARD.discardGroupId", 0]
+            ]
+          ]
+        },
+        "DESTROY_CARD_WITH_ATTACK": {
+          "args": ["$CARD"],
+          "code": [
+            ["DESTROY_CARD", "$CARD"],
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$ATTACKING_CARD", "$GAME.cardById", [
+              ["COND",
+                ["EQUAL", "$ATTACKING_CARD.isAttacking", true],
+                ["DESTROYED_A_CARD", "$ATTACKING_CARD", "$CARD"]
+              ]
+            ]]
           ]
         },
         "CLEAR_ATTACKERS": {
@@ -167,45 +308,105 @@
             ["SET", "/playerData/{{$PLAYER_I}}/attack", 0]
           ]
         },
+        "START_TURN": {
+          "args": ["$PLAYER_I"],
+          "code": [
+            ["COND",
+              ["GROUP_EMPTY", "{{$PLAYER_I}}Base"],
+              [
+                ["LOG", ["GET_ALIAS", "$PLAYER_I"], " has no base. They must select a new base to start their turn."],
+                ["LOOK_AT", "$PLAYER_I", "{{$PLAYER_I}}BaseDeck", -1, true],
+                ["PROMPT", "$PLAYER_I", "selectNewBase", "$PLAYER_I"]
+              ],
+              ["TRUE"],
+              [
+                ["LOG", ["GET_ALIAS", "$PLAYER_I"], " begins their turn."],
+                ["COND",
+                  ["EQUAL", "$PLAYER_I", "player1"],
+                  ["FADE_TEXT_GAME", "Empire's Turn"],
+                  ["EQUAL", "$PLAYER_I", "player2"],
+                  ["FADE_TEXT_GAME", "Rebels' Turn"]
+                ],
+                ["COND",
+                  ["EQUAL", "$GAME.roundNumber", 0],
+                  ["PROMPT", "$PLAYER_I", "tutorial"]
+                ],
+                ["COND",
+                  ["AND",
+                    ["EQUAL", "$PLAYER_I", "player1"],
+                    ["EQUAL", "$GAME.trackerValue", -3]
+                  ],
+                  [
+                    ["LOG", "[game] The force is all the way on the Empire's side, granting an additional resource."],
+                    ["INCREASE_VAL", "/playerData/player1/resources", 1],
+                    ["FADE_TEXT_PLAYER", "player1", "+1 token:resource (Force Tracker)"]
+                  ],
+                  ["AND",
+                    ["EQUAL", "$PLAYER_I", "player2"],
+                    ["EQUAL", "$GAME.trackerValue", 3]
+                  ],
+                  [
+                    ["LOG", "[game] The force is all the way on the Rebels' side, granting an additional resource."],
+                    ["INCREASE_VAL", "/playerData/player2/resources", 1],
+                    ["FADE_TEXT_PLAYER", "player2", "+1 token:resource (Force Tracker)"]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
         "END_TURN": {
           "args": ["$PLAYER_I"],
           "code": [
             ["COND",
               ["EQUAL", "$GAME.currentPlayer", "$PLAYER_I"],
               [
+                ["SET", "/playerData/$PLAYER_I/layout/tableButtons/endTurnSuggestion/visible", false],
                 ["CLEAR_ATTACKERS", "$PLAYER_I"],
                 ["SET", "/playerData/{{$PLAYER_I}}/resources", 0],
                 ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
-                  ["SET", "/cardById/$CARD.id/hasAttackedThisTurn", false]
+                  ["SET", "/cardById/$CARD.id/hasAttackedThisTurn", false],
+                  ["SET", "/cardById/$CARD.id/abilityUsedThisTurn", false],
+                  ["COND",
+                    ["EQUAL", "$CARD.exileAtEndOfTurn", true],
+                    [
+                      ["LOG", "└── Exiling {{$CARD.sides.A.name}} at the end of the turn due to earlier card effect."],
+                      ["EXILE_CARD_ID", "$CARD.id"],
+                      ["SET", "/cardById/$CARD.id/exileAtEndOfTurn", false]
+                    ]
+                  ]
                 ]],
                 ["LOG", "{{$ALIAS_N}} ends their turn."],
-                ["LOG", "{{$ALIAS_N}} discards their cards."],
+                ["LOG", "{{$ALIAS_N}} discards their cards from play."],
                 ["FOR_EACH_VAL", "$CARD_ID", "$GAME.groupById.{{$PLAYER_I}}Play.parentCardIds", [
                   ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
                   ["COND",
-                    ["NOT_EQUAL", "$CARD.currentFace.cardType", "CapitalShip"],
+                    ["NOT_EQUAL", "$CARD.currentFace.type", "CapitalShip"],
                     ["DISCARD_CARD_ID", "$CARD_ID"]
                   ]
+                ]],
+                ["LOG", "{{$ALIAS_N}} discards all cards in their hand."],
+                ["FOR_EACH_VAL", "$CARD_ID", "$GAME.groupById.{{$PLAYER_I}}Hand.parentCardIds", [
+                  ["DISCARD_CARD_ID", "$CARD_ID"]
                 ]],
                 ["LOG", "{{$ALIAS_N}} drew up to their hand size."],
                 ["DRAW_UP_TO_HAND_SIZE", "$PLAYER_I"],
                 ["SET", "/currentPlayer", ["NEXT_PLAYER", "$PLAYER_I"]],
-                ["VAR", "$NEW_PLAYER_I", "$GAME.currentPlayer"],
-                ["LOG", ["GET_ALIAS", "$NEW_PLAYER_I"], " begins their turn."],
                 ["NEXT_STEP"],
-                ["COND",
-                  ["GROUP_EMPTY", "{{$NEW_PLAYER_I}}Base"],
-                  [
-                    ["LOOK_AT", "$NEW_PLAYER_I", "{{$NEW_PLAYER_I}}BaseDeck", -1, true],
-                    ["PROMPT", "$NEW_PLAYER_I", "selectNewBase", "$NEW_PLAYER_I"]
-                  ]
-                ]
+                ["START_TURN", "$GAME.currentPlayer"]
               ],
               ["TRUE"],
               [
                 ["LOG", "{{$ALIAS_N}} tried to end their turn but it is not their turn."]
               ]
             ]
+          ]
+        },
+        "BUY_CARD_ID": {
+          "args": ["$CARD_ID"],
+          "code": [
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["BUY_CARD", "$CARD"]
           ]
         },
         "BUY_CARD": {
@@ -227,9 +428,10 @@
               ["TRUE"],
               [
                 ["VAR", "$CARD_COST", "$CARD.currentFace.cost"],
-                ["MOVE_CARD", "$CARD.id", "{{$PLAYER_N}}Discard", 0],
+                ["LOG", "{{$ALIAS_N}} bought {{$CARD.currentFace.name}} for {{$CARD_COST}} resources."],
                 ["DECREASE_VAL", "/playerData/$PLAYER_N/resources", "$CARD_COST"],
-                ["LOG", "{{$ALIAS_N}} bought {{$CARD.currentFace.name}} for {{$CARD_COST}} resources."]
+                ["FADE_TEXT_PLAYER", "$PLAYER_N", "{{$GAME.playerData.$PLAYER_N.resources}} token:resource remaining"],
+                ["GOT_PURCHASED", "$CARD"]
               ]
             ]
           ]
@@ -246,6 +448,34 @@
               [
                 ["LOG", "[game] Added {{$CARDS_TO_REVEAL}} card(s) to the galaxy row."],
                 ["MOVE_STACKS", "sharedGalaxyDeck", "sharedGalaxyRow", "$CARDS_TO_REVEAL"]
+              ]
+            ]
+          ]
+        },
+        "MOVE_FROM_GALAXY_ROW": {
+          "args": ["$CARD_ID", "$TO_GROUP_ID"],
+          "code": [
+            ["RESET_INDEX"],
+            ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+            ["COND",
+              ["NOT_EQUAL", "$GAME.currentPlayer", "$PLAYER_N"],
+              ["LOG", "{{$ALIAS_N}} tried to move {{$CARD.currentFace.name}} but it is not their turn."],
+              ["NOT_EQUAL", "$CARD.controller", "shared"],
+              ["LOG", "{{$ALIAS_N}} tried to move {{$CARD.currentFace.name}} but it is not in the shared area."],
+              ["TRUE"],
+              [
+
+                ["VAR", "$PREV_STACK_INDEX", "$CARD.stackIndex"],
+                ["LOG", "{{$ALIAS_N}} moved {{$CARD.sides.A.name}} to {{$GAME.groupById.$TO_GROUP_ID.label}}."],
+                ["MOVE_CARD", "$CARD.id", "$TO_GROUP_ID", 0],
+                ["COND",
+                  ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
+                  [
+                    ["VAR", "$TOP_CARD", "$GAME.groupById.sharedGalaxyDeck.parentCards.[0]"],
+                    ["LOG", "{{$ALIAS_N}} replaced it with {{$TOP_CARD.sides.A.name}}."],
+                    ["MOVE_CARD", "$TOP_CARD.id", "sharedGalaxyRow", "$PREV_STACK_INDEX"]
+                  ]
+                ]
               ]
             ]
           ]
@@ -325,15 +555,172 @@
               ["LOG", "{{$ALIAS_N}} tried to gain {{$N}} force but it is not their turn."],
               ["EQUAL", "$PLAYER_I", "player1"],
               [
-                ["LOG", "{{$ALIAS_N}} gained {{$N}} force."],
+                ["FADE_TEXT_PLAYER", "$PLAYER_I", "+{{$N}} force"],
                 ["SET_TRACKER_VALUE", ["MAX", ["LIST", ["SUBTRACT", "$GAME.trackerValue", "$N"], -3]]]
               ],
               ["EQUAL", "$PLAYER_I", "player2"],
               [
-                ["LOG", "{{$ALIAS_N}} gained {{$N}} force."],
+                ["FADE_TEXT_PLAYER", "$PLAYER_I", "+{{$N}} force"],
                 ["SET_TRACKER_VALUE", ["MIN", ["LIST", ["ADD", "$GAME.trackerValue", "$N"], 3]]]
               ]
             ]
+          ]
+        },
+        "EXILE_UP_TO_N_FROM_HAND_OR_DISCARD": {
+          "args": ["$PLAYER_I", "$N"],
+          "code": [
+            ["LOOK_AT", "$PLAYER_I", "{{$PLAYER_I}}Discard", -1, true],
+            ["COND",
+              ["EQUAL", "$N", 1],
+              ["PROMPT", "$PLAYER_I", "exileUpto1"],
+              ["EQUAL", "$N", 2],
+              ["PROMPT", "$PLAYER_I", "exileUpto2"],
+              ["EQUAL", "$N", 3],
+              ["PROMPT", "$PLAYER_I", "exileUpto3"]
+            ]
+          ]
+        },
+        "GET_FACTION": {
+          "args": ["$PLAYER_I"],
+          "code": ["COND",
+            ["EQUAL", "$PLAYER_I", "player1"],
+            "Empire",
+            ["EQUAL", "$PLAYER_I", "player2"],
+            "Rebels",
+            ["TRUE"],
+            null
+          ]
+        },
+        "CHECK_END_TURN_SUGGESTION": {
+          "args": [],
+          "code": [
+            ["VAR", "$CURRENT_PLAYER", "$GAME.currentPlayer"],
+            ["VAR", "$HAS_CARDS_IN_HAND", ["GROUP_NOT_EMPTY", "{{$CURRENT_PLAYER}}Hand"]],
+            ["VAR", "$HAS_ATTACKING_CARDS", false],
+            ["VAR", "$HAS_PURCHASEABLE_CARDS", false],
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+              ["COND",
+                ["AND",
+                  ["EQUAL", "$CARD.controller", "$CURRENT_PLAYER"],
+                  ["EQUAL", "$CARD.groupId", "{{$CURRENT_PLAYER}}Play"],
+                  ["DEFINED", "$CARD.currentFace.attack"],
+                  ["GREATER_THAN", "$CARD.currentFace.attack", 0],
+                  ["NOT", ["EQUAL", "$CARD.hasAttackedThisTurn", true]]
+                ],
+                ["UPDATE_VAR", "$HAS_ATTACKING_CARDS", true]
+              ],
+              ["COND",
+                ["EQUAL", "$CARD.borderColor", "orange"],
+                ["UPDATE_VAR", "$HAS_PURCHASEABLE_CARDS", true]
+              ]
+            ]],
+            //["LOG", "[debug] End turn suggestion check for {{$CURRENT_PLAYER}}: HAS_CARDS_IN_HAND={{$HAS_CARDS_IN_HAND}}, HAS_ATTACKING_CARDS={{$HAS_ATTACKING_CARDS}}, HAS_PURCHASEABLE_CARDS={{$HAS_PURCHASEABLE_CARDS}}."],
+            ["COND",
+              ["AND",
+                ["NOT", "$HAS_CARDS_IN_HAND"],
+                ["NOT", "$HAS_ATTACKING_CARDS"],
+                ["NOT", "$HAS_PURCHASEABLE_CARDS"]
+              ],
+              ["SET", "/playerData/{{$CURRENT_PLAYER}}/layout/tableButtons/endTurnSuggestion/visible", true],
+              ["TRUE"],
+              ["SET", "/playerData/{{$CURRENT_PLAYER}}/layout/tableButtons/endTurnSuggestion/visible", false]
+            ]
+          ]
+        },
+        "SHOW_SIDE_REGION": {
+          "args": ["$REGION_ID"],
+          "code": [
+            ["LOG", "{{$ALIAS_N}} is viewing the {{$GAME.groupById.$REGION_ID.label}} region."],
+            ["SET", "/playerData/{{$PLAYER_N}}/layout/regions/sharedTracker/visible", false],
+            ["SET", "/playerData/{{$PLAYER_N}}/layout/regions/sharedExiled/visible", false],
+            ["SET", "/playerData/{{$PLAYER_N}}/layout/regions/sharedRules/visible", false],
+            ["SET", "/playerData/{{$PLAYER_N}}/layout/regions/{{$REGION_ID}}/visible", true]
+          ]
+        },
+        "DAMAGE_BASE": {
+          "args": ["$PLAYER", "$AMOUNT"],
+          "code": [
+            ["VAR", "$BASE_CARD", ["GET_BASE", "$PLAYER"]],
+            ["VAR", "$ACTUAL_DAMAGE", "$AMOUNT"],
+            ["VAR", "$PREVENTED", 0],
+            ["COND",
+              ["AND",
+                ["EQUAL", "$BASE_CARD.sides.A.name", "Hoth"],
+                ["EQUAL", "$PLAYER", "$BASE_CARD.controller"]
+              ],
+              [
+                ["VAR", "$PREVENTED_THIS_TURN", "$GAME.playerData.{{$PLAYER}}.hothDamagePrevented"],
+                ["COND",
+                  ["NOT", ["DEFINED", "$PREVENTED_THIS_TURN"]],
+                  ["UPDATE_VAR", "$PREVENTED_THIS_TURN", 0]
+                ],
+                ["VAR", "$CAN_PREVENT", ["SUBTRACT", 2, "$PREVENTED_THIS_TURN"]],
+                ["COND",
+                  ["GREATER_THAN", "$CAN_PREVENT", 0],
+                  [
+                    ["UPDATE_VAR", "$PREVENTED", ["MIN", ["LIST", "$AMOUNT", "$CAN_PREVENT"]]],
+                    ["UPDATE_VAR", "$ACTUAL_DAMAGE", ["SUBTRACT", "$AMOUNT", "$PREVENTED"]],
+                    ["INCREASE_VAL", "/playerData/{{$PLAYER}}/hothDamagePrevented", "$PREVENTED"],
+                    ["LOG", "└── Hoth prevented {{$PREVENTED}} damage."]
+                  ]
+                ]
+              ]
+            ],
+            ["COND",
+              ["GREATER_THAN", "$ACTUAL_DAMAGE", 0],
+              [
+                ["LOG", "└── Dealt {{$ACTUAL_DAMAGE}} damage to {{$BASE_CARD.sides.A.name}}."],
+                ["INCREASE_VAL", "/cardById/{{$BASE_CARD.id}}/tokens/damage", "$ACTUAL_DAMAGE"],
+                ["FADE_TEXT_CARD", "$BASE_CARD.id", "+{{$ACTUAL_DAMAGE}} token:damage"]
+              ]
+            ]
+          ]
+        },
+        "GET_BASE": {
+          "args": ["$PLAYER_I"],
+          "code": [
+            ["VAR", "$BASE_CARD", "$GAME.groupById.{{$PLAYER_I}}Base.parentCards.[0]"],
+            "$BASE_CARD"
+          ]
+        },
+        "REPAIR_DAMAGE": {
+          "args": ["$PLAYER", "$AMOUNT"],
+          "code": [
+            ["VAR", "$BASE_CARD", ["GET_BASE", "$PLAYER"]],
+            ["VAR", "$CURRENT_DAMAGE", "$BASE_CARD.tokens.damage"],
+            ["COND",
+              ["NOT", ["DEFINED", "$CURRENT_DAMAGE"]],
+              ["UPDATE_VAR", "$CURRENT_DAMAGE", 0]
+            ],
+            ["VAR", "$ACTUAL_REPAIR", ["MIN", ["LIST", "$AMOUNT", "$CURRENT_DAMAGE"]]],
+            ["COND",
+              ["GREATER_THAN", "$ACTUAL_REPAIR", 0],
+              [
+                ["LOG", "└── repaired {{$AMOUNT}} damage from {{$BASE_CARD.sides.A.name}}."],
+                ["DECREASE_VAL", "/cardById/{{$BASE_CARD.id}}/tokens/damage", "$ACTUAL_REPAIR"],
+                ["FADE_TEXT_CARD", "$BASE_CARD.id", "-{{$ACTUAL_REPAIR}} token:damage"]
+              ]
+            ]
+          ]
+        },
+        "IS_FORCE_WITH_YOU": {
+          "args": ["$PLAYER_I"],
+          "code": ["OR",
+            ["AND",
+              ["EQUAL", "$PLAYER_I", "player1"],
+              ["LESS_THAN", "$GAME.trackerValue", 0]
+            ],
+            ["AND",
+              ["EQUAL", "$PLAYER_I", "player2"],
+              ["GREATER_THAN", "$GAME.trackerValue", 0]
+            ]
+          ]
+        },
+        "ABILITY_UNUSED": {
+          "args": ["$CARD"],
+          "code": ["AND",
+            ["EQUAL", "$CARD.rotation", 0],
+            "$CARD.inPlay"
           ]
         }
 

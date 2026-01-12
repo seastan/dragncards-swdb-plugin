@@ -1,7 +1,7 @@
 {
     "groupMenu": {
         "peekAtTopN": [5],
-        "moveToGroupIds": [],
+        "moveToGroupIds": ["player1Hand", "player2Hand", "sharedGalaxyDeck"],
         "options": [
         ]
     }

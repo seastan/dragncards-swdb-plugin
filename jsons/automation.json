@@ -9,7 +9,6 @@
             ["DRAW_STARTING_HANDS"],
             ["SET", "/started", true],
             ["REFILL_GALAXY_ROW"],
-            ["LOG", ["GET_ALIAS", "$GAME.currentPlayer"], " begins their turn."],
             ["SET_TRACKER_VALUE", 3]
         ],
         "gameRules": {
@@ -25,19 +24,9 @@
                 ],
                 "then": [
                     ["INCREASE_VAL", "/playerData/$TARGET.controller/resources", "$TARGET.currentFace.resources"],
-                    ["LOG", "└── {{$TARGET.controller}} gained {{$TARGET.currentFace.resources}} resources from {{$TARGET.currentFace.name}}."]
+                    ["FADE_TEXT_PLAYER", "$TARGET.controller", "+{{$TARGET.currentFace.resources}} token:resource"],
+                    ["LOG", "└── gained {{$TARGET.currentFace.resources}} resources."]
                 ]
-            },
-            "refillGalaxyRow": {
-                "_comment": "Refill galaxy row when cards are removed and deck is not empty",
-                "type": "trigger",
-                "listenTo": ["/cardById/*/groupId"],
-                "condition": ["AND",
-                    ["LESS_THAN", ["LENGTH", "$GAME.groupById.sharedGalaxyRow.stackIds"], 6],
-                    ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
-                    ["EQUAL", "$GAME.started", true]
-                ],
-                "then": ["REFILL_GALAXY_ROW"]
             },
             "destroyDamagedCards": {
                 "_comment": "Destroy cards when damage equals or exceeds hit points",
@@ -49,10 +38,7 @@
                     ["GREATER_EQUAL", "$TARGET.tokens.damage", "$TARGET.currentFace.hitPoints"],
                     ["DEFINED", "$TARGET.discardGroupId"]
                 ],
-                "then": [
-                    ["LOG", "└── {{$TARGET.currentFace.name}} has been destroyed."],
-                    ["MOVE_CARD", "$TARGET.id", "$TARGET.discardGroupId", 0]
-                ]
+                "then": ["DESTROY_CARD", "$TARGET"]
             },
             "updatePlayerScores": {
                 "_comment": "Update player scores based on victory pile size",
@@ -62,6 +48,16 @@
                 "then": [
                     ["SET", "/playerData/player1/score", ["LENGTH", "$GAME.groupById.player1VictoryPile.stackIds"]],
                     ["SET", "/playerData/player2/score", ["LENGTH", "$GAME.groupById.player2VictoryPile.stackIds"]]
+                ]
+            },
+            "updateAttackStrengthWhenModifierChanged": {
+                "_comment": "Update player scores based on victory pile size",
+                "type": "trigger",
+                "listenTo": ["/cardById/*/tokens/attackModifier"],
+                "condition": "$TARGET.isAttacking",
+                "then": [
+                    ["VAR", "$DELTA", ["SUBTRACT", "$TARGET.tokens.attackModifier", ["PREV", "$TARGET.tokens.attackModifier"]]],
+                    ["INCREASE_VAL", "/playerData/$TARGET.controller/attack", "$DELTA"]
                 ]
             },
             "checkGameOver": {
@@ -75,9 +71,19 @@
                 "then": [
                     ["COND",
                         ["GREATER_EQUAL", "$GAME.playerData.player1.score", 3],
-                        ["PROMPT", "$PLAYER_ORDER", "gameOver", "The Empire has won the game!"],
+                        [
+                            ["LOG", "[game] The Empire has destroyed 3 bases and wins the game!"],
+                            ["SET", "/victoryState", "Empire"],
+                            ["SAVE_GAME"],
+                            ["PROMPT", "$PLAYER_ORDER", "restartGame", "The Empire has destroyed 3 bases and wins the game!"]
+                        ],
                         ["GREATER_EQUAL", "$GAME.playerData.player2.score", 3],
-                        ["PROMPT", "$PLAYER_ORDER", "gameOver", "The Rebels have won the game!"]
+                        [
+                            ["LOG", "[game] The Rebels have destroyed 3 bases and win the game!"],
+                            ["SET", "/victoryState", "Rebels"],
+                            ["SAVE_GAME"],
+                            ["PROMPT", "$PLAYER_ORDER", "restartGame", "The Rebels have destroyed 3 bases and win the game!"]
+                        ]
                     ]
                 ]
             },
@@ -109,6 +115,51 @@
                     ]
                 ]
             },
+            "highlightPurchaseableCards": {
+                "_comment": "Set cards that can be purchased border color to orange",
+                "type": "trigger",
+                "priority": 5,
+                "listenTo": ["/playerData/*/resources", "/groupById/sharedGalaxyRow/stackIds"],
+                "condition": ["TRUE"],
+                "then": [
+                    ["VAR", "$RESOURCES", "$GAME.playerData.{{$GAME.currentPlayer}}.resources"],
+                    ["VAR", "$FACTION", 
+                        ["COND",
+                            ["EQUAL", "$GAME.currentPlayer", "player1"],
+                            "Empire",
+                            ["TRUE"],
+                            "Rebel"
+                        ]
+                    ],
+                    ["FOR_EACH_VAL", "$CARD_ID", "$GAME.groupById.sharedGalaxyRow.parentCardIds", [
+                        ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["COND",
+                            ["AND",
+                                ["LESS_EQUAL", "$CARD.currentFace.cost", "$RESOURCES"],
+                                ["OR",
+                                    ["EQUAL", "$CARD.currentFace.faction", "Neutral"],
+                                    ["EQUAL", "$CARD.currentFace.faction", "$FACTION"]
+                                ]
+                            ],
+                            ["SET", "/cardById/{{$CARD_ID}}/borderColor", "orange"],
+                            ["TRUE"],
+                            ["SET", "/cardById/{{$CARD_ID}}/borderColor", null]
+                        ]
+                    ]],
+                    ["COND",
+                        ["AND",
+                            ["GREATER_EQUAL", "$RESOURCES", 2],
+                            ["GROUP_NOT_EMPTY", "sharedOuterRimPilotDeck"]
+                        ],
+                        ["SET", "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor", "orange"],
+                        ["AND",
+                            ["LESS_THAN", "$RESOURCES", 2],
+                            ["GROUP_NOT_EMPTY", "sharedOuterRimPilotDeck"]
+                        ],
+                        ["SET", "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor", null]
+                    ]
+                ]
+            },
             "gainForceWhenCardPlayed": {
                 "_comment": "Gain force when a card with force property is played",
                 "type": "trigger",
@@ -121,6 +172,7 @@
                     ["GREATER_THAN", "$TARGET.currentFace.force", 0]
                 ],
                 "then": [
+                    ["LOG", "└── {{$TARGET.controller}} gained {{$TARGET.currentFace.force}} force."],
                     ["GAIN_N_FORCE", "$TARGET.controller", "$TARGET.currentFace.force"]
                 ]
             },
@@ -150,6 +202,16 @@
                             ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 90]
                         ]
                     ]
+                ]
+            },
+            "showEndTurnSuggestion": {
+                "_comment": "Show end turn suggestion when player has no more actions available",
+                "type": "trigger",
+                "priority": 10,
+                "listenTo": ["/groupById/*/stackIds", "/playerData/*/resources", "/cardById/*/tokens/attackModifier", "/cardById/*/hasAttackedThisTurn"],
+                "condition": ["TRUE"],
+                "then": [
+                    ["CHECK_END_TURN_SUGGESTION"]
                 ]
             }
         }

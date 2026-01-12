@@ -8,7 +8,8 @@
             "shuffleOnLoad": false,
             "onCardEnter": {
                 "controller": "shared",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "sharedGalaxyDeck": {
@@ -21,7 +22,8 @@
                 "controller": "shared",
                 "deckGroupId": "sharedGalaxyDeck",
                 "discardGroupId": "sharedGalaxyDiscard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "sharedGalaxyDiscard": {
@@ -33,16 +35,20 @@
                 "controller": "shared",
                 "deckGroupId": "sharedGalaxyDeck",
                 "discardGroupId": "sharedGalaxyDiscard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "sharedGalaxyRow": {
-            "groupType": "inPlay",
+            "groupType": "outOfPlay",
             "label": "Galaxy Row",
             "tableLabel": "Galaxy Row",
             "canHaveAttachments": false,
             "onCardEnter": {
                 "controller": "shared"
+            },
+            "onCardLeave": {
+                "borderColor": null
             }
         },
         "sharedOuterRimPilotDeck": {
@@ -53,29 +59,35 @@
             "shuffleOnLoad": false,
             "onCardEnter": {
                 "controller": "shared",
-                "rotation": 90
+                "rotation": 90,
+                "rotationByPlayer": {}
+            },
+            "onCardLeave": {
+                "borderColor": null
             }
         },
         "sharedExiled": {
-            "groupType": "deck",
+            "groupType": "discard",
             "label": "Exiled",
             "tableLabel": "Exiled",
             "canHaveAttachments": false,
             "shuffleOnLoad": false,
             "onCardEnter": {
                 "controller": "shared",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "sharedRules": {
-            "groupType": "deck",
+            "groupType": "discard",
             "label": "Rules",
             "tableLabel": "Rules",
             "canHaveAttachments": false,
             "shuffleOnLoad": false,
             "onCardEnter": {
                 "controller": "shared",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "sharedTracker": {
@@ -98,7 +110,8 @@
                 "controller": "player1",
                 "deckGroupId": "player1Deck",
                 "discardGroupId": "player1Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1Discard": {
@@ -110,7 +123,8 @@
                 "controller": "player1",
                 "deckGroupId": "player1Deck",
                 "discardGroupId": "player1Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1Hand": {
@@ -121,7 +135,8 @@
             "onCardEnter": {
                 "controller": "player1",
                 "peeking": {"player1": true},
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1Play": {
@@ -133,7 +148,8 @@
                 "controller": "player1",
                 "deckGroupId": "player1Deck",
                 "discardGroupId": "player1Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1Base": {
@@ -145,11 +161,12 @@
                 "controller": "player1",
                 "deckGroupId": "player1DBase",
                 "discardGroupId": "player2VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1BaseDeck": {
-            "groupType": "inPlay",
+            "groupType": "outOfPlay",
             "label": "Player 1 Base Deck",
             "tableLabel": "Base Deck",
             "canHaveAttachments": true,
@@ -157,7 +174,8 @@
                 "controller": "player1",
                 "deckGroupId": "player1BaseDeck",
                 "discardGroupId": "player2VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player1VictoryPile": {
@@ -170,7 +188,8 @@
                 "controller": "player1",
                 "deckGroupId": "player2Base",
                 "discardGroupId": "player1VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2Deck": {
@@ -183,7 +202,8 @@
                 "controller": "player2",
                 "deckGroupId": "player2Deck",
                 "discardGroupId": "player2Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2Discard": {
@@ -195,7 +215,8 @@
                 "controller": "player2",
                 "deckGroupId": "player2Deck",
                 "discardGroupId": "player2Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2Hand": {
@@ -206,7 +227,8 @@
             "onCardEnter": {
                 "controller": "player2",
                 "peeking": {"player2": true},
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2Play": {
@@ -218,7 +240,8 @@
                 "controller": "player2",
                 "deckGroupId": "player2Deck",
                 "discardGroupId": "player2Discard",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2Base": {
@@ -230,11 +253,12 @@
                 "controller": "player2",
                 "deckGroupId": "player2BaseDeck",
                 "discardGroupId": "player1VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2BaseDeck": {
-            "groupType": "deck",
+            "groupType": "outOfPlay",
             "label": "Player 2 Base Deck",
             "tableLabel": "Base Deck",
             "canHaveAttachments": true,
@@ -242,7 +266,8 @@
                 "controller": "player2",
                 "deckGroupId": "player2BaseDeck",
                 "discardGroupId": "player1VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         },
         "player2VictoryPile": {
@@ -255,7 +280,8 @@
                 "controller": "player2",
                 "deckGroupId": "player1Base",
                 "discardGroupId": "player2VictoryPile",
-                "rotation": 0
+                "rotation": 0,
+                "rotationByPlayer": {}
             }
         }
     }

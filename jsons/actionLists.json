@@ -1,5 +1,8 @@
 {
     "actionLists": {
-
+        "drawCard": [
+            ["LOG", "{{$ALIAS_N}} draws 1 card."],
+            ["DRAW_CARD", 1, "$PLAYER_N"]
+        ]
     }
 }
