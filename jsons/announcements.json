@@ -1,4 +1,11 @@
 {
     "announcements": [
+        "2025-02-02: Players can no longer attack a base while the opponent still has capital ships in play.",
+        "2025-02-02: Capital ships now reset their abilities at the end of each turn.",
+        "2025-01-12: Fixed Quarren Mercenary and Fang Fighter's triggers.",
+        "2025-01-12: Fixed Chirrut Imwe and Death Trooper's triggers.",
+        "2025-01-12: Fixed a bug with declaring an attack that destroys a base.",
+        "2025-01-12: Fixed the ability on Death Star.",
+        "2025-01-12: X-Wing can no longer be triggered multiple times per turn."
     ]
 }

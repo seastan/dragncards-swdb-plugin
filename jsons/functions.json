@@ -67,8 +67,7 @@
             ["COND",
               ["AND", ["EQUAL", "$CARD.rotation", -20], "$CARD.inPlay"],
               [
-                ["LOG", "$ALIAS_N", " unused the ability of ", "$CARD.currentFace.name", "."],
-                ["SET", "/cardById/$CARD.id/rotation", 0]
+                ["LOG", "{{$ALIAS_N}} tried to use the ability of {{$CARD.currentFace.name}} but it has already been used this turn. If it was used by mistake, use undo (Ctrl+Z) to reset its rotation."]
               ],
               ["AND", ["EQUAL", "$CARD.rotation", 0], "$CARD.inPlay"],
               [
@@ -171,6 +170,20 @@
           "args": ["$CARD"],
           "code": [
             ["VAR", "$TOTAL_ATTACK", "$GAME.playerData.$PLAYER_N.attack"],
+            ["VAR", "$TARGET_IS_BASE", ["OR", ["EQUAL", "$CARD.groupId", "player1Base"], ["EQUAL", "$CARD.groupId", "player2Base"]]],
+            ["VAR", "$DEFENDER_HAS_CAPITAL_SHIPS", false],
+            ["COND", "$TARGET_IS_BASE", [
+              ["FOR_EACH_KEY_VAL", "$ITER_CARD_ID", "$ITER_CARD", "$GAME.cardById", [
+                ["COND",
+                  ["AND",
+                    ["EQUAL", "$ITER_CARD.controller", "$CARD.controller"],
+                    "$ITER_CARD.inPlay",
+                    ["EQUAL", "$ITER_CARD.currentFace.cardType", "CapitalShip"]
+                  ],
+                  ["UPDATE_VAR", "$DEFENDER_HAS_CAPITAL_SHIPS", true]
+                ]
+              ]]
+            ]],
             ["COND",
               ["NOT_EQUAL", "$GAME.currentPlayer", "$PLAYER_N"],
               ["LOG", "{{$ALIAS_N}} tried to attack but it is not their turn."],
@@ -182,6 +195,8 @@
               ["LOG", "{{$ALIAS_N}} tried to attack {{$CARD.currentFace.name}} but it is not a valid target."],
               ["EQUAL", "$CARD.controller", "$PLAYER_N"],
               ["LOG", "{{$ALIAS_N}} tried to attack {{$CARD.currentFace.name}} but it is not a valid target."],
+              ["AND", "$TARGET_IS_BASE", "$DEFENDER_HAS_CAPITAL_SHIPS"],
+              ["LOG", "{{$ALIAS_N}} tried to attack the base but the opponent still has capital ships in play. Destroy all capital ships first."],
               ["TRUE"],
               [
                 ["LOG", "{{$ALIAS_N}} attacked {{$CARD.currentFace.name}} with a total of {{$TOTAL_ATTACK}}."],
@@ -381,7 +396,9 @@
                 ["FOR_EACH_VAL", "$CARD_ID", "$GAME.groupById.{{$PLAYER_I}}Play.parentCardIds", [
                   ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
                   ["COND",
-                    ["NOT_EQUAL", "$CARD.currentFace.type", "CapitalShip"],
+                    ["EQUAL", "$CARD.currentFace.type", "CapitalShip"],
+                    ["SET", "/cardById/$CARD.id/rotation", 0],
+                    ["TRUE"],
                     ["DISCARD_CARD_ID", "$CARD_ID"]
                   ]
                 ]],
