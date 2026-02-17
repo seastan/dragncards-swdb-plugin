@@ -1,0 +1,64 @@
+{
+    "automation": {
+        "cards": {
+            "eb7": {
+                "_comment": "Coruscant",
+                "rules": {
+                    "lookAtGalaxyDeck": {
+                        "_comment": "When your turn begins, look at the top 2 cards of the galaxy deck. Place one on top of the deck and discard the other.",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayer"],
+                        "condition": ["AND",
+                            ["EQUAL", "$THIS.inPlay", true],
+                            ["EQUAL", "$GAME.currentPlayer", "$THIS.controller"],
+                            ["NOT_EQUAL", ["PREV", "$GAME.currentPlayer"], "$GAME.currentPlayer"]
+                        ],
+                        "then": [
+                            ["VAR", "$DECK_SIZE", ["LENGTH", "$GAME.groupById.sharedGalaxyDeck.stackIds"]],
+                            ["COND",
+                                ["GREATER_THAN", "$DECK_SIZE", 1],
+                                [
+                                    ["LOG", "{{$ALIAS_N}}'s turn begins. Coruscant's ability triggers: Look at the top 2 cards of the galaxy deck."],
+                                    ["LOOK_AT", "$THIS.controller", "sharedGalaxyDeck", 2, false],
+                                    ["PROMPT", "$THIS.controller", "eb7_choose", "$THIS"]
+                                ],
+                                ["GREATER_THAN", "$DECK_SIZE", 0],
+                                [
+                                    ["LOG", "{{$ALIAS_N}}'s turn begins. Coruscant's ability triggers, but there is only 1 card in the galaxy deck."],
+                                    ["LOOK_AT", "$THIS.controller", "sharedGalaxyDeck", 1, false],
+                                    ["PROMPT", "$THIS.controller", "eb7_choose", "$THIS"]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "eb7_choose": {
+            "args": ["$CARD"],
+            "message": "Select a card to discard. The other will be kept on top of the galaxy deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["LOG", "└── Discarding {{$DISCARD_CARD.sides.A.name}} from the top of the galaxy deck."],
+                        ["MOVE_CARD", "$DISCARD_CARD_ID", "sharedGalaxyDiscard", 0]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

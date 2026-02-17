@@ -1,0 +1,35 @@
+{
+    "automation": {
+        "cards": {
+            "g11": {
+                "_comment": "Han Solo",
+                "ability": {
+                    "A": [
+                        ["VAR", "$HAS_MILLENNIUM_FALCON", false],
+                        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                            ["COND",
+                                ["AND",
+                                    ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                    ["EQUAL", "$CARD.inPlay", true],
+                                    ["EQUAL", "$CARD.sides.A.name", "Millennium Falcon"]
+                                ],
+                                ["UPDATE_VAR", "$HAS_MILLENNIUM_FALCON", true]
+                            ]
+                        ]],
+                        ["COND",
+                            "$HAS_MILLENNIUM_FALCON",
+                            [
+                                ["DRAW_CARD", 2, "$THIS.controller"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["DRAW_CARD", 1, "$THIS.controller"]
+                            ]
+                        ],
+                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+{
+    "automation": {
+        "cards": {
+            "g1": {
+                "_comment": "Y-Wing",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Y-Wing's ability: Exile to deal 2 damage."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["PROMPT", "$THIS.controller", "g1_damage", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Y-Wing's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g1_damage": {
+            "args": ["$CARD"],
+            "message": "Deal 2 damage to your opponent's base or a capital ship they have in play.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                            ["LOG", "└── Selected card is not your opponent's."],
+                            ["AND",
+                                ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$OPPONENT}}Base"],
+                                ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"]
+                            ],
+                            ["LOG", "└── Selected card is not a base or capital ship."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Dealt 2 damage to {{$TARGET_CARD.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/{{$TARGET_CARD.id}}/tokens/damage", 2],
+                                ["FADE_TEXT_CARD", "$TARGET_CARD.id", "+2 token:damage"],
+                                ["EXILE_CARD", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Deal damage (select a card)"
+                },
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

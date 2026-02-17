@@ -1,0 +1,24 @@
+{
+    "automation": {
+        "cards": {
+            "g42": {
+                "_comment": "HWK-290",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── HWK-290's ability: Exile to repair 4 damage."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["REPAIR_DAMAGE", "$THIS.controller", 4],
+                                ["EXILE_CARD", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── HWK-290's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

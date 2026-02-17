@@ -1,0 +1,17 @@
+{
+    "functions": {
+        "TRIGGER_BOSSK": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── Bossk's ability triggered: Gain 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+1 token:resource"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

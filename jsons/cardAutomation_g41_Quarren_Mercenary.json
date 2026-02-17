@@ -1,0 +1,21 @@
+{
+    "functions": {
+        "TRIGGER_QUARREN_MERCENARY": {
+            "args": ["$CARD"],
+            "code": [
+                ["COND",
+                    ["IS_FORCE_WITH_YOU", "$PLAYER_N"],
+                    [
+                        ["LOG", "└── Quarren Mercenary's ability triggered: Exile up to 2 cards."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 2]
+                    ],
+                    ["TRUE"],
+                    [
+                        ["LOG", "└── Quarren Mercenary's ability triggered: Exile 1 card."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ]
+                ]
+            ]
+        }
+    }
+}

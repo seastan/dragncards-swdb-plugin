@@ -1,0 +1,20 @@
+{
+    "automation": {
+        "cards": {
+            "rb6": {
+                "_comment": "Hoth",
+                "rules": {
+                    "resetDamagePrevention": {
+                        "_comment": "Reset the damage prevention tracking at the start of player's turn",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayerN"],
+                        "condition": ["EQUAL", "$GAME.currentPlayerN", "$THIS.controller"],
+                        "then": [
+                            ["SET", "/playerData/{{$THIS.controller}}/hothDamagePrevented", 0]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

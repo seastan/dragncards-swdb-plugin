@@ -1,0 +1,63 @@
+{
+    "automation": {
+        "cards": {
+            "g45": {
+                "_comment": "Jabba's Sail Barge",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "{{$ALIAS_N}} triggered Jabba's Sail Barge's ability: Add a Bounty Hunter from discard to hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "g45_bounty_hunter", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Jabba's Sail Barge's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g45_bounty_hunter": {
+            "args": ["$CARD"],
+            "message": "Select a Bounty Hunter from your discard pile to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.cardType", "Bounty Hunter"],
+                            ["LOG", "└── Selected card is not a Bounty Hunter."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD.id", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Add to hand (select a card)"
+                },
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

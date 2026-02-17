@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "g31": {
+                "_comment": "Darth Vader",
+                "rules": {
+                    "forceAttackBonus": {
+                        "_comment": "While the Force is with the Empire, this unit gains 4 attack.",
+                        "type": "passive",
+                        "listenTo": ["/trackerValue", "/cardById/$THIS_ID/inPlay"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["IS_FORCE_WITH_YOU", "$THIS.controller"]
+                        ],
+                        "onDo": [
+                            ["LOG", "└── The Force is with the Empire, so Darth Vader gains 4 attack."],
+                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 4]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── The Force is not with the Empire, so Darth Vader loses 4 attack."],
+                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 4]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

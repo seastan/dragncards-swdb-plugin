@@ -1,0 +1,63 @@
+{
+    "automation": {
+        "cards": {
+            "g29": {
+                "_comment": "AT-AT",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── AT-AT's ability: Add a Trooper from discard to hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "g29_trooper", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── AT-AT's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g29_trooper": {
+            "args": ["$CARD"],
+            "message": "Select a Trooper from your discard pile to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Trooper."]],
+                            ["LOG", "└── Selected card is not a Trooper."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD.id", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Add to hand (select a card)"
+                },
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

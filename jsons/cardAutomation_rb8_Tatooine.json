@@ -1,0 +1,94 @@
+{
+    "automation": {
+        "cards": {
+            "rb8": {
+                "_comment": "Tatooine",
+                "rules": {
+                    "swapGalaxyCards": {
+                        "_comment": "When you reveal Tatooine, swap a card in the galaxy row with a Rebel card from the galaxy discard pile and gain 1 [resource].",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Tatooine's ability: Swap a card in the galaxy row with a Rebel card from the galaxy discard pile."],
+                            ["LOOK_AT", "$PLAYER_N", "sharedGalaxyRow", -1, true],
+                            ["PROMPT", "$PLAYER_N", "rb8_select_row", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "rb8_select_row": {
+            "args": ["$CARD"],
+            "message": "Select a card from the galaxy row to swap out.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$ROW_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$ROW_CARD", "$GAME.cardById.{{$ROW_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$ROW_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Selected {{$ROW_CARD.currentFace.name}} to remove from the galaxy row."],
+                                ["SET", "/cardById/{{$CARD.id}}/tokens/swapCardId", "$ROW_CARD_ID"],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["LOOK_AT", "$CARD.controller", "sharedGalaxyDiscard", -1, true],
+                                ["PROMPT", "$CARD.controller", "rb8_select_discard", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        },
+        "rb8_select_discard": {
+            "args": ["$CARD"],
+            "message": "Select a Rebel card from the galaxy discard pile to add to the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["VAR", "$ROW_CARD_ID", "$GAME.cardById.{{$CARD.id}}.tokens.swapCardId"],
+                        ["COND",
+                            ["NOT_EQUAL", "$DISCARD_CARD.groupId", "sharedGalaxyDiscard"],
+                            ["LOG", "└── Selected card is not in the galaxy discard pile."],
+                            ["NOT_EQUAL", "$DISCARD_CARD.currentFace.faction", "Rebel"],
+                            ["LOG", "└── Selected card is not a Rebel card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Swapping {{$DISCARD_CARD.currentFace.name}} into the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$ROW_CARD_ID", "sharedGalaxyDiscard"],
+                                ["MOVE_CARD", "$DISCARD_CARD_ID", "sharedGalaxyRow", 0],
+                                ["GAIN_N_RESOURCES", "$CARD.controller", 1],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

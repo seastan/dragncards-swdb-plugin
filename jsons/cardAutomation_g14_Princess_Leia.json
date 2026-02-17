@@ -1,0 +1,71 @@
+{
+    "automation": {
+        "cards": {
+            "g14": {
+                "_comment": "Princess Leia",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Princess Leia's ability: Purchase a Rebel card from the galaxy row for free."],
+                                ["LOOK_AT", "$THIS.controller", "sharedGalaxyRow", -1, true],
+                                ["PROMPT", "$THIS.controller", "g14_select", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Princess Leia's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g14_select": {
+            "args": ["$CARD"],
+            "message": "Select a Rebel card from the galaxy row to purchase for free.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Rebel"],
+                            ["LOG", "└── Selected card is not a Rebel card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Purchased {{$TARGET_CARD.currentFace.name}} for free."],
+                                ["GOT_PURCHASED", "$TARGET_CARD"],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$CARD.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you, placing card on top of your deck."],
+                                        ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$CARD.controller}}Discard"]
+                                    ]
+                                ],
+                                ["SET", "/cardById/{{$CARD.id}}/rotation", -20],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

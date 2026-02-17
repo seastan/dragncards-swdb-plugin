@@ -1,0 +1,17 @@
+{
+    "functions": {
+        "TRIGGER_DENGAR": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── Dengar's ability triggered: Gain 2 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 2],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+2 token:resource"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

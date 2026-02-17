@@ -1,0 +1,27 @@
+{
+    "automation": {
+        "cards": {
+            "g35": {
+                "_comment": "Rodian Gunslinger",
+                "rules": {
+                    "galaxyRowAttackBonus": {
+                        "_comment": "This unit gains 2 [attack] while attacking a target in the galaxy row.",
+                        "type": "passive",
+                        "listenTo": ["/playerData/*/bountyHunting"],
+                        "condition": ["AND",
+                            "$THIS.isAttacking",
+                            "$GAME.playerData.{{$THIS.controller}}.bountyHunting"
+                        ],
+                        "onDo": [
+                            ["LOG", "└── Rodian Gunslinger gains 2 attack while attacking a target in the galaxy row."],
+                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ],
+                        "offDo": [
+                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "automation": {
+        "cards": {
+            "g32": {
+                "_comment": "Z-95 Headhunter",
+                "ability": {
+                    "A": [
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$THIS.controller"]],
+                        ["VAR", "$HAS_CAPITAL_SHIP", false],
+                        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                            ["COND",
+                                ["AND",
+                                    ["EQUAL", "$CARD.controller", "$OPPONENT"],
+                                    ["EQUAL", "$CARD.inPlay", true],
+                                    ["EQUAL", "$CARD.currentFace.type", "CapitalShip"]
+                                ],
+                                ["UPDATE_VAR", "$HAS_CAPITAL_SHIP", true]
+                            ]
+                        ]],
+                        ["COND",
+                            "$HAS_CAPITAL_SHIP",
+                            [
+                                ["DRAW_CARD", 1, "$THIS.controller"]
+                            ]
+                        ],
+                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "automation": {
+        "cards": {
+            "g8": {
+                "_comment": "Chewbacca",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_OTHER_UNIQUE", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                            ["EQUAL", "$CARD.currentFace.unique", true]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_OTHER_UNIQUE", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_OTHER_UNIQUE",
+                                    [
+                                        ["LOG", "└── {{$ALIAS_N}} triggered Chewbacca's ability: Drew 1 card (has another unique unit in play)."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── {{$ALIAS_N}} triggered Chewbacca's ability: No other unique unit in play, did not draw."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Chewbacca's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

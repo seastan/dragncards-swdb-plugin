@@ -1,0 +1,63 @@
+{
+    "automation": {
+        "cards": {
+            "g15": {
+                "_comment": "Millennium Falcon",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "{{$ALIAS_N}} triggered Millennium Falcon's ability: Add a unique unit from discard to hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "g15_unique", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Millennium Falcon's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g15_unique": {
+            "args": ["$CARD"],
+            "message": "Select a unique (◆) unit from your discard pile to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.unique", true],
+                            [
+                                ["LOG", "└── Selected card is not unique."],
+                                ["PROMPT", "$CARD.controller", "g15_unique", "$CARD"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD.id", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

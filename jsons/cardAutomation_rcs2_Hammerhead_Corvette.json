@@ -1,0 +1,52 @@
+{
+    "automation": {
+        "cards": {
+            "rcs2": {
+                "_comment": "Hammerhead Corvette",
+                "ability": {
+                    "A": [
+                        ["LOG", "└── Hammerhead Corvette's ability: Exile to destroy capital ship."],
+                        ["PROMPT", "$THIS.controller", "rcs2_ability", "$THIS"]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "rcs2_ability": {
+            "args": ["$CARD"],
+            "message": "Exile this capital ship to destroy a capital ship your opponent has in play, or an enemy capital ship in the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── Selected card is not a capital ship."],
+                            ["AND",
+                                ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                                ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"]
+                            ],
+                            ["LOG", "└── Selected card is not an enemy capital ship."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Destroyed {{$TARGET_CARD.currentFace.name}}."],
+                                ["EXILE_CARD", "$CARD"],
+                                ["DESTROY_CARD", "$TARGET_CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

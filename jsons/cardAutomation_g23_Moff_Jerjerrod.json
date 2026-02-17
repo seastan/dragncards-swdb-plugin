@@ -1,0 +1,75 @@
+{
+    "automation": {
+        "cards": {
+            "g23": {
+                "_comment": "Moff Jerjerrod",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
+                                    [
+                                        ["VAR", "$TOP_CARD_ID", "$GAME.groupById.sharedGalaxyDeck.parentCardIds.[0]"],
+                                        ["VAR", "$TOP_CARD", "$GAME.cardById.{{$TOP_CARD_ID}}"],
+                                        ["LOG", "{{$ALIAS_N}} looked at {{$TOP_CARD.currentFace.name}} on top of galaxy deck."],
+                                        ["LOOK_AT", "$THIS.controller", "sharedGalaxyDeck", 1, true],
+                                        ["COND",
+                                            ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                            [
+                                                ["LOG", "└── The Force is with you, you may swap it with a card from the galaxy row."],
+                                                ["PROMPT", "$THIS.controller", "g23_swap", "$THIS", "$TOP_CARD_ID"]
+                                            ]
+                                        ]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Galaxy deck is empty, cannot look at top card."]
+                                ],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Moff Jerjerrod's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g23_swap": {
+            "args": ["$CARD", "$TOP_CARD_ID"],
+            "message": "Select a card from the galaxy row to swap with the top card of the galaxy deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$ROW_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$ROW_CARD", "$GAME.cardById.{{$ROW_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$ROW_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Swapping {{$ROW_CARD.currentFace.name}} with top card of galaxy deck."],
+                                ["VAR", "$ROW_INDEX", "$ROW_CARD.stackIndex"],
+                                ["MOVE_CARD", "$TOP_CARD_ID", "sharedGalaxyRow", "$ROW_INDEX"],
+                                ["MOVE_CARD", "$ROW_CARD_ID", "sharedGalaxyDeck", 0],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

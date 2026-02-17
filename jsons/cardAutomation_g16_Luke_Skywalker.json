@@ -1,0 +1,82 @@
+{
+    "automation": {
+        "cards": {
+            "g16": {
+                "_comment": "Luke Skywalker",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "{{$ALIAS_N}} triggered Luke Skywalker's ability: The Force is with you, destroy an opponent's capital ship."],
+                                        ["VAR", "$OPPONENT", "player2"],
+                                        ["COND",
+                                            ["EQUAL", "$THIS.controller", "player2"],
+                                            ["UPDATE_VAR", "$OPPONENT", "player1"]
+                                        ],
+                                        ["LOOK_AT", "$THIS.controller", "{{$OPPONENT}}Play", -1, true],
+                                        ["PROMPT", "$THIS.controller", "g16_destroy", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "{{$ALIAS_N}} triggered Luke Skywalker's ability: The Force is not with you, so no capital ship is destroyed."],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Luke Skywalker's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g16_destroy": {
+            "args": ["$CARD"],
+            "message": "Select an opponent's capital ship to destroy.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", "player2"],
+                        ["COND",
+                            ["EQUAL", "$CARD.controller", "player2"],
+                            ["UPDATE_VAR", "$OPPONENT", "player1"]
+                        ],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                            ["LOG", "└── Selected card is not controlled by your opponent."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── Selected card is not a Capital Ship."],
+                            ["NOT_EQUAL", "$TARGET_CARD.inPlay", true],
+                            ["LOG", "└── Selected card is not in play."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Destroyed {{$TARGET_CARD.currentFace.name}}."],
+                                ["DESTROY_CARD", "$TARGET_CARD"],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

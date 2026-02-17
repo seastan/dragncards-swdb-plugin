@@ -1,0 +1,54 @@
+{
+    "automation": {
+        "cards": {
+            "ncs1": {
+                "_comment": "C-ROC Cruiser",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered C-ROC Cruiser's ability."],
+                                ["PROMPT", "$THIS.controller", "ncs1_ability", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use C-ROC Cruiser's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "ncs1_ability": {
+            "args": ["$CARD"],
+            "message": "Discard 1 card from your hand to repair 3 damage from your base.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$SELECTED_CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$SELECTED_CARD.groupId", "{{$CARD.controller}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── C-ROC Cruiser's ability: Discard 1 card to repair 3 damage."],
+                                ["DISCARD_CARD", "$SELECTED_CARD"],
+                                ["REPAIR_DAMAGE", "$CARD.controller", 3],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

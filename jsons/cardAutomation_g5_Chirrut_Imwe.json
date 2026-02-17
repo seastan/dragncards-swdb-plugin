@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "g5": {
+                "_comment": "Chirrut Imwe",
+                "rules": {
+                    "forceAttackBonus": {
+                        "_comment": "While the Force is with you, this unit gains 2 attack.",
+                        "type": "passive",
+                        "listenTo": ["/trackerValue", "/cardById/$THIS_ID/inPlay"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["IS_FORCE_WITH_YOU", "$THIS.controller"]
+                        ],
+                        "onDo": [
+                            ["LOG", "└── The Force is with you, so Chirrut Imwe gains 2 attack."],
+                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── The Force is not with you, so Chirrut Imwe loses 2 attack."],
+                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

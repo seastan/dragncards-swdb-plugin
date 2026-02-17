@@ -1,0 +1,27 @@
+{
+    "automation": {
+        "cards": {
+            "g7": {
+                "_comment": "X-Wing",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use X-Wing's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

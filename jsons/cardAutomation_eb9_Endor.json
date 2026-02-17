@@ -1,0 +1,55 @@
+{
+    "automation": {
+        "cards": {
+            "eb9": {
+                "_comment": "Endor",
+                "rules": {
+                    "trooperVehicleBonus": {
+                        "_comment": "While Endor is your base, each of your Trooper and Vehicle units gains 1 [attack].",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["VAR", "$CONTROLLER", "$THIS.controller"],
+                            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        ["EQUAL", "$CARD.controller", "$CONTROLLER"],
+                                        "$CARD.inPlay",
+                                        ["OR",
+                                            ["EQUAL", "$CARD.currentFace.cardType", "Trooper"],
+                                            ["EQUAL", "$CARD.currentFace.cardType", "Vehicle"]
+                                        ]
+                                    ],
+                                    [
+                                        ["VAR", "$HAS_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.endorBonus"],
+                                        ["COND",
+                                            ["NOT_EQUAL", "$HAS_BONUS", true],
+                                            [
+                                                ["INCREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", 1],
+                                                ["SET", "/cardById/{{$CARD_ID}}/tokens/endorBonus", true]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        "TRUE"
+                                    ],
+                                    [
+                                        ["VAR", "$HAS_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.endorBonus"],
+                                        ["COND",
+                                            ["EQUAL", "$HAS_BONUS", true],
+                                            [
+                                                ["DECREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", 1],
+                                                ["SET", "/cardById/{{$CARD_ID}}/tokens/endorBonus", false]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

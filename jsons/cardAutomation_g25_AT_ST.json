@@ -1,0 +1,56 @@
+{
+    "automation": {
+        "cards": {
+            "g25": {
+                "_comment": "AT-ST",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── AT-ST's ability: Discard 1 card from the galaxy row."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["PROMPT", "$THIS.controller", "g25_discard", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── AT-ST's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g25_discard": {
+            "args": ["$CARD"],
+            "message": "Select a card from the galaxy row to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$TARGET_CARD.currentFace.name}} from the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD.id", "sharedGalaxyDiscard"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Discard (select a card)"
+                },
+                {
+                    "label": "Skip"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "automation": {
+        "cards": {
+            "eb4": {
+                "_comment": "Kafrene",
+                "rules": {
+                    "neutralCardBonus": {
+                        "_comment": "When you play a neutral card for the first time each turn, draw 1 card.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["AND",
+                            ["EQUAL", "$TARGET.groupId", "player1Play"],
+                            ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]],
+                            ["EQUAL", "$TARGET.sides.A.faction", "Neutral"],
+                            ["EQUAL", "$THIS.abilityUsedThisTurn", false]
+                        ],
+                        "then": [
+                            ["LOG", "└── {{$ALIAS_N}} played their first neutral card this turn, drawing 1 card from Kafrene's ability."],
+                            ["DRAW_CARD", 1, "$THIS.controller"],
+                            ["SET", "/cardById/$THIS_ID/abilityUsedThisTurn", true]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

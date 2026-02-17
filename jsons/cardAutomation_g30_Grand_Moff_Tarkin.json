@@ -1,0 +1,59 @@
+{
+    "automation": {
+        "cards": {
+            "g30": {
+                "_comment": "Grand Moff Tarkin",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Grand Moff Tarkin's ability: Add an Empire card from galaxy row to hand."],
+                                ["LOOK_AT", "$THIS.controller", "sharedGalaxyRow", -1, true],
+                                ["PROMPT", "$THIS.controller", "g30_select", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Grand Moff Tarkin's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g30_select": {
+            "args": ["$CARD"],
+            "message": "Select an Empire card from the galaxy row to add to your hand. You must exile it at end of turn.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Empire"],
+                            ["LOG", "└── Selected card is not an Empire card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand"],
+                                ["SET", "/cardById/{{$TARGET_CARD_ID}}/exileAtEndOfTurn", true],
+                                ["SET", "/cardById/$CARD.id/rotation", -20],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": ["STOP_LOOKING", "$CARD.controller"]
+                }
+            ]
+        }
+    }
+}

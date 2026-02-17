@@ -1,0 +1,55 @@
+{
+    "automation": {
+        "cards": {
+            "rcs1": {
+                "_comment": "Rebel Transport",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Rebel Transport's ability."],
+                                ["PROMPT", "$THIS.controller", "rcs1_ability", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Rebel Transport's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "rcs1_ability": {
+            "args": ["$CARD"],
+            "message": "Choose: Repair 2 damage from your base, or gain 1 resource.",
+            "options": [
+                {
+                    "label": "Repair 2 damage",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Rebel Transport's ability: Repair 2 damage."],
+                        ["REPAIR_DAMAGE", "$CARD.controller", 2],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                },
+                {
+                    "label": "Gain 1 resource",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Rebel Transport's ability: Gain 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+1 token:resource"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                },
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

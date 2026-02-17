@@ -1,0 +1,31 @@
+{
+    "automation": {
+        "cards": {
+            "g17": {
+                "_comment": "Tie Fighter",
+                "ability": {
+                    "A": [
+                        ["VAR", "$HAS_CAPITAL_SHIP", false],
+                        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                            ["COND",
+                                ["AND",
+                                    ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                    ["EQUAL", "$CARD.inPlay", true],
+                                    ["EQUAL", "$CARD.currentFace.type", "CapitalShip"]
+                                ],
+                                ["UPDATE_VAR", "$HAS_CAPITAL_SHIP", true]
+                            ]
+                        ]],
+                        ["COND",
+                            "$HAS_CAPITAL_SHIP",
+                            [
+                                ["DRAW_CARD", 1, "$THIS.controller"]
+                            ]
+                        ],
+                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "automation": {
+        "cards": {
+            "g10": {
+                "_comment": "U-Wing",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            ["COND",
+                                ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                [
+                                    ["LOG", "{{$ALIAS_N}} triggered U-Wing's ability: Repair 3 damage to your base."],
+                                    ["REPAIR_DAMAGE", "$THIS.controller", 3],
+                                    ["SET", "/cardById/$THIS.id/rotation", -20]
+                                ],
+                                ["TRUE"],
+                                [
+                                    ["LOG", "{{$ALIAS_N}} tried to use U-Wing's ability but the force is not with them."]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use U-Wing's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "functions": {
+        "TRIGGER_IG_88": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── IG-88's ability triggered: Exile 1 card from your hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$CARD.controller", 1]
+                    ]
+                ]
+            ]
+        }
+    }
+}

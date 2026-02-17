@@ -1,0 +1,58 @@
+{
+    "automation": {
+        "cards": {
+            "g33": {
+                "_comment": "Jawa Scavenger",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Jawa Scavenger's ability: Exile to purchase from galaxy discard."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["LOOK_AT", "$THIS.controller", "sharedGalaxyDiscard", -1, true],
+                                ["PROMPT", "$THIS.controller", "g33_purchase", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Jawa Scavenger's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g33_purchase": {
+            "args": ["$CARD"],
+            "message": "Purchase a card from the galaxy discard pile as if it were in the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyDiscard"],
+                            ["LOG", "└── Selected card is not in the galaxy discard pile."],
+                            ["TRUE"],
+                            [
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["BUY_CARD", "$TARGET_CARD"],
+                                ["EXILE_CARD", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,49 @@
+{
+    "automation": {
+        "cards": {
+            "rb4": {
+                "_comment": "Bespin",
+                "rules": {
+                    "neutralCardBonus": {
+                        "_comment": "When you play a neutral card for the first time each turn, draw 1 card.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["VAR", "$CONTROLLER", "$THIS.controller"],
+                            ["VAR", "$DRAWN_BONUS", "$GAME.playerData.{{$CONTROLLER}}.playedFirstNeutralThisTurn"],
+                            ["COND",
+                                ["NOT_EQUAL", "$DRAWN_BONUS", true],
+                                [
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                ["EQUAL", "$CARD.controller", "$CONTROLLER"],
+                                                "$CARD.inPlay",
+                                                ["EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                                            ],
+                                            [
+                                                ["LOG", "└── {{$ALIAS_N}} played their first neutral card this turn, drawing 1 card from Bespin's ability."],
+                                                ["DRAW_CARD", 1, "$CONTROLLER"],
+                                                ["SET", "/playerData/{{$CONTROLLER}}/playedFirstNeutralThisTurn", true]
+                                            ]
+                                        ]
+                                    ]]
+                                ]
+                            ]
+                        ]
+                    },
+                    "resetTurnBonus": {
+                        "_comment": "Reset the bonus tracking at the start of player's turn",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayerN"],
+                        "condition": ["EQUAL", "$GAME.currentPlayerN", "$THIS.controller"],
+                        "then": [
+                            ["SET", "/playerData/{{$THIS.controller}}/playedFirstNeutralThisTurn", false]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

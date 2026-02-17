@@ -1,0 +1,48 @@
+{
+    "automation": {
+        "cards": {
+            "ecs1": {
+                "_comment": "Gozanti Cruiser",
+                "ability": {
+                    "A": [
+                        ["PROMPT", "$THIS.controller", "ecs1_ability", "$THIS"]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "ecs1_ability": {
+            "args": ["$CARD"],
+            "message": "Discard 1 card from your hand to draw 1 card.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$SELECTED_CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$SELECTED_CARD.groupId", "{{$CARD.controller}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Gozanti Cruiser's ability: Discard 1 card to draw 1 card."],
+                                ["DISCARD_CARD", "$SELECTED_CARD"],
+                                ["DRAW_CARD", 1, "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Discard (select a card)"
+                },
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

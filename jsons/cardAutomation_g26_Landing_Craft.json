@@ -1,0 +1,42 @@
+{
+    "automation": {
+        "cards": {
+            "g26": {
+                "_comment": "Landing Craft",
+                "ability": {
+                    "A": [
+                        ["PROMPT", "$THIS.controller", "g26_ability", "$THIS"]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g26_ability": {
+            "args": ["$CARD"],
+            "message": "Choose: Gain 4 resources, or repair 4 damage from your base.",
+            "options": [
+                {
+                    "label": "Gain 4 resources",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Landing Craft's ability: Gain 4 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+4 token:resource"]
+                    ]
+                },
+                {
+                    "label": "Repair 4 damage",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Landing Craft's ability: Repair 4 damage."],
+                        ["REPAIR_DAMAGE", "$CARD.controller", 4]
+                    ]
+                },
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

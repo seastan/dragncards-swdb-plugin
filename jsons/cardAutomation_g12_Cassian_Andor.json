@@ -1,0 +1,39 @@
+{
+    "functions": {
+        "TRIGGER_CASSIAN_ANDOR": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── Cassian Andor's ability triggered."],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["PROMPT", "$OPPONENT", "g12_discard"]
+                    ]
+                ]
+            ]
+        }
+    },
+    "prompts": {
+        "g12_discard": {
+            "args": [],
+            "message": "Cassian Andor defeated a target. Discard 1 card from your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["DISCARD_CARD", "$CARD"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Discard (select a card)"
+                }
+            ]
+        }
+    }
+}

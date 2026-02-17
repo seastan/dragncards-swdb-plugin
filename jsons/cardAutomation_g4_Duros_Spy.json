@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "g4": {
+                "_comment": "Duros Spy",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Duros Spy's ability: Opponent must choose."],
+                                ["VAR", "$OPPONENT", "player2"],
+                                ["COND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["UPDATE_VAR", "$OPPONENT", "player1"]
+                                ],
+                                ["PROMPT", "$OPPONENT", "g4_choice", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Duros Spy's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g4_choice": {
+            "args": ["$CARD"],
+            "message": "Duros Spy: Choose to discard 1 card from your hand, or your opponent gains 1 resource.",
+            "options": [
+                {
+                    "label": "Discard 1 card",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Chose to discard 1 card."],
+                        ["PROMPT", "$PLAYER_N", "g4_discard", "$CARD"]
+                    ]
+                },
+                {
+                    "label": "Opponent gains 1 resource",
+                    "hotkey": "2",
+                    "code": [
+                        ["VAR", "$OWNER", "$CARD.controller"],
+                        ["LOG", "└── {{$ALIAS_N}} chose to let opponent gain 1 resource."],
+                        ["GAIN_N_RESOURCES", "$OWNER", 1],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "g4_discard": {
+            "args": ["$CARD"],
+            "message": "Select a card from your hand to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$DISCARD_CARD.groupId", "{{$PLAYER_N}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$DISCARD_CARD.currentFace.name}}."],
+                                ["DISCARD_CARD_ID", "$DISCARD_CARD_ID"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

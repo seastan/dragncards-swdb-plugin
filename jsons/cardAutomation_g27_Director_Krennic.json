@@ -1,0 +1,25 @@
+{
+    "automation": {
+        "cards": {
+            "g27": {
+                "_comment": "Director Krennic",
+                "ability": {
+                    "A": [
+                        ["VAR", "$BASE_CARD", ["GET_BASE", "$THIS.controller"]],
+                        ["COND",
+                            ["EQUAL", "$BASE_CARD.sides.A.name", "Death Star"],
+                            [
+                                ["DRAW_CARD", 2, "$THIS.controller"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["DRAW_CARD", 1, "$THIS.controller"]
+                            ]
+                        ],
+                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                    ]
+                }
+            }
+        }
+    }
+}

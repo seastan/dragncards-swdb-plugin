@@ -1,0 +1,67 @@
+{
+    "automation": {
+        "cards": {
+            "g46": {
+                "_comment": "Jabba The Hutt",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Jabba The Hutt's ability: Exile 1 to draw cards."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["PROMPT", "$THIS.controller", "g46_ability", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Jabba The Hutt's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g46_ability": {
+            "args": ["$CARD"],
+            "message": "Exile 1 card from your hand to draw cards.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$SELECTED_CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$SELECTED_CARD.groupId", "{{$CARD.controller}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["EXILE_CARD", "$SELECTED_CARD"],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$CARD.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you: Draw 2 cards."],
+                                        ["DRAW_CARD", 2, "$CARD.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Draw 1 card."],
+                                        ["DRAW_CARD", 1, "$CARD.controller"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Exile (select a card)"
+                },
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

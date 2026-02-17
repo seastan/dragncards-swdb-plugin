@@ -1,0 +1,20 @@
+{
+    "automation": {
+        "cards": {
+            "rb9": {
+                "_comment": "Sullust",
+                "rules": {
+                    "resetPurchaseTracking": {
+                        "_comment": "Reset the purchase tracking at the start of player's turn",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayerN"],
+                        "condition": ["EQUAL", "$GAME.currentPlayerN", "$THIS.controller"],
+                        "then": [
+                            ["SET", "/playerData/{{$THIS.controller}}/purchasedCardThisTurn", false]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

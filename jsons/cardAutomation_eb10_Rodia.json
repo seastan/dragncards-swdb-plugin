@@ -1,0 +1,60 @@
+{
+    "automation": {
+        "cards": {
+            "eb10": {
+                "_comment": "Rodia",
+                "rules": {
+                    "damageAndDiscard": {
+                        "_comment": "When you reveal Rodia, deal 1 damage to the enemy base for each enemy card in the galaxy row. Then discard each of those cards from the galaxy row.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Rodia's ability: Deal 1 damage per enemy card in the galaxy row, then discard those cards."],
+                            ["VAR", "$ENEMY_COUNT", 0],
+                            ["VAR", "$ENEMY_FACTION", "Rebel"],
+                            ["COND",
+                                ["EQUAL", "$THIS.controller", "player1"],
+                                ["UPDATE_VAR", "$ENEMY_FACTION", "Rebel"],
+                                ["TRUE"],
+                                ["UPDATE_VAR", "$ENEMY_FACTION", "Empire"]
+                            ],
+                            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$ROW_CARD", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        ["EQUAL", "$ROW_CARD.groupId", "sharedGalaxyRow"],
+                                        ["EQUAL", "$ROW_CARD.currentFace.faction", "{{$ENEMY_FACTION}}"]
+                                    ],
+                                    ["INCREASE_VAR", "$ENEMY_COUNT", 1]
+                                ]
+                            ]],
+                            ["LOG", "└── Found {{$ENEMY_COUNT}} enemy card(s) in the galaxy row."],
+                            ["COND",
+                                ["GREATER_THAN", "$ENEMY_COUNT", 0],
+                                [
+                                    ["VAR", "$OPPONENT", "player2"],
+                                    ["COND",
+                                        ["EQUAL", "$THIS.controller", "player2"],
+                                        ["UPDATE_VAR", "$OPPONENT", "player1"]
+                                    ],
+                                    ["DAMAGE_BASE", "$OPPONENT", "$ENEMY_COUNT"],
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$ROW_CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                ["EQUAL", "$ROW_CARD.groupId", "sharedGalaxyRow"],
+                                                ["EQUAL", "$ROW_CARD.currentFace.faction", "{{$ENEMY_FACTION}}"]
+                                            ],
+                                            [
+                                                ["LOG", "└── Discarding {{$ROW_CARD.currentFace.name}} from the galaxy row."],
+                                                ["MOVE_FROM_GALAXY_ROW", "$CARD_ID", "sharedGalaxyDiscard"]
+                                            ]
+                                        ]
+                                    ]]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

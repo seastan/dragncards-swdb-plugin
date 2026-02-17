@@ -1,0 +1,46 @@
+{
+    "automation": {
+        "cards": {
+            "g3": {
+                "_comment": "Snowspeeder",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Snowspeeder's ability: Opponent discards 1 card."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$THIS.controller"]],
+                                ["PROMPT", "$OPPONENT", "g3_discard"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Snowspeeder's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g3_discard": {
+            "args": [],
+            "message": "Snowspeeder: Discard 1 card from your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
+                        ["DISCARD_CARD", "$CARD"]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Discard (select a card)"
+                }
+            ]
+        }
+    }
+}

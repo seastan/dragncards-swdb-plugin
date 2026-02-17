@@ -1,0 +1,21 @@
+{
+    "functions": {
+        "DESTROYED_A_CARD": {
+            "args": ["$ATTACKING_CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$ATTACKING_CARD.sides.A.name", "Cassian Andor"],
+                    ["TRIGGER_CASSIAN_ANDOR", "$ATTACKING_CARD", "$DESTROYED_CARD"],
+                    ["EQUAL", "$ATTACKING_CARD.sides.A.name", "Boba Fett"],
+                    ["TRIGGER_BOBA_FETT", "$ATTACKING_CARD", "$DESTROYED_CARD"],
+                    ["EQUAL", "$ATTACKING_CARD.sides.A.name", "Bossk"],
+                    ["TRIGGER_BOSSK", "$ATTACKING_CARD", "$DESTROYED_CARD"],
+                    ["EQUAL", "$ATTACKING_CARD.sides.A.name", "Dengar"],
+                    ["TRIGGER_DENGAR", "$ATTACKING_CARD", "$DESTROYED_CARD"],
+                    ["EQUAL", "$ATTACKING_CARD.sides.A.name", "IG-88"],
+                    ["TRIGGER_IG_88", "$ATTACKING_CARD", "$DESTROYED_CARD"]
+                ]
+            ]
+        }
+    }
+}

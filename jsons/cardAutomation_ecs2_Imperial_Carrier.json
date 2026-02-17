@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "ecs2": {
+                "_comment": "Imperial Carrier",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Imperial Carrier is in play, each of your Fighter units gains 1 [attack].",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": ["TRUE"],
+                        "listenTo": [],
+                        "onDo": [
+                            ["LOG", "└── Imperial Carrier added 1 attack to each Fighter unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Fighter."]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Imperial Carrier no longer adds 1 attack to each Fighter unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["PREV", ["IN_STRING", "$TARGET.currentFace.traits", "Fighter."]]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove attack when Fighter units enter/leave play.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Fighter."]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Imperial Carrier added 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Imperial Carrier no longer adds 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

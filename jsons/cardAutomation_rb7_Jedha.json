@@ -1,0 +1,13 @@
+{
+    "functions": {
+        "TRIGGER_JEDHA_ABILITY": {
+            "args": ["$PLAYER_BASE", "$CARD"],
+            "code": [
+                ["LOG", "└── {{$CARD.controller}} triggered Jedha's ability: First neutral purchase this turn goes to hand and must be exiled at end of turn."],
+                ["MOVE_CARD_ID", "$CARD.id", "{{$CARD.controller}}Hand"],
+                ["SET", "/cardById/{{$CARD.id}}/exileAtEndOfTurn", true],
+                ["SET", "/cardById/{{$PLAYER_BASE.id}}/abilityUsedThisTurn", true]
+            ]
+        }
+    }
+}

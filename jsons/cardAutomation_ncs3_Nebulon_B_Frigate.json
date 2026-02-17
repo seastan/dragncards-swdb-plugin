@@ -1,0 +1,42 @@
+{
+    "automation": {
+        "cards": {
+            "ncs3": {
+                "_comment": "Nebulon-B Frigate",
+                "ability": {
+                    "A": [
+                        ["PROMPT", "$THIS.controller", "ncs3_ability", "$THIS"]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "ncs3_ability": {
+            "args": ["$CARD"],
+            "message": "Choose: Repair 3 damage from your base, or gain 3 resources.",
+            "options": [
+                {
+                    "label": "Repair 3 damage",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Nebulon-B Frigate's ability: Repair 3 damage."],
+                        ["REPAIR_DAMAGE", "$CARD.controller", 3]
+                    ]
+                },
+                {
+                    "label": "Gain 3 resources",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Nebulon-B Frigate's ability: Gain 3 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+3 token:resource"]
+                    ]
+                },
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

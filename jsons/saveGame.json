@@ -1,0 +1,24 @@
+{
+    "saveGame": {
+        "metadata": {
+            "Winner": ["COND", 
+                ["DEFINED", "$GAME.victoryState"],
+                "$GAME.victoryState",
+                ["TRUE"],
+                "Incomplete"
+            ],
+            "Empire": ["COND", 
+                ["DEFINED", "$GAME.playerData.player1.alias"], 
+                "$GAME.playerData.player1.alias", 
+                ["TRUE"], 
+                "Unknown"
+            ],
+            "Rebels": ["COND", 
+                ["DEFINED", "$GAME.playerData.player2.alias"], 
+                "$GAME.playerData.player2.alias", 
+                ["TRUE"], 
+                "Unknown"
+            ]
+        }
+    }
+}

@@ -1,0 +1,81 @@
+{
+    "automation": {
+        "cards": {
+            "g9": {
+                "_comment": "Jyn Erso",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$OPPONENT", "player2"],
+                                ["COND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["UPDATE_VAR", "$OPPONENT", "player1"]
+                                ],
+                                ["LOG", "└── {{$ALIAS_N}} triggered Jyn Erso's ability: Look at opponent's hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$OPPONENT}}Hand", -1, true],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you, select a card to place on top of their deck."],
+                                        ["PROMPT", "$THIS.controller", "g9_select", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── The Force is not with you."],
+                                        ["STOP_LOOKING", "$THIS.controller"],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Jyn Erso's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g9_select": {
+            "args": ["$CARD"],
+            "message": "Select a card from opponent's hand to place on top of their deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", "player2"],
+                        ["COND",
+                            ["EQUAL", "$CARD.controller", "player2"],
+                            ["UPDATE_VAR", "$OPPONENT", "player1"]
+                        ],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$OPPONENT}}Hand"],
+                            ["LOG", "└── Selected card is not in opponent's hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Placed {{$TARGET_CARD.currentFace.name}} on top of opponent's deck."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$OPPONENT}}Deck", 0],
+                                ["SET", "/cardById/$CARD.id/rotation", -20],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

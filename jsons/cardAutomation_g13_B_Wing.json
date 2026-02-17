@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "g13": {
+                "_comment": "B-Wing",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "{{$ALIAS_N}} triggered B-Wing's ability: Opponent must choose."],
+                                ["VAR", "$OPPONENT", "player2"],
+                                ["COND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["UPDATE_VAR", "$OPPONENT", "player1"]
+                                ],
+                                ["PROMPT", "$OPPONENT", "g13_choice", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use B-Wing's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g13_choice": {
+            "args": ["$CARD"],
+            "message": "B-Wing: Choose to discard 1 card from your hand, or B-Wing gains 2 attack.",
+            "options": [
+                {
+                    "label": "Discard 1 card",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Chose to discard 1 card."],
+                        ["PROMPT", "$PLAYER_N", "g13_discard", "$CARD"]
+                    ]
+                },
+                {
+                    "label": "B-Wing gains 2 attack",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── {{$ALIAS_N}} chose to let B-Wing gain 2 attack."],
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 2],
+                        ["FADE_TEXT_CARD", "$CARD.id", "+2 token:attackModifier"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "g13_discard": {
+            "args": ["$CARD"],
+            "message": "Select a card from your hand to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$DISCARD_CARD.groupId", "{{$PLAYER_N}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$DISCARD_CARD.currentFace.name}}."],
+                                ["DISCARD_CARD_ID", "$DISCARD_CARD_ID"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

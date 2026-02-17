@@ -1,0 +1,54 @@
+{
+    "automation": {
+        "cards": {
+            "g18": {
+                "_comment": "Admiral Piett",
+                "rules": {
+                    "capitalShipBonus": {
+                        "_comment": "While Admiral Piett is in play, each of your capital ships gains 1 [attack].",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["VAR", "$CONTROLLER", "$THIS.controller"],
+                            ["VAR", "$PIETT_IN_PLAY", "$THIS.inPlay"],
+                            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        ["EQUAL", "$CARD.controller", "$CONTROLLER"],
+                                        "$CARD.inPlay",
+                                        ["EQUAL", "$CARD.currentFace.type", "CapitalShip"],
+                                        "$PIETT_IN_PLAY"
+                                    ],
+                                    [
+                                        ["VAR", "$HAS_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.piettBonus"],
+                                        ["COND",
+                                            ["NOT_EQUAL", "$HAS_BONUS", true],
+                                            [
+                                                ["INCREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", 1],
+                                                ["SET", "/cardById/{{$CARD_ID}}/tokens/piettBonus", true]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        "TRUE"
+                                    ],
+                                    [
+                                        ["VAR", "$HAS_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.piettBonus"],
+                                        ["COND",
+                                            ["EQUAL", "$HAS_BONUS", true],
+                                            [
+                                                ["DECREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", 1],
+                                                ["SET", "/cardById/{{$CARD_ID}}/tokens/piettBonus", false]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

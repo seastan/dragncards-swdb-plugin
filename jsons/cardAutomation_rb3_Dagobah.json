@@ -1,0 +1,20 @@
+{
+    "automation": {
+        "cards": {
+            "rb3": {
+                "_comment": "Dagobah",
+                "rules": {
+                    "revealedExile": {
+                        "_comment": "When you reveal Dagobah, exile up to 3 cards from your hand or discard pile.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Dagobah's ability: Exile up to 3 cards."],
+                            ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$THIS.controller", 3]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

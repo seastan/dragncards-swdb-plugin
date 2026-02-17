@@ -1,0 +1,53 @@
+{
+    "functions": {
+        "GOT_PURCHASED": {
+          "args": ["$CARD"],
+          "code": [
+            ["VAR", "$PLAYER_BASE", ["GET_BASE", "$PLAYER_N"]],
+            ["VAR", "$DESTINATION", "{{$PLAYER_N}}Discard"],
+            ["COND",
+              ["EQUAL", "$CARD.sides.A.name", "Fang Fighter"],
+              ["TRIGGER_FANG_FIGHTER", "$CARD"],
+
+              ["EQUAL", "$CARD.sides.A.name", "Quarren Mercenary"],
+              ["TRIGGER_QUARREN_MERCENARY", "$CARD"],
+
+              ["EQUAL", "$GAME.playerData.$PLAYER_N.nextPurchaseOnTopOfDeck", true],
+              [
+                ["LOG", "└── Placing on top of deck."],
+                ["UPDATE_VAR", "$DESTINATION", "{{$PLAYER_N}}Deck"],
+                ["SET", "/playerData/$PLAYER_N/nextPurchaseOnTopOfDeck", false]
+              ],
+
+              ["AND",
+                ["EQUAL", "$PLAYER_BASE.sides.A.name", "Sullust"],
+                ["EQUAL", "$PLAYER_BASE.abilityUsedThisTurn", false]
+              ],
+              [
+                ["LOG", "└── {{$ALIAS_N}} triggered Sullust's ability: First purchase this turn goes on top of deck."],
+                ["UPDATE_VAR", "$DESTINATION", "{{$PLAYER_N}}Deck"],
+                ["SET", "/cardById/{{$PLAYER_BASE.id}}/abilityUsedThisTurn", true]
+              ],
+
+              ["AND",
+                ["EQUAL", "$PLAYER_BASE.sides.A.name", "Jedha"],
+                ["EQUAL", "$CARD.currentFace.faction", "Neutral"],
+                ["EQUAL", "$PLAYER_BASE.abilityUsedThisTurn", false]
+              ],
+              ["TRIGGER_JEDHA_ABILITY", "$PLAYER_BASE", "$CARD"]
+            ],
+            ["SET", "/playerData/$PLAYER_N/purchasedCardThisTurn", true],
+            ["COND",
+              ["EQUAL", "$CARD.currentFace.faction", "Neutral"],
+              ["SET", "/playerData/$PLAYER_N/purchasedNeutralCardThisTurn", true]
+            ],
+            ["COND",
+              ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"],
+              ["MOVE_FROM_GALAXY_ROW", "$CARD.id", "$DESTINATION"],
+              ["TRUE"],
+              ["MOVE_CARD", "$CARD.id", "$DESTINATION", 0]
+            ]
+          ]
+        }
+    }
+}

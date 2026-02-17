@@ -1,0 +1,18 @@
+{
+    "functions": {
+        "TRIGGER_FANG_FIGHTER": {
+            "args": ["$CARD"],
+            "code": [
+                ["LOG", "└── Fang Fighter's ability triggered: Add to hand."],
+                ["MOVE_CARD", "$CARD.id", "{{$PLAYER_N}}Hand", 0],
+                ["COND",
+                    ["IS_FORCE_WITH_YOU", "$PLAYER_N"],
+                    [
+                        ["LOG", "└── The Force is with you: Draw 1 card."],
+                        ["DRAW_CARD", 1, "$PLAYER_N"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

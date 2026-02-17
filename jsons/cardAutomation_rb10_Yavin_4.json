@@ -1,0 +1,30 @@
+{
+    "automation": {
+        "cards": {
+            "rb10": {
+                "_comment": "Yavin 4",
+                "rules": {
+                    "damageOnOpponentDiscard": {
+                        "_comment": "When your opponent discards a card from their hand during your turn, deal 2 damage to their base.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["EQUAL", "$THIS.inPlay", true],
+                        "then": [
+                            ["COND",
+                                ["AND",
+                                    ["EQUAL", "$GAME.currentPlayer", "player2"],
+                                    ["EQUAL", "$TARGET.groupId", "player1Discard"],
+                                    ["EQUAL", ["PREV", "$TARGET.groupId"], "player1Hand"]
+                                ],
+                                [
+                                    ["LOG", "└── Yavin 4's ability: Opponent discarded a card during your turn, so 2 damage was dealt to their base."],
+                                    ["DAMAGE_BASE", "player1", 2]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

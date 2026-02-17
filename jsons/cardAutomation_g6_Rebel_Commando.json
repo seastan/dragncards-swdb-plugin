@@ -1,0 +1,70 @@
+{
+    "automation": {
+        "cards": {
+            "g6": {
+                "_comment": "Rebel Commando",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$THIS.controller"]],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "{{$ALIAS_N}} triggered Rebel Commando's ability: Opponent discards 1 card at random (Force is with you)."],
+                                        ["VAR", "$HAND_SIZE", ["LENGTH", "$GAME.groupById.{{$OPPONENT}}Hand.stackIds"]],
+                                        ["COND",
+                                            ["GREATER_THAN", "$HAND_SIZE", 0],
+                                            [
+                                                ["VAR", "$RANDOM_INDEX", ["RANDOM_NUMBER", 0, ["SUBTRACT", "$HAND_SIZE", 1]]],
+                                                ["VAR", "$RANDOM_CARD_ID", "$GAME.groupById.{{$OPPONENT}}Hand.stackIds.{{$RANDOM_INDEX}}"],
+                                                ["VAR", "$RANDOM_CARD", "$GAME.cardById.{{$RANDOM_CARD_ID}}"],
+                                                ["LOG", "└── Opponent discarded {{$RANDOM_CARD.currentFace.name}} at random."],
+                                                ["DISCARD_CARD_ID", "$RANDOM_CARD_ID"]
+                                            ]
+                                        ],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "{{$ALIAS_N}} triggered Rebel Commando's ability: Opponent discards 1 card."],
+                                        ["PROMPT", "$OPPONENT", "g6_discard", "$THIS"]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Rebel Commando's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "g6_discard": {
+            "args": ["$CARD"],
+            "message": "Select a card from your hand to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$DISCARD_CARD.groupId", "{{$PLAYER_N}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$DISCARD_CARD.currentFace.name}}."],
+                                ["DISCARD_CARD_ID", "$DISCARD_CARD_ID"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

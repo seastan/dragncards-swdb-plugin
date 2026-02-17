@@ -1,0 +1,61 @@
+{
+    "automation": {
+        "cards": {
+            "eb8": {
+                "_comment": "Death Star",
+                "ability": {
+                    "A": [
+                        // Controller must have at least 4 resources
+                        ["COND",
+                            ["GREATER_EQUAL", "$GAME.playerData.{{$THIS.controller}}.resources", 4],
+                            ["PROMPT", "$THIS.controller", "eb8", "$THIS"],
+                            ["TRUE"],
+                            ["LOG", "└── ", "Did not have enough resources to use Death Star ability."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "eb8": {
+            "args": ["$CARD"],
+            "message": "Choose a capital ship to destroy.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            // Sanity checks
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── ", "Selected card is not a capital ship. Ability cannot be resolved."],
+                            ["AND",
+                                ["NOT_EQUAL", "$TARGET_CARD.inPlay", true],
+                                ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"]
+                            ],
+                            ["LOG", "└── ", "Selected card is not in play. Ability cannot be resolved."],
+                            ["LESS_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", 4],
+                            ["LOG", "└── ", "Not enough resources to use Death Star ability."],
+                            ["EQUAL", "$TARGET_CARD.controller", "$CARD.controller"],
+                            ["LOG", "└── ", "Cannot target your own capital ship with Death Star ability."],
+                            ["TRUE"],
+                            [
+                                // All conditions met, proceed to destroy the target capital ship
+                                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 4],
+                                ["DESTROY_CARD", "$TARGET_CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

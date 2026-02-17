@@ -1,0 +1,44 @@
+{
+    "automation": {
+        "cards": {
+            "g24": {
+                "_comment": "General Veers",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_TROOPER_OR_VEHICLE", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["OR",
+                                                ["IN_STRING", "$CARD.currentFace.traits", "Trooper."],
+                                                ["IN_STRING", "$CARD.currentFace.traits", "Vehicle."]
+                                            ]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_TROOPER_OR_VEHICLE", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_TROOPER_OR_VEHICLE",
+                                    [
+                                        ["LOG", "└── {{$ALIAS_N}} triggered General Veers' ability: Drew 1 card (has Trooper or Vehicle in play)."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── {{$ALIAS_N}} triggered General Veers' ability: No Trooper or Vehicle in play, did not draw."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use General Veers' ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

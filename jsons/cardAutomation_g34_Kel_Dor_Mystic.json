@@ -1,0 +1,24 @@
+{
+    "automation": {
+        "cards": {
+            "g34": {
+                "_comment": "Kel Dor Mystic",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Kel Dor Mystic's ability: Exile to exile 1 card."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$THIS.controller", 1],
+                                ["EXILE_CARD", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Kel Dor Mystic's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}
