@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g14": {
+                "_comment": "Vulture Droid",
+                "rules": {
+                    "setExileAfterAttacking": {
+                        "_comment": "After this unit attacks, exile it.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["SET", "/cardById/$THIS_ID/tokens/exileAfterAttacking", 1]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "functions": {
+        "TRIGGER_VULTURE_DROID": {
+            "args": ["$CARD"],
+            "code": [
+                ["LOG", "└── Vulture Droid's ability triggered: Add to hand."],
+                ["MOVE_FROM_GALAXY_ROW", "$CARD.id", "{{$PLAYER_N}}Hand"]
+            ]
+        }
+    }
+}

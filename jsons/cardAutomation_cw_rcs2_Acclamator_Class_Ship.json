@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rcs2": {
+                "_comment": "Acclamator-Class Ship",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "{{$ALIAS_N}} triggered Acclamator-Class Ship's ability: Next card purchased this turn goes on top of deck."],
+                                ["SET", "/playerData/{{$THIS.controller}}/nextPurchaseOnTopOfDeck", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Acclamator-Class Ship's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

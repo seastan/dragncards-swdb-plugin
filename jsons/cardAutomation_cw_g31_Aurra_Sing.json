@@ -1,0 +1,37 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g31": {
+                "_comment": "Aurra Sing",
+                "rules": {
+                    "bountyHunterBonus": {
+                        "_comment": "While there is a Bounty Hunter in the galaxy row, Aurra Sing gains 2 attack.",
+                        "type": "passive",
+                        "listenTo": ["/cardById/$THIS_ID/inPlay", "/groupById/sharedGalaxyRow/stackIds"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            [
+                                ["VAR", "$BOUNTY_HUNTER_PRESENT", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD", "$GAME.groupById.sharedGalaxyRow.parentCards", [
+                                    ["COND",
+                                        ["IN_STRING", "$CARD.sides.A.traits", "Bounty Hunter."],
+                                        ["UPDATE_VAR", "$BOUNTY_HUNTER_PRESENT", true]
+                                    ]
+                                ]],
+                                "$BOUNTY_HUNTER_PRESENT"
+                            ]
+                        ],
+                        "onDo": [
+                            ["LOG", "└── There is a Bounty Hunter in the galaxy row. Aurra Sing gets +2 attack."],
+                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Aurra Sing loses +2 attack."],
+                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

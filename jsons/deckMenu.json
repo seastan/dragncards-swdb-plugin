@@ -1,7 +1,6 @@
 {
     "deckMenu": {
         "deckLists": [
-            {"label": "id:standard", "deckListId": "standard"}
         ]
     }
 }

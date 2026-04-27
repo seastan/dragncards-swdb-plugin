@@ -1,0 +1,83 @@
+databaseId	type	name	mainText
+eb1	Base	Lothal	Start the game with this base in play.
+eb10	Base	Rodia	When you reveal Rodia, deal 1 damage to the enemy base for each enemy card in the galaxy row. Then discard each of those cards from the galaxy row.
+eb2	Base	Corellia	When you reveal Corellia, purchase an Empire or neutral card from the galaxy row for free and add it to your hand.
+eb3	Base	Kessel	When you reveal Kessel, exile up to 3 cards from your hand or discard pile.
+eb4	Base	Kafrene	When you play a neutral card for the first time each turn, draw 1 card.
+eb5	Base	Mustafar	When you reveal Mustafar, gain 4 [resource].
+eb6	Base	Ord Mantell	While Ord Mantell is your base, you can bounty hunt 1 neutral unit in the galaxy row each turn, using its cost as its target value. If you defeat that card, gain [resource] equal to its cost.
+eb7	Base	Coruscant	When your turn begins, look at the top 2 cards of the galaxy deck. Place one on top of the deck and discard the other.
+eb8	Base	Death Star	Spend 4 [resource] to destroy a capital ship your opponent has in play or a capital ship in the galaxy row.
+eb9	Base	Endor	While Endor is your base, each of your Trooper and Vehicle units gains 1 [attack].
+ecs1	CapitalShip	Gozanti Cruiser	Discard 1 card from your hand to draw 1 card.
+ecs2	CapitalShip	Imperial Carrier	While Imperial Carrier is in play, each of your Fighter units gains 1 [attack].
+ecs3	CapitalShip	Star Destroyer	
+es1	Unit	Imperial Shuttle	
+es2	Unit	Stormtrooper	
+es3	Unit	Inquisitor	When you play Inquisitor, choose: They gain 1 [attack], 1 [resource], or 1 [force] this turn.
+g1	Unit	Y-Wing	Exile this unit to deal 2 damage to your opponent's base or a capital ship they have in play.
+g10	Unit	U-Wing	If the Force is with you, repair 3 damage from your base.
+g11	Unit	Han Solo	Draw 1 card (2 cards instead if you have the Millennium Falcon in play).
+g12	Unit	Cassian Andor	When Cassian Andor defeats a target in the galaxy row, your opponent discards 1 card from their hand.
+g13	Unit	B-Wing	Your opponent must choose: Either they discard 1 card from their hand, or this unit gains 2 [attack].
+g14	Unit	Princess Leia	Purchase a Rebel card from the galaxy row for free. If the Force is with you, place that card on top of your deck.
+g15	Unit	Millennium Falcon	Add a unique ([unique]) unit from your discard pile to your hand.
+g16	Unit	Luke Skywalker	If the Force is with you, destroy a capital ship your opponent has in play.
+g17	Unit	Tie Fighter	If you have a capital ship in play, draw 1 card.
+g18	Unit	Admiral Piett	While Admiral Piett is in play, each of your capital ships gains 1 [attack].
+g19	Unit	Tie Bomber	Discard 1 card from the galaxy row.
+g2	Unit	Baze Malbus	Baze Malbus gains 1 [attack] for each Rebel base in your opponent's victory pile.
+g20	Unit	Scout Trooper	Reveal the top card of the galaxy deck. If it is an Empire card, gain 1 [resource]. If it is an enemy card, discard it.
+g21	Unit	Death Trooper	While the Force is with you, this unit gains 2 [attack].
+g22	Unit	Tie Interceptor	Reveal the top card of the galaxy deck. If it is an Empire card, draw 1 card. If it is an enemy card, discard it.
+g23	Unit	Moff Jerjerrod	Look at the top card of the galaxy deck. If the Force is with you, you may swap that card with a card from the galaxy row.
+g24	Unit	General Veers	If you have a Trooper or Vehicle in play, draw 1 card.
+g25	Unit	AT-ST	Discard 1 card from the galaxy row.
+g26	Unit	Landing Craft	Choose: Gain 4 [resource], or repair 4 damage from your base.
+g27	Unit	Director Krennic	Draw 1 card (2 cards instead if your base is the Death Star).
+g28	Unit	Boba Fett	When Boba Fett defeats a target in the galaxy row, draw 1 card.
+g29	Unit	AT-AT	Add a Trooper from your discard pile to your hand.
+g3	Unit	Snowspeeder	Your opponent discards 1 card from their hand.
+g30	Unit	Grand Moff Tarkin	Add an Empire card from the galaxy row to your hand. You must exile that card at the end of your turn.
+g31	Unit	Darth Vader	While the Force is with you, Darth Vader gains 4 [attack].
+g32	Unit	Z-95 Headhunter	If your opponent has a capital ship in play, draw 1 card.
+g33	Unit	Jawa Scavenger	Exile this unit to purchase a card from the galaxy discard pile as if it were in the galaxy row.
+g34	Unit	Kel Dor Mystic	Exile this unit to exile 1 card from your hand or discard pile.
+g35	Unit	Rodian Gunslinger	This unit gains 2 [attack] while attacking a target in the galaxy row.
+g36	Unit	Lobot	When you play Lobot, choose: He gains 2 [attack], 2 [resource], or 2 [force] this turn.
+g37	Unit	Bossk	When Bossk defeats a target in the galaxy row, gain 1 [resource].
+g38	Unit	Fang Fighter	When you purchase this unit, add it to your hand (and draw 1 card if the Force is with you).
+g39	Unit	Twi'lek Smuggler	Place the next card you purchase this turn on top of your deck.
+g40	Unit	Dengar	When Dengar defeats a target in the galaxy row, gain 2 [resource].
+g41	Unit	Quarren Mercenary	When you purchase this unit, exile 1 card from your hand or discard pile (up to 2 cards instead if the Force is with you).
+g42	Unit	HWK-290	Exile this unit to repair 4 damage from your base.
+g43	Unit	IG-88	When IG-88 defeats a target in the galaxy row, exile 1 card from your hand or discard pile.
+g44	Unit	Lando Calrissian	Draw 1 card. If the Force is with you, your opponent discards 1 card from their hand.
+g45	Unit	Jabba's Sail Barge	Add a Bounty Hunter from your discard pile to your hand.
+g46	Unit	Jabba The Hutt	Exile 1 card from your hand to draw 1 card (2 cards instead if the Force is with you).
+g4	Unit	Duros Spy	Your opponent must choose: Either they discard 1 card from their hand, or you gain 1 [resource].
+g5	Unit	Chirrut Imwe	While the Force is with you, Chirrut Imwe gains 2 [attack].
+g6	Unit	Rebel Commando	Your opponent discards 1 card from their hand (at random if the Force is with you).
+g7	Unit	X-Wing	If the Force is with you, draw 1 card.
+g8	Unit	Chewbacca	If you have another unique (◆) unit in play, draw 1 card.
+g9	Unit	Jyn Erso	Look at your opponent's hand. If the Force is with you, place 1 card from their hand on top of their deck.
+ncs1	CapitalShip	C-ROC Cruiser	Discard 1 card from your hand to repair 3 damage from your base.
+ncs2	CapitalShip	Blockade Runner	Though designed as a diplomatic courier ship, the Corellian CR90 corvette is often used to run planetary blockades.
+ncs3	CapitalShip	Nebulon-B Frigate	Choose: Repair 3 damage from your base, or gain 3 [resource].
+orp1	Unit	Outer Rim Pilot	Exile this unit to gain 1 [force].
+rb1	Base	Dantooine	Start the game with this base in play.
+rb10	Base	Yavin 4	When your opponent discards a card from their hand during your turn, deal 2 damage to their base.
+rb2	Base	Mon Cala	When you reveal Mon Cala, purchase a Rebel or neutral card from the galaxy row for free and add it to your hand.
+rb3	Base	Dagobah	When you reveal Dagobah, exile up to 3 cards from your hand or discard pile.
+rb4	Base	Bespin	When you play a neutral card for the first time each turn, draw 1 card.
+rb5	Base	Alderaan	When you reveal Alderaan, gain 4 [resource].
+rb6	Base	Hoth	While Hoth is your base, prevent the first 2 damage dealt to Hoth each turn.
+rb7	Base	Jedha	While Jedha is your base, add the first neutral card you purchase each turn to your hand. You must exile that card at the end of your turn.
+rb8	Base	Tatooine	When you reveal Tatooine, swap a card in the galaxy row with a Rebel card from the galaxy discard pile and gain 1 [resource].
+rb9	Base	Sullust	While Sullust is your base, place the first card you purchase each turn on top of your deck.
+rcs1	CapitalShip	Rebel Transport	Choose: Repair 2 damage from your base, or gain 1 [resource].
+rcs2	CapitalShip	Hammerhead Corvette	Exile this capital ship to destroy a capital ship your opponent has in play, or an enemy capital ship in the galaxy row.
+rcs3	CapitalShip	Mon Calamari Cruiser	
+rs1	Unit	Alliance Shuttle	
+rs2	Unit	Rebel Trooper	
+rs3	Unit	Temple Guardian	When you play Temple Guardian, choose: They gain 1 [attack], 1 [resource], or 1 [force] this turn.

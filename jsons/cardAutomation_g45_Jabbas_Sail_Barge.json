@@ -34,7 +34,7 @@
                         ["COND",
                             ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
                             ["LOG", "└── Selected card is not in your discard pile."],
-                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.cardType", "Bounty Hunter"],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Bounty Hunter."]],
                             ["LOG", "└── Selected card is not a Bounty Hunter."],
                             ["TRUE"],
                             [

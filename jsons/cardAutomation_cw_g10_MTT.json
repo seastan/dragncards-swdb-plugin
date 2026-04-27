@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g10": {
+                "_comment": "MTT",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "{{$ALIAS_N}} triggered MTT's ability: Next Droid purchased this turn goes on top of deck."],
+                                ["SET", "/playerData/{{$THIS.controller}}/nextDroidPurchaseOnTopOfDeck", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use MTT's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

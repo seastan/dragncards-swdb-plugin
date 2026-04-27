@@ -1,0 +1,59 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g13": {
+                "_comment": "B2 Battle Droid",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered B2 Battle Droid's ability: Exile a Separatist card from the galaxy row to draw 1 card."],
+                                ["PROMPT", "$THIS.controller", "cw_g13_exile", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use B2 Battle Droid's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g13_exile": {
+            "args": ["$CARD"],
+            "message": "Select a Separatist card from the galaxy row to exile. If you do, draw 1 card.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Separatist"],
+                            ["LOG", "└── Selected card is not a Separatist card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Exiled {{$TARGET_CARD.currentFace.name}} and drew 1 card."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedExiled"],
+                                ["DRAW_CARD", 1, "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,64 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rcs1": {
+                "_comment": "Consular-Class Cruiser",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["LOG", "└── {{$ALIAS_N}} triggered Consular-Class Cruiser's ability: Swap a card in your hand with the top card of your deck."],
+                                        ["PROMPT", "$THIS.controller", "cw_rcs1_swap", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck to swap."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Consular-Class Cruiser's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rcs1_swap": {
+            "args": ["$CARD"],
+            "message": "Select a card from your hand to swap with the top card of your deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$HAND_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$HAND_CARD", "$GAME.cardById.{{$HAND_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$HAND_CARD.groupId", "{{$CARD.controller}}Hand"],
+                            ["LOG", "└── Selected card is not in your hand."],
+                            ["TRUE"],
+                            [
+                                ["VAR", "$TOP_CARD", "$GAME.groupById.{{$CARD.controller}}Deck.parentCards.[0]"],
+                                ["LOG", "└── Swapped {{$HAND_CARD.sides.A.name}} with {{$TOP_CARD.sides.A.name}} from top of deck."],
+                                ["MOVE_CARD", "$HAND_CARD_ID", "{{$CARD.controller}}Deck", 0],
+                                ["MOVE_CARD", "$TOP_CARD.id", "{{$CARD.controller}}Hand", 0]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": []
+                }
+            ]
+        }
+    }
+}

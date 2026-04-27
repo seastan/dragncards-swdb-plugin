@@ -1,0 +1,31 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g8": {
+                "_comment": "Droideka",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    "$GAME.playerData.{{$THIS.controller}}.exiledCardThisTurn",
+                                    [
+                                        ["LOG", "└── Droideka's ability: Exiled at least 1 card this turn. Droideka gains 2 attack."],
+                                        ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2],
+                                        ["FADE_TEXT_CARD", "$THIS.id", "+2 token:attackModifier"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Droideka's ability: Have not exiled a card this turn."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Droideka's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,57 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb4": {
+                "_comment": "Coruscant (Republic Base)",
+                "rules": {
+                    "revealTopCard": {
+                        "_comment": "When your turn begins, reveal the top card of your deck. You may discard that card.",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayer"],
+                        "condition": ["AND",
+                            ["EQUAL", "$THIS.inPlay", true],
+                            ["EQUAL", "$GAME.currentPlayer", "$THIS.controller"],
+                            ["NOT_EQUAL", ["PREV", "$GAME.currentPlayer"], "$GAME.currentPlayer"]
+                        ],
+                        "then": [
+                            ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                            ["COND",
+                                ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                [
+                                    ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                    ["LOG", "└── Coruscant's ability: Revealed {{$TOP_CARD.sides.A.name}} from the top of your deck."],
+                                    ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                    ["PROMPT", "$THIS.controller", "cw_rb4_reveal", "$THIS", "$TOP_CARD"]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rb4_reveal": {
+            "args": ["$CARD", "$TOP_CARD"],
+            "message": "You revealed the top card of your deck. You may discard it.",
+            "options": [
+                {
+                    "label": "Discard it",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Discarded {{$TOP_CARD.sides.A.name}} from the top of the deck."],
+                        ["DISCARD_CARD", "$TOP_CARD"]
+                    ]
+                },
+                {
+                    "label": "Keep it on top",
+                    "hotkey": "2",
+                    "code": [
+                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"],
+                        ["LOG", "└── Kept the card on top of the deck."]
+                    ]
+                }
+            ]
+        }
+    }
+}

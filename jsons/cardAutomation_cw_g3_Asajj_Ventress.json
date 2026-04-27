@@ -1,0 +1,85 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g3": {
+                "_comment": "Asajj Ventress",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Asajj Ventress's ability: Discard each neutral unit from the galaxy row."],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"],
+                                            ["EQUAL", "$CARD.currentFace.faction", "Neutral"],
+                                            ["EQUAL", "$CARD.currentFace.type", "Unit"]
+                                        ],
+                                        [
+                                            ["LOG", "└── Discarding {{$CARD.currentFace.name}} from galaxy row."],
+                                            ["MOVE_FROM_GALAXY_ROW", "$CARD_ID", "sharedGalaxyDiscard"]
+                                        ]
+                                    ]
+                                ]],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you. Choose 1 enemy unit to also discard."],
+                                        ["PROMPT", "$THIS.controller", "cw_g3_enemy", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Asajj Ventress's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g3_enemy": {
+            "args": ["$CARD"],
+            "message": "The Force is with you. Select 1 enemy unit from the galaxy row to also discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$MY_FACTION", ["GET_FACTION", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["OR",
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "$MY_FACTION"],
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            ["LOG", "└── Selected card is not an enemy card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarding {{$TARGET_CARD.currentFace.name}} from galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedGalaxyDiscard"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

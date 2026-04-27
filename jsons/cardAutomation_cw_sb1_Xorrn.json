@@ -1,0 +1,9 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb1": {
+                "_comment": "Xorrn - Start the game with this base in play. No automation needed - handled by preBuiltDecks."
+            }
+        }
+    }
+}

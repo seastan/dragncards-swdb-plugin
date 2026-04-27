@@ -1,0 +1,45 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb3": {
+                "_comment": "Christophsis",
+                "rules": {
+                    "revealedSelfDamage": {
+                        "_comment": "When you reveal Christophsis, deal 4 damage to it.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Christophsis's ability: Deal 4 damage to Christophsis."],
+                            ["INCREASE_VAL", "/cardById/$THIS_ID/tokens/damage", 4]
+                        ]
+                    },
+                    "transportRepair": {
+                        "_comment": "When you play a Transport, repair 1 damage from this base.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["OR",
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player1"],
+                                    ["EQUAL", "$TARGET.groupId", "player1Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]]
+                                ],
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["EQUAL", "$TARGET.groupId", "player2Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player2Play"]]
+                                ]
+                            ],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Transport."]
+                        ],
+                        "then": [
+                            ["LOG", "└── Christophsis's ability: Played a Transport, repair 1 damage from Christophsis."],
+                            ["REPAIR_DAMAGE", "$THIS.controller", 1]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

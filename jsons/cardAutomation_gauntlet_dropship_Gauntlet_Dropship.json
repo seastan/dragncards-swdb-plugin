@@ -1,0 +1,68 @@
+{
+    "automation": {
+        "cards": {
+            "gauntlet_dropship": {
+                "_comment": "Gauntlet Dropship",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Gauntlet Dropship's ability: Reveal top 5 cards of your deck. Add a revealed Trooper to your hand."],
+                                ["VAR", "$DECK_SIZE", ["LENGTH", "$GAME.groupById.{{$THIS.controller}}Deck.stackIds"]],
+                                ["VAR", "$REVEAL_COUNT", 5],
+                                ["COND",
+                                    ["LESS_THAN", "$DECK_SIZE", 5],
+                                    ["UPDATE_VAR", "$REVEAL_COUNT", "$DECK_SIZE"]
+                                ],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Deck", "$REVEAL_COUNT", true],
+                                ["PROMPT", "$THIS.controller", "gauntlet_dropship_trooper", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Gauntlet Dropship's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "gauntlet_dropship_trooper": {
+            "args": ["$CARD"],
+            "message": "Select a revealed Trooper from the top 5 cards of your deck to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Deck"],
+                            ["LOG", "└── Selected card is not in your deck."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Trooper."]],
+                            ["LOG", "└── Selected card is not a Trooper."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip (no Trooper)",
+                    "code": [
+                        ["LOG", "└── No Trooper found in top 5 cards."],
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

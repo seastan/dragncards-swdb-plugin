@@ -1,0 +1,80 @@
+{
+    "automation": {
+        "cards": {
+            "cw_ncs2": {
+                "_comment": "Dreadnought-class Cruiser",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Dreadnought-class Cruiser is in play, each of your neutral units gains 1 attack.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": ["TRUE"],
+                        "listenTo": [],
+                        "onDo": [
+                            ["LOG", "└── Dreadnought-class Cruiser added 1 attack to each neutral unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["EQUAL", "$TARGET.currentFace.faction", "Neutral"],
+                                        ["EQUAL", "$TARGET.currentFace.type", "Unit"]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Dreadnought-class Cruiser no longer adds 1 attack to each neutral unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["PREV", ["EQUAL", "$TARGET.currentFace.faction", "Neutral"]],
+                                        ["EQUAL", "$TARGET.currentFace.type", "Unit"]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove attack when neutral units enter/leave play.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["EQUAL", "$TARGET.currentFace.faction", "Neutral"],
+                            ["EQUAL", "$TARGET.currentFace.type", "Unit"]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Dreadnought-class Cruiser added 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Dreadnought-class Cruiser no longer adds 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

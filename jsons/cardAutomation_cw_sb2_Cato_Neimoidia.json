@@ -1,0 +1,103 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb2": {
+                "_comment": "Cato Neimoidia",
+                "rules": {
+                    "revealedAbility": {
+                        "_comment": "When you reveal Cato Neimoidia, discard 1 enemy card from the galaxy row. Replace it with a different enemy card from the galaxy discard pile and gain resources equal to the latter card's cost.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Cato Neimoidia's ability: Discard 1 enemy card from the galaxy row, then replace with an enemy card from the galaxy discard pile."],
+                            ["PROMPT", "$THIS.controller", "cw_sb2_discard", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_sb2_discard": {
+            "args": ["$CARD"],
+            "message": "Select an enemy card from the galaxy row to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$MY_FACTION", ["GET_FACTION", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["OR",
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "$MY_FACTION"],
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            ["LOG", "└── Selected card is not an enemy card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$TARGET_CARD.currentFace.name}} from the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedGalaxyDiscard"],
+                                ["LOOK_AT", "$CARD.controller", "sharedGalaxyDiscard", -1, true],
+                                ["PROMPT", "$CARD.controller", "cw_sb2_replace", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["LOG", "└── Skipped Cato Neimoidia's ability."]
+                    ]
+                }
+            ]
+        },
+        "cw_sb2_replace": {
+            "args": ["$CARD"],
+            "message": "Select an enemy card from the galaxy discard pile to add to the galaxy row. You will gain resources equal to its cost.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$MY_FACTION", ["GET_FACTION", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyDiscard"],
+                            ["LOG", "└── Selected card is not in the galaxy discard pile."],
+                            ["OR",
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "$MY_FACTION"],
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            ["LOG", "└── Selected card is not an enemy card."],
+                            ["TRUE"],
+                            [
+                                ["VAR", "$CARD_COST", "$TARGET_CARD.currentFace.cost"],
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to the galaxy row (cost {{$CARD_COST}})."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "sharedGalaxyRow", 0],
+                                ["LOG", "└── Gained {{$CARD_COST}} resources."],
+                                ["GAIN_N_RESOURCES", "$CARD.controller", "$CARD_COST"],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["LOG", "└── Skipped replacing the card."],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

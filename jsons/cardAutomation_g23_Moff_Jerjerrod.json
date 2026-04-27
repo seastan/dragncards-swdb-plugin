@@ -13,7 +13,7 @@
                                     [
                                         ["VAR", "$TOP_CARD_ID", "$GAME.groupById.sharedGalaxyDeck.parentCardIds.[0]"],
                                         ["VAR", "$TOP_CARD", "$GAME.cardById.{{$TOP_CARD_ID}}"],
-                                        ["LOG", "{{$ALIAS_N}} looked at {{$TOP_CARD.currentFace.name}} on top of galaxy deck."],
+                                        ["LOG", "{{$ALIAS_N}} looked at {{$TOP_CARD.sides.A.name}} on top of galaxy deck."],
                                         ["LOOK_AT", "$THIS.controller", "sharedGalaxyDeck", 1, true],
                                         ["COND",
                                             ["IS_FORCE_WITH_YOU", "$THIS.controller"],
@@ -52,7 +52,7 @@
                             ["LOG", "└── Selected card is not in the galaxy row."],
                             ["TRUE"],
                             [
-                                ["LOG", "└── Swapping {{$ROW_CARD.currentFace.name}} with top card of galaxy deck."],
+                                ["LOG", "└── Swapping {{$ROW_CARD.sides.A.name}} with top card of galaxy deck."],
                                 ["VAR", "$ROW_INDEX", "$ROW_CARD.stackIndex"],
                                 ["MOVE_CARD", "$TOP_CARD_ID", "sharedGalaxyRow", "$ROW_INDEX"],
                                 ["MOVE_CARD", "$ROW_CARD_ID", "sharedGalaxyDeck", 0],

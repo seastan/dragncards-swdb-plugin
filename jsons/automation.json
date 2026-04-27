@@ -1,88 +1,241 @@
 {
     "automation": {
         "postNewGameActionList": [
-            ["SET", "/playerData/player1/label", "Empire"],
-            ["SET", "/playerData/player2/label", "Rebels"],
-            ["PROMPT", "player1", "startGame"]
-        ],
-        "postLoadActionList": [
-            ["DRAW_STARTING_HANDS"],
-            ["SET", "/started", true],
-            ["REFILL_GALAXY_ROW"],
-            ["SET_TRACKER_VALUE", 3]
+            [
+                "PROMPT",
+                "player1",
+                "selectFaction_p1"
+            ]
         ],
         "gameRules": {
             "addResourcesWhenCardEntersPlay": {
                 "_comment": "Add card's resource property to player's resources when card enters Play group",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/groupId"],
-                "condition": ["AND",
-                    ["IN_STRING", "$TARGET.groupId", "Play"],
-                    ["NOT", ["PREV", ["IN_STRING", "$TARGET.groupId", "Play"]]],
-                    ["DEFINED", "$TARGET.currentFace.resources"],
-                    ["GREATER_THAN", "$TARGET.currentFace.resources", 0]
+                "listenTo": [
+                    "/cardById/*/groupId"
+                ],
+                "condition": [
+                    "AND",
+                    [
+                        "IN_STRING",
+                        "$TARGET.groupId",
+                        "Play"
+                    ],
+                    [
+                        "NOT",
+                        [
+                            "PREV",
+                            [
+                                "IN_STRING",
+                                "$TARGET.groupId",
+                                "Play"
+                            ]
+                        ]
+                    ],
+                    [
+                        "DEFINED",
+                        "$TARGET.currentFace.resources"
+                    ],
+                    [
+                        "GREATER_THAN",
+                        "$TARGET.currentFace.resources",
+                        0
+                    ]
                 ],
                 "then": [
-                    ["INCREASE_VAL", "/playerData/$TARGET.controller/resources", "$TARGET.currentFace.resources"],
-                    ["FADE_TEXT_PLAYER", "$TARGET.controller", "+{{$TARGET.currentFace.resources}} token:resource"],
-                    ["LOG", "└── gained {{$TARGET.currentFace.resources}} resources."]
+                    [
+                        "INCREASE_VAL",
+                        "/playerData/$TARGET.controller/resources",
+                        "$TARGET.currentFace.resources"
+                    ],
+                    [
+                        "FADE_TEXT_PLAYER",
+                        "$TARGET.controller",
+                        "+{{$TARGET.currentFace.resources}} token:resource"
+                    ],
+                    [
+                        "LOG",
+                        "\u2514\u2500\u2500 gained {{$TARGET.currentFace.resources}} resources."
+                    ]
                 ]
             },
             "destroyDamagedCards": {
                 "_comment": "Destroy cards when damage equals or exceeds hit points",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/tokens/damage"],
-                "condition": ["AND",
-                    ["DEFINED", "$TARGET.currentFace.hitPoints"],
-                    ["GREATER_THAN", "$TARGET.currentFace.hitPoints", 0],
-                    ["GREATER_EQUAL", "$TARGET.tokens.damage", "$TARGET.currentFace.hitPoints"],
-                    ["DEFINED", "$TARGET.discardGroupId"]
+                "listenTo": [
+                    "/cardById/*/tokens/damage"
                 ],
-                "then": ["DESTROY_CARD", "$TARGET"]
+                "condition": [
+                    "AND",
+                    [
+                        "DEFINED",
+                        "$TARGET.currentFace.hitPoints"
+                    ],
+                    [
+                        "GREATER_THAN",
+                        "$TARGET.currentFace.hitPoints",
+                        0
+                    ],
+                    [
+                        "GREATER_EQUAL",
+                        "$TARGET.tokens.damage",
+                        ["ADD", "$TARGET.currentFace.hitPoints", "$TARGET.tokens.hpModifier"]
+                    ],
+                    [
+                        "DEFINED",
+                        "$TARGET.discardGroupId"
+                    ]
+                ],
+                "then": [
+                    "DESTROY_CARD",
+                    "$TARGET"
+                ]
             },
             "updatePlayerScores": {
                 "_comment": "Update player scores based on victory pile size",
                 "type": "trigger",
-                "listenTo": ["/groupById/player1VictoryPile/stackIds", "/groupById/player2VictoryPile/stackIds"],
-                "condition": ["TRUE"],
+                "listenTo": [
+                    "/groupById/player1VictoryPile/stackIds",
+                    "/groupById/player2VictoryPile/stackIds"
+                ],
+                "condition": [
+                    "TRUE"
+                ],
                 "then": [
-                    ["SET", "/playerData/player1/score", ["LENGTH", "$GAME.groupById.player1VictoryPile.stackIds"]],
-                    ["SET", "/playerData/player2/score", ["LENGTH", "$GAME.groupById.player2VictoryPile.stackIds"]]
+                    [
+                        "SET",
+                        "/playerData/player1/score",
+                        [
+                            "LENGTH",
+                            "$GAME.groupById.player1VictoryPile.stackIds"
+                        ]
+                    ],
+                    [
+                        "SET",
+                        "/playerData/player2/score",
+                        [
+                            "LENGTH",
+                            "$GAME.groupById.player2VictoryPile.stackIds"
+                        ]
+                    ]
                 ]
             },
             "updateAttackStrengthWhenModifierChanged": {
                 "_comment": "Update player scores based on victory pile size",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/tokens/attackModifier"],
+                "listenTo": [
+                    "/cardById/*/tokens/attackModifier"
+                ],
                 "condition": "$TARGET.isAttacking",
                 "then": [
-                    ["VAR", "$DELTA", ["SUBTRACT", "$TARGET.tokens.attackModifier", ["PREV", "$TARGET.tokens.attackModifier"]]],
-                    ["INCREASE_VAL", "/playerData/$TARGET.controller/attack", "$DELTA"]
+                    [
+                        "VAR",
+                        "$DELTA",
+                        [
+                            "SUBTRACT",
+                            "$TARGET.tokens.attackModifier",
+                            [
+                                "PREV",
+                                "$TARGET.tokens.attackModifier"
+                            ]
+                        ]
+                    ],
+                    [
+                        "INCREASE_VAL",
+                        "/playerData/$TARGET.controller/attack",
+                        "$DELTA"
+                    ]
                 ]
             },
             "checkGameOver": {
                 "_comment": "Check for game over when player scores change",
                 "type": "trigger",
-                "listenTo": ["/playerData/*/score"],
-                "condition": ["OR",
-                    ["GREATER_EQUAL", "$GAME.playerData.player1.score", 3],
-                    ["GREATER_EQUAL", "$GAME.playerData.player2.score", 3]
+                "listenTo": [
+                    "/playerData/*/score"
+                ],
+                "condition": [
+                    "AND",
+                    [
+                        "EQUAL",
+                        "$GAME.victoryState",
+                        ""
+                    ],
+                    [
+                        "OR",
+                        [
+                            "GREATER_EQUAL",
+                            "$GAME.playerData.player1.score",
+                            3
+                        ],
+                        [
+                            "GREATER_EQUAL",
+                            "$GAME.playerData.player2.score",
+                            3
+                        ]
+                    ]
                 ],
                 "then": [
-                    ["COND",
-                        ["GREATER_EQUAL", "$GAME.playerData.player1.score", 3],
+                    [
+                        "COND",
                         [
-                            ["LOG", "[game] The Empire has destroyed 3 bases and wins the game!"],
-                            ["SET", "/victoryState", "Empire"],
-                            ["SAVE_GAME"],
-                            ["PROMPT", "$PLAYER_ORDER", "restartGame", "The Empire has destroyed 3 bases and wins the game!"]
+                            "GREATER_EQUAL",
+                            "$GAME.playerData.player1.score",
+                            3
                         ],
-                        ["GREATER_EQUAL", "$GAME.playerData.player2.score", 3],
                         [
-                            ["LOG", "[game] The Rebels have destroyed 3 bases and win the game!"],
-                            ["SET", "/victoryState", "Rebels"],
-                            ["SAVE_GAME"],
-                            ["PROMPT", "$PLAYER_ORDER", "restartGame", "The Rebels have destroyed 3 bases and win the game!"]
+                            [
+                                "VAR",
+                                "$WINNER_NAME",
+                                "$GAME.playerData.player1.label"
+                            ],
+                            [
+                                "LOG",
+                                "[game] {{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                            ],
+                            [
+                                "SET",
+                                "/victoryState",
+                                "$GAME.player1Faction"
+                            ],
+                            [
+                                "SAVE_GAME"
+                            ],
+                            [
+                                "PROMPT",
+                                "$PLAYER_ORDER",
+                                "restartGame",
+                                "{{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                            ]
+                        ],
+                        [
+                            "GREATER_EQUAL",
+                            "$GAME.playerData.player2.score",
+                            3
+                        ],
+                        [
+                            [
+                                "VAR",
+                                "$WINNER_NAME",
+                                "$GAME.playerData.player2.label"
+                            ],
+                            [
+                                "LOG",
+                                "[game] {{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                            ],
+                            [
+                                "SET",
+                                "/victoryState",
+                                "$GAME.player2Faction"
+                            ],
+                            [
+                                "SAVE_GAME"
+                            ],
+                            [
+                                "PROMPT",
+                                "$PLAYER_ORDER",
+                                "restartGame",
+                                "{{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                            ]
                         ]
                     ]
                 ]
@@ -90,28 +243,84 @@
             "highlightAttackingCards": {
                 "_comment": "Set attacking cards border color to green",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/isAttacking"],
-                "condition": ["TRUE"],
+                "listenTo": [
+                    "/cardById/*/isAttacking"
+                ],
+                "condition": [
+                    "TRUE"
+                ],
                 "then": [
-                    ["COND",
-                        ["EQUAL", "$TARGET.isAttacking", true],
-                        ["SET", "/cardById/$TARGET_ID/borderColor", "green"],
-                        ["TRUE"],
-                        ["SET", "/cardById/$TARGET_ID/borderColor", null]
+                    [
+                        "COND",
+                        [
+                            "EQUAL",
+                            "$TARGET.isAttacking",
+                            true
+                        ],
+                        [
+                            "SET",
+                            "/cardById/$TARGET_ID/borderColor",
+                            "green"
+                        ],
+                        [
+                            "TRUE"
+                        ],
+                        [
+                            "SET",
+                            "/cardById/$TARGET_ID/borderColor",
+                            null
+                        ]
                     ]
                 ]
             },
             "highlightAttackedCards": {
                 "_comment": "Set cards that attacked this turn border color to red",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/hasAttackedThisTurn"],
-                "condition": ["TRUE"],
+                "listenTo": [
+                    "/cardById/*/hasAttackedThisTurn"
+                ],
+                "condition": [
+                    "TRUE"
+                ],
                 "then": [
-                    ["COND",
-                        ["EQUAL", "$TARGET.hasAttackedThisTurn", true],
-                        ["SET", "/cardById/$TARGET_ID/borderColor", "red"],
-                        ["TRUE"],
-                        ["SET", "/cardById/$TARGET_ID/borderColor", null]
+                    [
+                        "COND",
+                        [
+                            "EQUAL",
+                            "$TARGET.hasAttackedThisTurn",
+                            true
+                        ],
+                        [
+                            "SET",
+                            "/cardById/$TARGET_ID/borderColor",
+                            "red"
+                        ],
+                        [
+                            "TRUE"
+                        ],
+                        [
+                            "SET",
+                            "/cardById/$TARGET_ID/borderColor",
+                            null
+                        ]
+                    ]
+                ]
+            },
+            "exileCardsAfterAttacking": {
+                "_comment": "Exile cards with exileAfterAttacking token when they finish attacking",
+                "type": "trigger",
+                "listenTo": [
+                    "/cardById/*/hasAttackedThisTurn"
+                ],
+                "condition": [
+                    "AND",
+                    "$TARGET.hasAttackedThisTurn",
+                    "$TARGET.tokens.exileAfterAttacking"
+                ],
+                "then": [
+                    [
+                        "EXILE_CARD",
+                        "$TARGET"
                     ]
                 ]
             },
@@ -119,87 +328,366 @@
                 "_comment": "Set cards that can be purchased border color to orange",
                 "type": "trigger",
                 "priority": 5,
-                "listenTo": ["/playerData/*/resources", "/groupById/sharedGalaxyRow/stackIds"],
-                "condition": ["TRUE"],
+                "listenTo": [
+                    "/playerData/*/resources",
+                    "/groupById/sharedGalaxyRow/stackIds"
+                ],
+                "condition": [
+                    "TRUE"
+                ],
                 "then": [
-                    ["VAR", "$RESOURCES", "$GAME.playerData.{{$GAME.currentPlayer}}.resources"],
-                    ["VAR", "$FACTION", 
-                        ["COND",
-                            ["EQUAL", "$GAME.currentPlayer", "player1"],
-                            "Empire",
-                            ["TRUE"],
-                            "Rebel"
+                    [
+                        "VAR",
+                        "$RESOURCES",
+                        "$GAME.playerData.{{$GAME.currentPlayer}}.resources"
+                    ],
+                    [
+                        "VAR",
+                        "$FACTION",
+                        [
+                            "COND",
+                            [
+                                "EQUAL",
+                                "$GAME.currentPlayer",
+                                "player1"
+                            ],
+                            "$GAME.player1Faction",
+                            [
+                                "TRUE"
+                            ],
+                            "$GAME.player2Faction"
                         ]
                     ],
-                    ["FOR_EACH_VAL", "$CARD_ID", "$GAME.groupById.sharedGalaxyRow.parentCardIds", [
-                        ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
-                        ["COND",
-                            ["AND",
-                                ["LESS_EQUAL", "$CARD.currentFace.cost", "$RESOURCES"],
-                                ["OR",
-                                    ["EQUAL", "$CARD.currentFace.faction", "Neutral"],
-                                    ["EQUAL", "$CARD.currentFace.faction", "$FACTION"]
-                                ]
+                    [
+                        "FOR_EACH_VAL",
+                        "$CARD_ID",
+                        "$GAME.groupById.sharedGalaxyRow.parentCardIds",
+                        [
+                            [
+                                "VAR",
+                                "$CARD",
+                                "$GAME.cardById.{{$CARD_ID}}"
                             ],
-                            ["SET", "/cardById/{{$CARD_ID}}/borderColor", "orange"],
-                            ["TRUE"],
-                            ["SET", "/cardById/{{$CARD_ID}}/borderColor", null]
+                            [
+                                "COND",
+                                [
+                                    "AND",
+                                    [
+                                        "LESS_EQUAL",
+                                        "$CARD.currentFace.cost",
+                                        "$RESOURCES"
+                                    ],
+                                    [
+                                        "OR",
+                                        [
+                                            "EQUAL",
+                                            "$CARD.currentFace.faction",
+                                            "Neutral"
+                                        ],
+                                        [
+                                            "EQUAL",
+                                            "$CARD.currentFace.faction",
+                                            "$FACTION"
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    "SET",
+                                    "/cardById/{{$CARD_ID}}/borderColor",
+                                    "orange"
+                                ],
+                                [
+                                    "TRUE"
+                                ],
+                                [
+                                    "SET",
+                                    "/cardById/{{$CARD_ID}}/borderColor",
+                                    null
+                                ]
+                            ]
                         ]
-                    ]],
-                    ["COND",
-                        ["AND",
-                            ["GREATER_EQUAL", "$RESOURCES", 2],
-                            ["GROUP_NOT_EMPTY", "sharedOuterRimPilotDeck"]
+                    ],
+                    [
+                        "COND",
+                        [
+                            "AND",
+                            [
+                                "GREATER_EQUAL",
+                                "$RESOURCES",
+                                2
+                            ],
+                            [
+                                "GROUP_NOT_EMPTY",
+                                "sharedOuterRimPilotDeck"
+                            ]
                         ],
-                        ["SET", "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor", "orange"],
-                        ["AND",
-                            ["LESS_THAN", "$RESOURCES", 2],
-                            ["GROUP_NOT_EMPTY", "sharedOuterRimPilotDeck"]
+                        [
+                            "SET",
+                            "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor",
+                            "orange"
                         ],
-                        ["SET", "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor", null]
+                        [
+                            "AND",
+                            [
+                                "LESS_THAN",
+                                "$RESOURCES",
+                                2
+                            ],
+                            [
+                                "GROUP_NOT_EMPTY",
+                                "sharedOuterRimPilotDeck"
+                            ]
+                        ],
+                        [
+                            "SET",
+                            "/cardById/{{$GAME.groupById.sharedOuterRimPilotDeck.parentCardIds.[0]}}/borderColor",
+                            null
+                        ]
                     ]
                 ]
             },
             "gainForceWhenCardPlayed": {
                 "_comment": "Gain force when a card with force property is played",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/groupId"],
-                "condition": ["AND",
-                    ["IN_STRING", "$TARGET.groupId", "Play"],
-                    ["NOT", ["PREV", ["IN_STRING", "$TARGET.groupId", "Play"]]],
-                    ["NOT_EQUAL", "$TARGET.controller", "shared"],
-                    ["DEFINED", "$TARGET.currentFace.force"],
-                    ["GREATER_THAN", "$TARGET.currentFace.force", 0]
+                "listenTo": [
+                    "/cardById/*/groupId"
+                ],
+                "condition": [
+                    "AND",
+                    [
+                        "IN_STRING",
+                        "$TARGET.groupId",
+                        "Play"
+                    ],
+                    [
+                        "NOT",
+                        [
+                            "PREV",
+                            [
+                                "IN_STRING",
+                                "$TARGET.groupId",
+                                "Play"
+                            ]
+                        ]
+                    ],
+                    [
+                        "NOT_EQUAL",
+                        "$TARGET.controller",
+                        "shared"
+                    ],
+                    [
+                        "GREATER_THAN",
+                        ["ADD", "$TARGET.currentFace.force", "$TARGET.tokens.forceModifier"],
+                        0
+                    ]
                 ],
                 "then": [
-                    ["LOG", "└── {{$TARGET.controller}} gained {{$TARGET.currentFace.force}} force."],
-                    ["GAIN_N_FORCE", "$TARGET.controller", "$TARGET.currentFace.force"]
+                    [
+                        "VAR",
+                        "$TOTAL_FORCE",
+                        ["ADD", "$TARGET.currentFace.force", "$TARGET.tokens.forceModifier"]
+                    ],
+                    [
+                        "LOG",
+                        "\u2514\u2500\u2500 {{$TARGET.controller}} gained {{$TOTAL_FORCE}} force."
+                    ],
+                    [
+                        "GAIN_N_FORCE",
+                        "$TARGET.controller",
+                        "$TOTAL_FORCE"
+                    ]
                 ]
             },
             "rotateFactionCards": {
                 "_comment": "Rotate cards in galaxy row based on faction",
                 "type": "trigger",
-                "listenTo": ["/cardById/*/groupId"],
-                "condition": ["AND",
-                    ["EQUAL", "$TARGET.groupId", "sharedGalaxyRow"],
-                    ["DEFINED", "$TARGET.currentFace.faction"]
+                "listenTo": [
+                    "/cardById/*/groupId"
+                ],
+                "condition": [
+                    "AND",
+                    [
+                        "EQUAL",
+                        "$TARGET.groupId",
+                        "sharedGalaxyRow"
+                    ],
+                    [
+                        "DEFINED",
+                        "$TARGET.currentFace.faction"
+                    ]
                 ],
                 "then": [
-                    ["COND",
-                        ["EQUAL", "$TARGET.currentFace.faction", "Rebel"],
+                    [
+                        "COND",
                         [
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 180],
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 0]
+                            "EQUAL",
+                            "$TARGET.currentFace.faction",
+                            "Neutral"
                         ],
-                        ["EQUAL", "$TARGET.currentFace.faction", "Empire"],
                         [
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 0],
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 180]
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player1",
+                                90
+                            ],
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player2",
+                                90
+                            ]
                         ],
-                        ["EQUAL", "$TARGET.currentFace.faction", "Neutral"],
                         [
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player1", 90],
-                            ["SET", "/cardById/$TARGET_ID/rotationByPlayer/player2", 90]
+                            "EQUAL",
+                            "$TARGET.currentFace.faction",
+                            "$GAME.player1Faction"
+                        ],
+                        [
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player1",
+                                0
+                            ],
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player2",
+                                180
+                            ]
+                        ],
+                        [
+                            "EQUAL",
+                            "$TARGET.currentFace.faction",
+                            "$GAME.player2Faction"
+                        ],
+                        [
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player1",
+                                180
+                            ],
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player2",
+                                0
+                            ]
+                        ],
+                        [
+                            "TRUE"
+                        ],
+                        [
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player1",
+                                90
+                            ],
+                            [
+                                "SET",
+                                "/cardById/$TARGET_ID/rotationByPlayer/player2",
+                                90
+                            ]
+                        ]
+                    ]
+                ]
+            },
+            "rotateFactionCardsOnFactionSet": {
+                "_comment": "Re-rotate all galaxy row cards once both player factions are known",
+                "type": "trigger",
+                "listenTo": [
+                    "/player1Faction",
+                    "/player2Faction"
+                ],
+                "condition": [
+                    "AND",
+                    [
+                        "NOT_EQUAL",
+                        "$GAME.player1Faction",
+                        ""
+                    ],
+                    [
+                        "NOT_EQUAL",
+                        "$GAME.player2Faction",
+                        ""
+                    ]
+                ],
+                "then": [
+                    [
+                        "FOR_EACH_VAL",
+                        "$CARD_ID",
+                        "$GAME.groupById.sharedGalaxyRow.parentCardIds",
+                        [
+                            [
+                                "VAR",
+                                "$CARD",
+                                "$GAME.cardById.{{$CARD_ID}}"
+                            ],
+                            [
+                                "COND",
+                                [
+                                    "EQUAL",
+                                    "$CARD.currentFace.faction",
+                                    "Neutral"
+                                ],
+                                [
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player1",
+                                        90
+                                    ],
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player2",
+                                        90
+                                    ]
+                                ],
+                                [
+                                    "EQUAL",
+                                    "$CARD.currentFace.faction",
+                                    "$GAME.player1Faction"
+                                ],
+                                [
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player1",
+                                        0
+                                    ],
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player2",
+                                        180
+                                    ]
+                                ],
+                                [
+                                    "EQUAL",
+                                    "$CARD.currentFace.faction",
+                                    "$GAME.player2Faction"
+                                ],
+                                [
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player1",
+                                        180
+                                    ],
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player2",
+                                        0
+                                    ]
+                                ],
+                                [
+                                    "TRUE"
+                                ],
+                                [
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player1",
+                                        90
+                                    ],
+                                    [
+                                        "SET",
+                                        "/cardById/{{$CARD_ID}}/rotationByPlayer/player2",
+                                        90
+                                    ]
+                                ]
+                            ]
                         ]
                     ]
                 ]
@@ -208,10 +696,19 @@
                 "_comment": "Show end turn suggestion when player has no more actions available",
                 "type": "trigger",
                 "priority": 10,
-                "listenTo": ["/groupById/*/stackIds", "/playerData/*/resources", "/cardById/*/tokens/attackModifier", "/cardById/*/hasAttackedThisTurn"],
-                "condition": ["TRUE"],
+                "listenTo": [
+                    "/groupById/*/stackIds",
+                    "/playerData/*/resources",
+                    "/cardById/*/tokens/attackModifier",
+                    "/cardById/*/hasAttackedThisTurn"
+                ],
+                "condition": [
+                    "TRUE"
+                ],
                 "then": [
-                    ["CHECK_END_TURN_SUGGESTION"]
+                    [
+                        "CHECK_END_TURN_SUGGESTION"
+                    ]
                 ]
             }
         }

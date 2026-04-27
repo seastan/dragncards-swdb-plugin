@@ -1,0 +1,92 @@
+{
+    "automation": {
+        "cards": {
+            "paz_vizsla": {
+                "_comment": "Paz Vizsla",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Paz Vizsla's ability: Spend up to 3 resources to gain attack."],
+                                ["PROMPT", "$THIS.controller", "paz_vizsla_spend", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Paz Vizsla's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "paz_vizsla_spend": {
+            "args": ["$CARD"],
+            "message": "Spend up to 3 resources. Paz Vizsla gains 1 attack for each resource spent.",
+            "options": [
+                {
+                    "label": "Spend 0 resources",
+                    "hotkey": "0",
+                    "code": [
+                        ["LOG", "└── Spent 0 resources. Paz Vizsla gains 0 attack."],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                },
+                {
+                    "label": "Spend 1 resource",
+                    "hotkey": "1",
+                    "code": [
+                        ["COND",
+                            ["GREATER_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", 0],
+                            [
+                                ["LOG", "└── Spent 1 resource. Paz Vizsla gains 1 attack."],
+                                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                                ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1],
+                                ["FADE_TEXT_CARD", "$CARD.id", "+1 token:attackModifier"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Not enough resources."]
+                        ]
+                    ]
+                },
+                {
+                    "label": "Spend 2 resources",
+                    "hotkey": "2",
+                    "code": [
+                        ["COND",
+                            ["GREATER_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", 1],
+                            [
+                                ["LOG", "└── Spent 2 resources. Paz Vizsla gains 2 attack."],
+                                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 2],
+                                ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 2],
+                                ["FADE_TEXT_CARD", "$CARD.id", "+2 token:attackModifier"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Not enough resources."]
+                        ]
+                    ]
+                },
+                {
+                    "label": "Spend 3 resources",
+                    "hotkey": "3",
+                    "code": [
+                        ["COND",
+                            ["GREATER_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", 2],
+                            [
+                                ["LOG", "└── Spent 3 resources. Paz Vizsla gains 3 attack."],
+                                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 3],
+                                ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 3],
+                                ["FADE_TEXT_CARD", "$CARD.id", "+3 token:attackModifier"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Not enough resources."]
+                        ]
+                    ]
+                }
+            ]
+        }
+    }
+}

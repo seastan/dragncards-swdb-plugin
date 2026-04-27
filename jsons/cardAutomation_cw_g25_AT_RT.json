@@ -1,0 +1,42 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g25": {
+                "_comment": "AT-RT",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_OTHER_TROOPER", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                            ["IN_STRING", "$CARD.currentFace.traits", "Trooper."]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_OTHER_TROOPER", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_OTHER_TROOPER",
+                                    [
+                                        ["LOG", "└── AT-RT's ability: Have another Trooper in play. Repair 2 damage from your base."],
+                                        ["REPAIR_DAMAGE", "$THIS.controller", 2]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── AT-RT's ability: No other Trooper in play."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use AT-RT's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

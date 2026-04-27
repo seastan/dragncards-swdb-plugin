@@ -3,6 +3,7 @@
         "standard": {
             "cardSize": 16,
             "rowSpacing": 3,
+            "showRotationOfActiveCard": [180],
             "chat": {"left": "70%", "top": "80%", "width": "30%", "height": "20%"},
             "regions": {
                 "playerN+1Hand": {"groupId": "{playerN+1}Hand", "type": "fan", "direction": "horizontal", "left": "0%", "top": "0%", "width": "60%", "height": "20%", "style": {"background": "rgba(0, 0, 0, 0.3)"}, "showMenu": true, "disableDroppableAttachments": true},

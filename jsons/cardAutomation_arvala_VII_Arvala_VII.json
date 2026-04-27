@@ -1,0 +1,31 @@
+{
+    "automation": {
+        "cards": {
+            "arvala_VII": {
+                "_comment": "Arvala VII",
+                "rules": {
+                    "turnStartTrigger": {
+                        "_comment": "When your turn begins, if force marker is on neutral, gain 1 resource. Otherwise, move force marker 1 step toward neutral.",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayer"],
+                        "condition": ["EQUAL", "$GAME.currentPlayer", "$THIS.controller"],
+                        "then": [
+                            ["COND",
+                                ["EQUAL", "$GAME.trackerValue", 0],
+                                [
+                                    ["LOG", "└── Arvala VII: Force is neutral. Gaining 1 resource."],
+                                    ["INCREASE_VAL", "/playerData/{{$THIS.controller}}/resources", 1]
+                                ],
+                                ["TRUE"],
+                                [
+                                    ["LOG", "└── Arvala VII: Force is not neutral. Moving Force marker 1 step toward neutral."],
+                                    ["MOVE_FORCE_TOWARD_NEUTRAL"]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

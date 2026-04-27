@@ -1,0 +1,20 @@
+{
+    "functions": {
+        "TRIGGER_NEVARRO": {
+            "args": ["$BASE_CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["AND",
+                        ["EQUAL", "$BASE_CARD.inPlay", true],
+                        ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                        ["NOT_EQUAL", "$DESTROYED_CARD.currentFace.type", "Permanent"]
+                    ],
+                    [
+                        ["LOG", "└── Nevarro's ability triggered: Defeated a non-Permanent target in the galaxy row. Draw 1 card."],
+                        ["DRAW_CARD", 1, "$BASE_CARD.controller"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

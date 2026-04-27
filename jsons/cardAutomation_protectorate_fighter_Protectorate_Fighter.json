@@ -1,0 +1,11 @@
+{
+    "functions": {
+        "TRIGGER_PROTECTORATE_FIGHTER": {
+            "args": ["$CARD"],
+            "code": [
+                ["LOG", "└── Protectorate Fighter's ability triggered: Add to hand."],
+                ["MOVE_FROM_GALAXY_ROW", "$CARD.id", "{{$PLAYER_N}}Hand"]
+            ]
+        }
+    }
+}

@@ -9,9 +9,8 @@
                         "type": "entersPlay",
                         "side": "A",
                         "then": [
-                            ["LOG", "└── Alderaan's ability: Gain 4 resources."],
-                            ["INCREASE_VAL", "/playerData/{{$THIS.controller}}/resources", 4],
-                            ["FADE_TEXT_PLAYER", "$THIS.controller", "+4 token:resource"]
+                            ["LOG", "└── Alderaan's ability: Gain 4 force."],
+                            ["GAIN_N_FORCE", "$THIS.controller", 4]
                         ]
                     }
                 }

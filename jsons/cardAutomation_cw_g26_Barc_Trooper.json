@@ -1,0 +1,49 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g26": {
+                "_comment": "Barc Trooper",
+                "rules": {
+                    "trooperBonus": {
+                        "_comment": "While you have another Trooper in play, this unit gains 2 attack.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["COND",
+                                "$THIS.inPlay",
+                                [
+                                    ["VAR", "$HAS_OTHER_TROOPER", false],
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                                ["EQUAL", "$CARD.inPlay", true],
+                                                ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                                ["IN_STRING", "$CARD.currentFace.traits", "Trooper."]
+                                            ],
+                                            ["UPDATE_VAR", "$HAS_OTHER_TROOPER", true]
+                                        ]
+                                    ]],
+                                    ["VAR", "$CURRENT_BONUS", "$GAME.cardById.$THIS.id.tokens.barcTrooperBonus"],
+                                    ["COND",
+                                        ["AND", "$HAS_OTHER_TROOPER", ["NOT_EQUAL", "$CURRENT_BONUS", 2]],
+                                        [
+                                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2],
+                                            ["SET", "/cardById/$THIS.id/tokens/barcTrooperBonus", 2]
+                                        ],
+                                        ["AND", ["NOT", "$HAS_OTHER_TROOPER"], ["EQUAL", "$CURRENT_BONUS", 2]],
+                                        [
+                                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2],
+                                            ["SET", "/cardById/$THIS.id/tokens/barcTrooperBonus", 0]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g41": {
+                "_comment": "Gauntlet Starfighter",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Gauntlet Starfighter's ability: Exile to purchase from galaxy discard and add to hand."],
+                                ["LOOK_AT", "$THIS.controller", "sharedGalaxyDiscard", -1, true],
+                                ["PROMPT", "$THIS.controller", "cw_g41_purchase", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "└── Gauntlet Starfighter's ability has already been used or cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g41_purchase": {
+            "args": ["$CARD"],
+            "message": "Select a card from the galaxy discard pile to purchase as if it were in the galaxy row. It will be added to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyDiscard"],
+                            ["LOG", "└── Selected card is not in the galaxy discard pile."],
+                            ["TRUE"],
+                            [
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["BUY_CARD", "$TARGET_CARD"],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0],
+                                ["EXILE_CARD", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

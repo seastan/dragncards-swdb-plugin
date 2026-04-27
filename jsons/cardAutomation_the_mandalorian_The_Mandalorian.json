@@ -1,0 +1,77 @@
+{
+    "functions": {
+        "TRIGGER_THE_MANDALORIAN": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── The Mandalorian's ability triggered: Choose a card from your discard pile."],
+                        ["LOOK_AT", "$CARD.controller", "{{$CARD.controller}}Discard", -1, true],
+                        ["PROMPT", "$CARD.controller", "the_mandalorian_select", "$CARD"]
+                    ]
+                ]
+            ]
+        }
+    },
+    "prompts": {
+        "the_mandalorian_select": {
+            "args": ["$CARD"],
+            "message": "Select a card from your discard pile. Place it on top of your deck or exile it.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["TRUE"],
+                            [
+                                ["SET", "/cardById/{{$CARD.id}}/tokens/selectedDiscardCardId", "$TARGET_CARD_ID"],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["PROMPT", "$CARD.controller", "the_mandalorian_place", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        },
+        "the_mandalorian_place": {
+            "args": ["$CARD"],
+            "message": "Place the selected card on top of your deck or exile it.",
+            "options": [
+                {
+                    "label": "Place on top of deck",
+                    "hotkey": "1",
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$GAME.cardById.{{$CARD.id}}.tokens.selectedDiscardCardId"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["LOG", "└── Placed {{$TARGET_CARD.currentFace.name}} on top of deck."],
+                        ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck", 0]
+                    ]
+                },
+                {
+                    "label": "Exile it",
+                    "hotkey": "2",
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$GAME.cardById.{{$CARD.id}}.tokens.selectedDiscardCardId"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["LOG", "└── Exiled {{$TARGET_CARD.currentFace.name}}."],
+                        ["EXILE_CARD", "$TARGET_CARD"]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -27,7 +27,7 @@
     "prompts": {
         "g4_choice": {
             "args": ["$CARD"],
-            "message": "Duros Spy: Choose to discard 1 card from your hand, or your opponent gains 1 resource.",
+            "message": "Duros Spy: Choose to discard 1 card from your hand, or your opponent gains 1 force.",
             "options": [
                 {
                     "label": "Discard 1 card",
@@ -38,12 +38,12 @@
                     ]
                 },
                 {
-                    "label": "Opponent gains 1 resource",
+                    "label": "Opponent gains 1 force",
                     "hotkey": "2",
                     "code": [
                         ["VAR", "$OWNER", "$CARD.controller"],
-                        ["LOG", "└── {{$ALIAS_N}} chose to let opponent gain 1 resource."],
-                        ["GAIN_N_RESOURCES", "$OWNER", 1],
+                        ["LOG", "└── {{$ALIAS_N}} chose to let opponent gain 1 force."],
+                        ["GAIN_N_FORCE", "$OWNER", 1],
                         ["SET", "/cardById/$CARD.id/rotation", -20]
                     ]
                 }

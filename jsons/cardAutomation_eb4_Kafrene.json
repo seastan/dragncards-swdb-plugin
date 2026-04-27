@@ -9,6 +9,7 @@
                         "type": "trigger",
                         "listenTo": ["/cardById/*/groupId"],
                         "condition": ["AND",
+                            "$THIS.inPlay",
                             ["EQUAL", "$TARGET.groupId", "player1Play"],
                             ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]],
                             ["EQUAL", "$TARGET.sides.A.faction", "Neutral"],

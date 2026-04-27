@@ -1,0 +1,101 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g7": {
+                "_comment": "Wat Tambor",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Wat Tambor's ability: Discard 1 neutral card from the galaxy row."],
+                                ["PROMPT", "$THIS.controller", "cw_g7_discard", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Wat Tambor's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g7_discard": {
+            "args": ["$CARD"],
+            "message": "Select a neutral card from the galaxy row to discard.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"],
+                            ["LOG", "└── Selected card is not a neutral card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Discarded {{$TARGET_CARD.currentFace.name}} from the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedGalaxyDiscard"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20],
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$CARD.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you. You may replace it with a Separatist card from the galaxy discard."],
+                                        ["LOOK_AT", "$CARD.controller", "sharedGalaxyDiscard", -1, true],
+                                        ["PROMPT", "$CARD.controller", "cw_g7_replace", "$CARD"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "cw_g7_replace": {
+            "args": ["$CARD"],
+            "message": "Select a Separatist card from the galaxy discard pile to add to the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyDiscard"],
+                            ["LOG", "└── Selected card is not in the galaxy discard pile."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Separatist"],
+                            ["LOG", "└── Selected card is not a Separatist card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to the galaxy row."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "sharedGalaxyRow", 0],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["LOG", "└── Skipped replacing the card."],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

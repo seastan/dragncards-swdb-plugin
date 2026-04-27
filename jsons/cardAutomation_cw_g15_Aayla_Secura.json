@@ -1,0 +1,78 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g15": {
+                "_comment": "Aayla Secura",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Aayla Secura is in play and the Force is with you, each of your Trooper units gains 1 attack.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                        "listenTo": ["/trackerValue"],
+                        "onDo": [
+                            ["LOG", "└── Aayla Secura: The Force is with you, each of your Troopers gains 1 attack."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Aayla Secura: The Force is no longer with you, Troopers lose 1 attack."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove attack when Trooper units enter/leave play while Aayla Secura is in play with Force.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."],
+                            ["IS_FORCE_WITH_YOU", "$THIS.controller"]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Aayla Secura added 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Aayla Secura removed 1 attack from {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

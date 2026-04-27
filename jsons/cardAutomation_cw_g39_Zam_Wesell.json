@@ -1,0 +1,54 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g39": {
+                "_comment": "Zam Wesell",
+                "rules": {
+                    "entersPlayChoice": {
+                        "_comment": "When you play Zam Wesell, choose: She gains 2 attack, 2 resources, or 2 force this turn.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Zam Wesell's ability: Choose a bonus."],
+                            ["PROMPT", "$PLAYER_N", "cw_g39", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g39": {
+            "args": ["$CARD"],
+            "message": "Choose to have Zam Wesell gain 2 attack, 2 resources, or 2 force.",
+            "options": [
+                {
+                    "label": "Gain 2 Attack",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Added 2 attack."],
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 2],
+                        ["FADE_TEXT_CARD", "$CARD.id", "+2 token:attackModifier"]
+                    ]
+                },
+                {
+                    "label": "Gain 2 Resources",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Gained 2 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 2],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+2 token:resource"]
+                    ]
+                },
+                {
+                    "label": "Gain 2 Force",
+                    "hotkey": "3",
+                    "code": [
+                        ["LOG", "└── Gained 2 force."],
+                        ["GAIN_N_FORCE", "$CARD.controller", 2]
+                    ]
+                }
+            ]
+        }
+    }
+}

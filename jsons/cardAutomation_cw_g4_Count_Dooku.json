@@ -1,0 +1,109 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g4": {
+                "_comment": "Count Dooku",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "└── Count Dooku's ability: The Force is with you. Swap a unit in the galaxy row with a non-starter card from your exile pile."],
+                                        ["LOOK_AT", "$THIS.controller", "sharedGalaxyRow", -1, true],
+                                        ["PROMPT", "$THIS.controller", "cw_g4_select_row", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Count Dooku's ability: The Force is not with you."],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Count Dooku's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g4_select_row": {
+            "args": ["$CARD"],
+            "message": "Select a unit from the galaxy row to remove.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$ROW_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$ROW_CARD", "$GAME.cardById.{{$ROW_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$ROW_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$ROW_CARD.currentFace.type", "Unit"],
+                            ["LOG", "└── Selected card is not a unit."],
+                            ["TRUE"],
+                            [
+                                ["SET", "/cardById/{{$CARD.id}}/tokens/swapCardId", "$ROW_CARD_ID"],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["LOOK_AT", "$CARD.controller", "sharedExiled", -1, true],
+                                ["PROMPT", "$CARD.controller", "cw_g4_select_exile", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "cw_g4_select_exile": {
+            "args": ["$CARD"],
+            "message": "Select a non-starter card from your exile pile to put into the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$EXILE_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$EXILE_CARD", "$GAME.cardById.{{$EXILE_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$EXILE_CARD.groupId", "sharedExiled"],
+                            ["LOG", "└── Selected card is not in your exile pile."],
+                            ["EQUAL", "$EXILE_CARD.currentFace.isStarter", true],
+                            ["LOG", "└── Selected card is a starter card and cannot be used."],
+                            ["TRUE"],
+                            [
+                                ["VAR", "$ROW_CARD_ID", "$GAME.cardById.{{$CARD.id}}.tokens.swapCardId"],
+                                ["LOG", "└── Swapping exile card into the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$ROW_CARD_ID", "sharedGalaxyDiscard"],
+                                ["MOVE_CARD", "$EXILE_CARD_ID", "sharedGalaxyRow", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g9": {
+                "_comment": "Magnaguard",
+                "rules": {
+                    "uniqueUnitBonus": {
+                        "_comment": "While Magnaguard is in play, each of your unique units gains 1 attack (2 if Force is with you). Recalculate when Force changes.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById", "/trackerValue"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["COND",
+                                "$THIS.inPlay",
+                                [
+                                    ["VAR", "$FORCE_BONUS", 1],
+                                    ["COND",
+                                        ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                        ["UPDATE_VAR", "$FORCE_BONUS", 2]
+                                    ],
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                "$CARD.inPlay",
+                                                ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                                ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                                ["EQUAL", "$CARD.currentFace.unique", true]
+                                            ],
+                                            [
+                                                ["VAR", "$CURRENT_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.magnaguardBonus"],
+                                                ["COND",
+                                                    ["NOT_EQUAL", "$CURRENT_BONUS", "$FORCE_BONUS"],
+                                                    [
+                                                        ["VAR", "$BONUS_CHANGE", ["SUBTRACT", "$FORCE_BONUS", "$CURRENT_BONUS"]],
+                                                        ["INCREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", "$BONUS_CHANGE"],
+                                                        ["SET", "/cardById/{{$CARD_ID}}/tokens/magnaguardBonus", "$FORCE_BONUS"]
+                                                    ]
+                                                ]
+                                            ]
+                                        ]
+                                    ]]
+                                ],
+                                ["TRUE"],
+                                [
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                "$CARD.inPlay",
+                                                ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                                ["EQUAL", "$CARD.currentFace.unique", true]
+                                            ],
+                                            [
+                                                ["VAR", "$CURRENT_BONUS", "$GAME.cardById.{{$CARD_ID}}.tokens.magnaguardBonus"],
+                                                ["COND",
+                                                    ["GREATER_THAN", "$CURRENT_BONUS", 0],
+                                                    [
+                                                        ["DECREASE_VAL", "/cardById/{{$CARD_ID}}/tokens/attackModifier", "$CURRENT_BONUS"],
+                                                        ["SET", "/cardById/{{$CARD_ID}}/tokens/magnaguardBonus", 0]
+                                                    ]
+                                                ]
+                                            ]
+                                        ]
+                                    ]]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

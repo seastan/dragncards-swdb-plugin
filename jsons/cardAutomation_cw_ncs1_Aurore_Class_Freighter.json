@@ -1,0 +1,26 @@
+{
+    "automation": {
+        "cards": {
+            "cw_ncs1": {
+                "_comment": "Aurore-class Freighter",
+                "rules": {
+                    "defeatedTrigger": {
+                        "_comment": "When this card is defeated (moves to discard group), each player may exile 1 card from their hand or discard pile.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/$THIS_ID/groupId"],
+                        "condition": [
+                            "AND",
+                            ["EQUAL", "$THIS.groupId", "sharedGalaxyDiscard"],
+                            ["NOT_EQUAL", ["PREV", "$THIS.groupId"], "sharedGalaxyDiscard"]
+                        ],
+                        "then": [
+                            ["LOG", "└── Aurore-class Freighter was defeated. Each player may exile 1 card from their hand or discard pile."],
+                            ["PROMPT", "player1", "exileUpto1"],
+                            ["PROMPT", "player2", "exileUpto1"]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

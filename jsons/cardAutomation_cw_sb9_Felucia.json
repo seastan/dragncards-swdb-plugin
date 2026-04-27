@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb9": {
+                "_comment": "Felucia",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Felucia is in play (side B), each of your Droid units gains 1 forceModifier.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": ["TRUE"],
+                        "listenTo": [],
+                        "onDo": [
+                            ["LOG", "└── Felucia added 1 force to each of your Droid units."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Droid."]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/forceModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Felucia no longer adds 1 force to each of your Droid units."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Droid."]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/forceModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove forceModifier when Droid units enter/leave play.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Droid."]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Felucia added 1 force to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/forceModifier", 1]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Felucia no longer adds 1 force to {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/forceModifier", 1]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

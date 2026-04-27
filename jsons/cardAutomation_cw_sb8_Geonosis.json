@@ -1,0 +1,64 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb8": {
+                "_comment": "Geonosis",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Geonosis's ability: Spend resources equal to the cost of a Droid in your discard pile to add it to your hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "cw_sb8_droid", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Geonosis's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_sb8_droid": {
+            "args": ["$CARD"],
+            "message": "Select a Droid from your discard pile. You will spend resources equal to its cost to add it to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Droid."]],
+                            ["LOG", "└── Selected card is not a Droid."],
+                            ["LESS_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", "$TARGET_CARD.currentFace.cost"],
+                            ["LOG", "└── Not enough resources to purchase this Droid."],
+                            ["TRUE"],
+                            [
+                                ["VAR", "$CARD_COST", "$TARGET_CARD.currentFace.cost"],
+                                ["LOG", "└── Spent {{$CARD_COST}} resources to add {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["DECREASE_VAL", "/playerData/{{$CARD.controller}}/resources", "$CARD_COST"],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

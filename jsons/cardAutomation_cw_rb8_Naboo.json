@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb8": {
+                "_comment": "Naboo",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Naboo is in play (side B), each of your CapitalShips gains 2 hpModifier.",
+                        "type": "whileInPlay",
+                        "side": "B",
+                        "condition": ["TRUE"],
+                        "listenTo": ["/cardById/$THIS_ID/inPlay", "/cardById/$THIS_ID/currentSide"],
+                        "onDo": [
+                            ["LOG", "└── Naboo added 2 hit points to each of your capital ships."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["EQUAL", "$TARGET.currentFace.type", "CapitalShip"]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/hpModifier", 2]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Naboo no longer adds 2 hit points to each of your capital ships."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["EQUAL", "$TARGET.currentFace.type", "CapitalShip"]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/hpModifier", 2]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove hpModifier when CapitalShips enter/leave play.",
+                        "type": "whileInPlay",
+                        "side": "B",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["EQUAL", "$TARGET.currentFace.type", "CapitalShip"]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Naboo added 2 hit points to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/hpModifier", 2]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Naboo no longer adds 2 hit points to {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/hpModifier", 2]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

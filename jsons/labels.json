@@ -1,6 +1,7 @@
 
 {
     "labels": {
+        "hpModifierIcon": {"English": "Hit Point Modifier Icon"},
         "flip": {"English": "Flip"},
         "drawCard": {"English": "Draw Card"},
         "useAbility": {"English": "Use Ability"},

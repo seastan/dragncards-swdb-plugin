@@ -1,0 +1,32 @@
+{
+    "automation": {
+        "cards": {
+            "captured_gozanti_cruiser": {
+                "_comment": "Captured Gozanti Cruiser",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["EQUAL", "$GAME.trackerValue", 0],
+                                    [
+                                        ["LOG", "└── {{$ALIAS_N}} triggered Captured Gozanti Cruiser's ability: Force is neutral. Drawing 1 card."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Captured Gozanti Cruiser: The Force marker is not on the neutral space. No card drawn."]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Captured Gozanti Cruiser's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

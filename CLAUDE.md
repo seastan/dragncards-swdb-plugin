@@ -1,0 +1,1 @@
+This is a repository for a DragnCards plugin for the Staw Wars Deckbuilding Game by Fantasy Flight Games.

@@ -1,0 +1,74 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g20": {
+                "_comment": "Clone Commander Cody",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Clone Commander Cody's ability: Place a Trooper from discard on top of deck (or hand if Force is with you)."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "cw_g20_trooper", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Clone Commander Cody's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g20_trooper": {
+            "args": ["$CARD"],
+            "message": "Select a Trooper from your discard pile to place on top of your deck (or hand if the Force is with you).",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Trooper."]],
+                            [
+                                ["LOG", "└── Selected card is not a Trooper."],
+                                ["PROMPT", "$CARD.controller", "cw_g20_trooper", "$CARD"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$CARD.controller"],
+                                    [
+                                        ["LOG", "└── The Force is with you. Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                        ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Placed {{$TARGET_CARD.currentFace.name}} on top of your deck."],
+                                        ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck", 0]
+                                    ]
+                                ],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

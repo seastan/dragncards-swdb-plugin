@@ -1,5 +1,6 @@
 {
     "announcements": [
+        "2026-02-19: Fixed Fang Fighter galaxy row replacement, Duros Spy giving force, capital ships giving resources on start of turn, Kafrene triggering while not active, Alderaan/Mustafar giving force on reveal, Chirrut Imwe giving force when played, and Jabba's Sail Barge Bounty Hunter trait detection.",
         "2025-02-02: Players can no longer attack a base while the opponent still has capital ships in play.",
         "2025-02-02: Capital ships now reset their abilities at the end of each turn.",
         "2025-01-12: Fixed Quarren Mercenary and Fang Fighter's triggers.",

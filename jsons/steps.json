@@ -1,7 +1,13 @@
 {
     "steps": {
-        "1.0": {"phaseId": "empireTurn", "label": "Perform Actions"},
-        "2.0": {"phaseId": "rebelTurn", "label": "Perform Actions"}
+        "1.0": {
+            "phaseId": "player1Turn",
+            "label": "Perform Actions"
+        },
+        "2.0": {
+            "phaseId": "player2Turn",
+            "label": "Perform Actions"
+        }
     },
     "stepOrder": [
         "1.0",

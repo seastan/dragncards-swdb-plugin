@@ -1,0 +1,38 @@
+{
+    "automation": {
+        "cards": {
+            "tattooine": {
+                "_comment": "Tatooine (Mandalorian Base)",
+                "rules": {
+                    "neutralCardBonus": {
+                        "_comment": "When you play a neutral card for the first time each turn, draw 1 card.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["OR",
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player1"],
+                                    ["EQUAL", "$TARGET.groupId", "player1Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]]
+                                ],
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["EQUAL", "$TARGET.groupId", "player2Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player2Play"]]
+                                ]
+                            ],
+                            ["EQUAL", "$TARGET.sides.A.faction", "Neutral"],
+                            ["EQUAL", "$THIS.abilityUsedThisTurn", false]
+                        ],
+                        "then": [
+                            ["LOG", "└── {{$ALIAS_N}} played their first neutral card this turn, drawing 1 card from Tatooine's ability."],
+                            ["DRAW_CARD", 1, "$THIS.controller"],
+                            ["SET", "/cardById/$THIS_ID/abilityUsedThisTurn", true]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

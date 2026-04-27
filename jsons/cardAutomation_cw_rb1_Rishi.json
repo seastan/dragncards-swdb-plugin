@@ -1,0 +1,9 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb1": {
+                "_comment": "Rishi - Start the game with this base in play. No automation needed - handled by preBuiltDecks."
+            }
+        }
+    }
+}

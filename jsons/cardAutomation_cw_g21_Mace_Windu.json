@@ -1,0 +1,48 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g21": {
+                "_comment": "Mace Windu",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                        ["LOG", "└── Mace Windu's ability: Revealed {{$TOP_CARD.sides.A.name}} (cost: {{$TOP_CARD.sides.A.cost}})."],
+                                        ["COND",
+                                            ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                            [
+                                                ["VAR", "$COST", "$TOP_CARD.sides.A.cost"],
+                                                ["VAR", "$BONUS", "$COST"],
+                                                ["COND",
+                                                    ["GREATER_THAN", "$COST", 5],
+                                                    ["UPDATE_VAR", "$BONUS", 5]
+                                                ],
+                                                ["LOG", "└── The Force is with you. Mace Windu gains {{$BONUS}} attack."],
+                                                ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", "$BONUS"],
+                                                ["FADE_TEXT_CARD", "$THIS.id", "+{{$BONUS}} token:attackModifier"]
+                                            ],
+                                            ["TRUE"],
+                                            ["LOG", "└── The Force is not with you. No attack bonus."]
+                                        ]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Mace Windu's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

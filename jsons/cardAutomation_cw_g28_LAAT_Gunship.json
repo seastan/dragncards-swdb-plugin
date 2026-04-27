@@ -1,0 +1,62 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g28": {
+                "_comment": "LAAT Gunship",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                        ["LOG", "└── LAAT Gunship's ability: Revealed {{$TOP_CARD.sides.A.name}}."],
+                                        ["COND",
+                                            ["OR",
+                                                ["IN_STRING", "$TOP_CARD.sides.A.traits", "Jedi."],
+                                                ["IN_STRING", "$TOP_CARD.sides.A.traits", "Trooper."]
+                                            ],
+                                            [
+                                                ["LOG", "└── It is a Jedi or Trooper. Drawing 1 card."],
+                                                ["DRAW_CARD", 1, "$THIS.controller"]
+                                            ],
+                                            ["TRUE"],
+                                            [
+                                                ["LOG", "└── It is not a Jedi or Trooper."],
+                                                ["PROMPT", "$THIS.controller", "cw_g28_facedown", "$THIS", "$TOP_CARD"]
+                                            ]
+                                        ]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use LAAT Gunship's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g28_facedown": {
+            "args": ["$CARD", "$TOP_CARD"],
+            "message": "The revealed card is not a Jedi or Trooper. Turn it facedown.",
+            "options": [
+                {
+                    "label": "Turn facedown",
+                    "hotkey": "1",
+                    "code": [
+                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"]
+                    ]
+                }
+            ]
+        }
+    }
+}

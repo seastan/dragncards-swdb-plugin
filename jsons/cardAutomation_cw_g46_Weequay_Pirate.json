@@ -1,0 +1,42 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g46": {
+                "_comment": "Weequay Pirate",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_OTHER_NEUTRAL", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                            ["EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_OTHER_NEUTRAL", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_OTHER_NEUTRAL",
+                                    [
+                                        ["LOG", "└── Weequay Pirate's ability: Have another neutral card in play. Drew 1 card."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Weequay Pirate's ability: No other neutral card in play."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Weequay Pirate's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

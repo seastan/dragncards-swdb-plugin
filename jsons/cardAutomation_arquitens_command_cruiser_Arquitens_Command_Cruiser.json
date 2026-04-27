@@ -1,0 +1,77 @@
+{
+    "automation": {
+        "cards": {
+            "arquitens_command_cruiser": {
+                "_comment": "Arquitens Command Cruiser",
+                "rules": {
+                    "passiveRule": {
+                        "_comment": "While Arquitens Command Cruiser is in play, each of your Trooper units gains 1 attack.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": ["TRUE"],
+                        "listenTo": [],
+                        "onDo": [
+                            ["LOG", "└── Arquitens Command Cruiser added 1 attack to each Trooper unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                                    ],
+                                    [
+                                        ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── Arquitens Command Cruiser no longer adds 1 attack to each Trooper unit."],
+                            ["FOR_EACH_KEY_VAL", "$TARGET_ID", "$TARGET", "$GAME.cardById", [
+                                ["COND",
+                                    ["AND",
+                                        "$TARGET.inPlay",
+                                        ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                                    ],
+                                    [
+                                        ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                                    ]
+                                ]
+                            ]]
+                        ]
+                    },
+                    "targetChangeRule": {
+                        "_comment": "Add/remove attack when Trooper units enter/leave play.",
+                        "type": "whileInPlay",
+                        "side": "A",
+                        "condition": [
+                            "AND",
+                            "$TARGET.inPlay",
+                            ["EQUAL", "$TARGET.controller", "$THIS.controller"],
+                            ["NOT_EQUAL", "$THIS_ID", "$TARGET_ID"],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                        ],
+                        "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
+                        "onDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Arquitens Command Cruiser added 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ],
+                        "offDo": [
+                            "COND",
+                            ["AND", "$THIS.inPlay"],
+                            [
+                                ["LOG", "└── Arquitens Command Cruiser no longer adds 1 attack to {{$TARGET.currentFace.name}}."],
+                                ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

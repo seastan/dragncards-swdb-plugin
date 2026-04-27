@@ -1,0 +1,46 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g30": {
+                "_comment": "Arc Trooper",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_JEDI_OR_TROOPER", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                            ["OR",
+                                                ["IN_STRING", "$CARD.currentFace.traits", "Jedi."],
+                                                ["IN_STRING", "$CARD.currentFace.traits", "Trooper."]
+                                            ]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_JEDI_OR_TROOPER", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_JEDI_OR_TROOPER",
+                                    [
+                                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$THIS.controller"]],
+                                        ["LOG", "└── Arc Trooper's ability: Have a Jedi or Trooper in play. Deal 2 damage to opponent's base."],
+                                        ["DAMAGE_BASE", "$OPPONENT", 2]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Arc Trooper's ability: No Jedi or Trooper in play."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Arc Trooper's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

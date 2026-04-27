@@ -1,0 +1,50 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g33": {
+                "_comment": "Embo",
+                "rules": {
+                    "neutralAttackBonus": {
+                        "_comment": "Embo gains 1 attack for each other neutral card you have in play (max +6).",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["COND",
+                                "$THIS.inPlay",
+                                [
+                                    ["VAR", "$NEUTRAL_COUNT", 0],
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                                ["EQUAL", "$CARD.inPlay", true],
+                                                ["NOT_EQUAL", "$CARD.id", "$THIS.id"],
+                                                ["EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                                            ],
+                                            ["INCREASE_VAR", "$NEUTRAL_COUNT", 1]
+                                        ]
+                                    ]],
+                                    ["VAR", "$BONUS", "$NEUTRAL_COUNT"],
+                                    ["COND",
+                                        ["GREATER_THAN", "$NEUTRAL_COUNT", 6],
+                                        ["UPDATE_VAR", "$BONUS", 6]
+                                    ],
+                                    ["VAR", "$CURRENT_BONUS", "$GAME.cardById.$THIS.id.tokens.emboBonus"],
+                                    ["COND",
+                                        ["NOT_EQUAL", "$CURRENT_BONUS", "$BONUS"],
+                                        [
+                                            ["VAR", "$BONUS_CHANGE", ["SUBTRACT", "$BONUS", "$CURRENT_BONUS"]],
+                                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", "$BONUS_CHANGE"],
+                                            ["SET", "/cardById/$THIS.id/tokens/emboBonus", "$BONUS"]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

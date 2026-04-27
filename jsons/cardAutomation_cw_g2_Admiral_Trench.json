@@ -1,0 +1,44 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g2": {
+                "_comment": "Admiral Trench",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_CAPITAL_SHIP", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["EQUAL", "$CARD.currentFace.type", "CapitalShip"]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_CAPITAL_SHIP", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_CAPITAL_SHIP",
+                                    [
+                                        ["LOG", "└── Admiral Trench's ability: Had a capital ship in play, drew 2 cards."],
+                                        ["DRAW_CARD", 2, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Admiral Trench's ability: No capital ship in play, drew 1 card."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Admiral Trench's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

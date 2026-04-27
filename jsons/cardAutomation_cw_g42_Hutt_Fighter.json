@@ -1,0 +1,31 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g42": {
+                "_comment": "Hutt Fighter",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["GREATER_THAN", "$GAME.playerData.{{$THIS.controller}}.resources", 1],
+                                    [
+                                        ["LOG", "└── Hutt Fighter's ability: Spend 2 resources to gain 2 force."],
+                                        ["DECREASE_VAL", "/playerData/{{$THIS.controller}}/resources", 2],
+                                        ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Hutt Fighter's ability: Not enough resources (need 2)."]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Hutt Fighter's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

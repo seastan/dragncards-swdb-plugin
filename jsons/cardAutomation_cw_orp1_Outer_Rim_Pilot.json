@@ -1,0 +1,24 @@
+{
+    "automation": {
+        "cards": {
+            "cw_orp1": {
+                "_comment": "Outer Rim Pilot (Clone Wars)",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Exile this unit to gain 1 resource."],
+                                ["SET", "/cardById/$THIS.id/rotation", -20],
+                                ["EXILE_CARD", "$THIS"],
+                                ["GAIN_N_RESOURCES", "$THIS.controller", 1]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Outer Rim Pilot's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

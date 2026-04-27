@@ -12,14 +12,14 @@
                                     ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
                                     [
                                         ["VAR", "$TOP_CARD", "$GAME.groupById.sharedGalaxyDeck.parentCards.[0]"],
-                                        ["LOG", "{{$ALIAS_N}} triggered Tie Interceptor's ability: Revealed {{$TOP_CARD.currentFace.name}}."],
+                                        ["LOG", "{{$ALIAS_N}} triggered Tie Interceptor's ability: Revealed {{$TOP_CARD.sides.A.name}}."],
                                         ["COND",
-                                            ["EQUAL", "$TOP_CARD.currentFace.faction", "Empire"],
+                                            ["EQUAL", "$TOP_CARD.sides.A.faction", "Empire"],
                                             [
                                                 ["LOG", "└── It is an Empire card, drew 1 card."],
                                                 ["DRAW_CARD", 1, "$THIS.controller"]
                                             ],
-                                            ["EQUAL", "$TOP_CARD.currentFace.faction", "Rebel"],
+                                            ["EQUAL", "$TOP_CARD.sides.A.faction", "Rebel"],
                                             [
                                                 ["LOG", "└── It is an enemy card, discarding it."],
                                                 ["MOVE_CARD", "$TOP_CARD.id", "sharedGalaxyDiscard", 0]

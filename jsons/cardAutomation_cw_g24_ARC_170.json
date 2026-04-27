@@ -1,0 +1,61 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g24": {
+                "_comment": "ARC-170",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                        ["LOG", "└── ARC-170's ability: Revealed {{$TOP_CARD.sides.A.name}} from top of deck."],
+                                        ["COND",
+                                            ["OR",
+                                                ["IN_STRING", "$TOP_CARD.sides.A.traits", "Fighter."],
+                                                ["IN_STRING", "$TOP_CARD.sides.A.traits", "Trooper."]
+                                            ],
+                                            [
+                                                ["LOG", "└── It is a Fighter or Trooper. ARC-170 gains 2 attack."],
+                                                ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 2],
+                                                ["FADE_TEXT_CARD", "$THIS.id", "+2 token:attackModifier"]
+                                            ],
+                                            ["TRUE"],
+                                            ["LOG", "└── It is not a Fighter or Trooper. No attack bonus."]
+                                        ],
+                                        ["PROMPT", "$THIS.controller", "cw_g24_facedown", "$THIS", "$TOP_CARD"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use ARC-170's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g24_facedown": {
+            "args": ["$CARD", "$TOP_CARD"],
+            "message": "Turn the revealed card facedown.",
+            "options": [
+                {
+                    "label": "Turn facedown",
+                    "hotkey": "1",
+                    "code": [
+                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"]
+                    ]
+                }
+            ]
+        }
+    }
+}

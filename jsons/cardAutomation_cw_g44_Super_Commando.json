@@ -1,0 +1,18 @@
+{
+    "functions": {
+        "TRIGGER_SUPER_COMMANDO": {
+            "args": ["$CARD"],
+            "code": [
+                ["LOG", "└── Super Commando's ability triggered: Add to hand."],
+                ["MOVE_FROM_GALAXY_ROW", "$CARD.id", "{{$PLAYER_N}}Hand"],
+                ["COND",
+                    ["IS_FORCE_WITH_YOU", "$PLAYER_N"],
+                    [
+                        ["LOG", "└── The Force is with you: You may exile 1 card."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ]
+                ]
+            ]
+        }
+    }
+}

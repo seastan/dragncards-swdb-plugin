@@ -1,0 +1,99 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g12": {
+                "_comment": "Tri-Fighter",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Tri-Fighter's ability: Exile a Separatist card from the galaxy row."],
+                                ["PROMPT", "$THIS.controller", "cw_g12_exile", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Tri-Fighter's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g12_exile": {
+            "args": ["$CARD"],
+            "message": "Select a Separatist card from the galaxy row to exile. If you do, you may deal 3 damage to a capital ship your opponent has in play.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Separatist"],
+                            ["LOG", "└── Selected card is not a Separatist card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Exiled {{$TARGET_CARD.currentFace.name}}."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedExiled"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20],
+                                ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                                ["LOOK_AT", "$CARD.controller", "{{$OPPONENT}}Play", -1, true],
+                                ["PROMPT", "$CARD.controller", "cw_g12_damage", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "cw_g12_damage": {
+            "args": ["$CARD"],
+            "message": "Select a capital ship your opponent has in play to deal 3 damage to.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                            ["LOG", "└── Selected card is not your opponent's."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── Selected card is not a capital ship."],
+                            ["NOT_EQUAL", "$TARGET_CARD.inPlay", true],
+                            ["LOG", "└── Selected card is not in play."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Dealt 3 damage to {{$TARGET_CARD.currentFace.name}}."],
+                                ["INCREASE_VAL", "/cardById/{{$TARGET_CARD.id}}/tokens/damage", 3],
+                                ["FADE_TEXT_CARD", "$TARGET_CARD.id", "+3 token:damage"],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

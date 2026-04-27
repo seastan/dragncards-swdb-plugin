@@ -1,0 +1,58 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb10": {
+                "_comment": "Dac",
+                "rules": {
+                    "revealedPurchase": {
+                        "_comment": "When you reveal Dac, purchase a Separatist or neutral card from the galaxy row for free and add it to your hand.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Dac's ability: Purchase a Separatist or neutral card for free."],
+                            ["PROMPT", "$THIS.controller", "cw_sb10_purchase", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_sb10_purchase": {
+            "args": ["$CARD"],
+            "message": "Choose a Separatist or neutral card from the galaxy row to purchase for free.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["AND",
+                                ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Separatist"],
+                                ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            ["LOG", "└── Selected card is not Separatist or Neutral faction."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Purchased {{$TARGET_CARD.currentFace.name}} for free."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD.id", "{{$CARD.controller}}Hand"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Purchase (select a card)"
+                },
+                {
+                    "label": "Skip"
+                }
+            ]
+        }
+    }
+}

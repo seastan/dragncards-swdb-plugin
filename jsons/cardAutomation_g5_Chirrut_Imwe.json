@@ -4,6 +4,21 @@
             "g5": {
                 "_comment": "Chirrut Imwe",
                 "rules": {
+                    "whenPlayed": {
+                        "_comment": "When played, gain force instead of resources.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Chirrut Imwe's ability: Gain force."],
+                            ["COND",
+                                ["GREATER_THAN", "$THIS.currentFace.resources", 0],
+                                [
+                                    ["DECREASE_VAL", "/playerData/{{$THIS.controller}}/resources", "$THIS.currentFace.resources"]
+                                ]
+                            ],
+                            ["GAIN_N_FORCE", "$THIS.controller", 1]
+                        ]
+                    },
                     "forceAttackBonus": {
                         "_comment": "While the Force is with you, this unit gains 2 attack.",
                         "type": "passive",

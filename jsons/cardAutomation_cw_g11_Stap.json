@@ -1,0 +1,49 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g11": {
+                "_comment": "Stap",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$SEPARATIST_COUNT", 0],
+                                ["VAR", "$ENEMY_COUNT", 0],
+                                ["VAR", "$MY_FACTION", ["GET_FACTION", "$THIS.controller"]],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"],
+                                        [
+                                            ["COND",
+                                                ["EQUAL", "$CARD.currentFace.faction", "Separatist"],
+                                                ["INCREASE_VAR", "$SEPARATIST_COUNT", 1],
+                                                ["AND",
+                                                    ["NOT_EQUAL", "$CARD.currentFace.faction", "Separatist"],
+                                                    ["NOT_EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                                                ],
+                                                ["INCREASE_VAR", "$ENEMY_COUNT", 1]
+                                            ]
+                                        ]
+                                    ]
+                                ]],
+                                ["COND",
+                                    ["GREATER_THAN", "$ENEMY_COUNT", "$SEPARATIST_COUNT"],
+                                    [
+                                        ["LOG", "└── More enemy cards than Separatist cards in the galaxy row. Gained 1 force."],
+                                        ["GAIN_N_FORCE", "$THIS.controller", 1]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Not more enemy cards than Separatist cards in the galaxy row."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Stap's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

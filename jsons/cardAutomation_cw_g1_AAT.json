@@ -1,0 +1,59 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g1": {
+                "_comment": "AAT",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered AAT's ability: Exile a Separatist card from the galaxy row to gain 2 resources."],
+                                ["PROMPT", "$THIS.controller", "cw_g1_exile", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use AAT's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g1_exile": {
+            "args": ["$CARD"],
+            "message": "Select a Separatist card from the galaxy row to exile. If you do, gain 2 resources.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Separatist"],
+                            ["LOG", "└── Selected card is not a Separatist card."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Exiled {{$TARGET_CARD.currentFace.name}} and gained 2 resources."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedExiled"],
+                                ["GAIN_N_RESOURCES", "$CARD.controller", 2],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

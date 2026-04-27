@@ -1,0 +1,22 @@
+{
+    "automation": {
+        "cards": {
+            "trask": {
+                "_comment": "Trask",
+                "rules": {
+                    "revealedEffect": {
+                        "_comment": "When you reveal Trask, choose a capital ship in the galaxy row. You can use your units to attack that ship. If you destroy it, purchase it for free.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Trask: Choose a capital ship in the galaxy row. You can use your units to attack it this turn. If you destroy it, you may purchase it for free and add it to your hand."],
+                            ["SET", "/playerData/{{$THIS.controller}}/bountyHuntCapitalShips", true],
+                            ["SET", "/playerData/{{$THIS.controller}}/bountyHuntPurchaseOnDestroy", true],
+                            ["SET", "/playerData/{{$THIS.controller}}/bountyHuntUsingCost", true]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

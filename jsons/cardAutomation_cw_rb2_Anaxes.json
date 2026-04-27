@@ -1,0 +1,63 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb2": {
+                "_comment": "Anaxes",
+                "rules": {
+                    "revealedPurchase": {
+                        "_comment": "When you reveal Anaxes, purchase a Republic or neutral card from the galaxy row for free and add it to your hand.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Anaxes's ability: Purchase a Republic or neutral card for free."],
+                            ["PROMPT", "$THIS.controller", "cw_rb2_purchase", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rb2_purchase": {
+            "args": ["$CARD"],
+            "message": "Choose a Republic or neutral card from the galaxy row to purchase for free.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            [
+                                ["LOG", "└── Selected card is not in the galaxy row."],
+                                ["PROMPT", "$CARD.controller", "cw_rb2_purchase", "$CARD"]
+                            ],
+                            ["AND",
+                                ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Republic"],
+                                ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            [
+                                ["LOG", "└── Selected card is not Republic or Neutral faction."],
+                                ["PROMPT", "$CARD.controller", "cw_rb2_purchase", "$CARD"]
+                            ],
+                            [
+                                ["LOG", "└── Purchased {{$TARGET_CARD.currentFace.name}} for free."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD.id", "{{$CARD.controller}}Hand"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Purchase (select a card)"
+                },
+                {
+                    "label": "Skip"
+                }
+            ]
+        }
+    }
+}

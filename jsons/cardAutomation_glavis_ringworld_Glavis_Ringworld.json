@@ -1,0 +1,34 @@
+{
+    "automation": {
+        "cards": {
+            "glavis_ringworld": {
+                "_comment": "Glavis Ringworld",
+                "rules": {
+                    "revealedEffect": {
+                        "_comment": "When you reveal Glavis Ringworld (enter play side B), set the Glavis discount available flag.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Glavis Ringworld: You may spend 1 fewer resource on the first Mandalorian card you purchase this turn."],
+                            ["SET", "/playerData/{{$THIS.controller}}/glavisDiscountAvailable", true]
+                        ]
+                    },
+                    "turnStartTrigger": {
+                        "_comment": "At the start of your turn, reset the Glavis discount flag so it is available each turn.",
+                        "type": "trigger",
+                        "listenTo": ["/currentPlayer"],
+                        "condition": [
+                            "AND",
+                            ["EQUAL", "$GAME.currentPlayer", "$THIS.controller"],
+                            ["EQUAL", "$THIS.currentSide", "B"]
+                        ],
+                        "then": [
+                            ["LOG", "└── Glavis Ringworld: Discount available for your first Mandalorian purchase this turn."],
+                            ["SET", "/playerData/{{$THIS.controller}}/glavisDiscountAvailable", true]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

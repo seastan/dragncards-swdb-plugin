@@ -1,0 +1,78 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g16": {
+                "_comment": "Ahsoka Tano",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                            ["COND",
+                                ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                [
+                                    ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                    ["LOG", "└── Ahsoka Tano's ability: Revealed {{$TOP_CARD.sides.A.name}} from top of deck."],
+                                    ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                    ["COND",
+                                        ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                        [
+                                            ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                            ["PROMPT", "$THIS.controller", "cw_g16_swap", "$THIS", "$TOP_CARD"]
+                                        ],
+                                        ["TRUE"],
+                                        ["LOG", "└── The Force is not with you. Card stays on top of deck."]
+                                    ]
+                                ],
+                                ["TRUE"],
+                                ["LOG", "└── No cards in your deck."]
+                            ],
+                            ["SET", "/cardById/$THIS.id/rotation", -20],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Ahsoka Tano's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g16_swap": {
+            "args": ["$ABILITY_CARD", "$TOP_CARD"],
+            "message": "The Force is with you. Select a card from your discard pile to swap with the top card of your deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$DISCARD_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$DISCARD_CARD", "$GAME.cardById.{{$DISCARD_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$DISCARD_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            [
+                                ["LOG", "└── Selected card is not in your discard pile."],
+                                ["PROMPT", "$CARD.controller", "cw_g16_swap", "$CARD", "$TOP_CARD"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Swapped {{$DISCARD_CARD.sides.A.name}} with {{$TOP_CARD.sides.A.name}}."],
+                                ["MOVE_CARD", "$TOP_CARD.id", "{{$CARD.controller}}Discard", 0],
+                                ["MOVE_CARD", "$DISCARD_CARD_ID", "{{$CARD.controller}}Deck", 0],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Keep top card",
+                    "code": [
+                        ["LOG", "└── Kept the top card of the deck."],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

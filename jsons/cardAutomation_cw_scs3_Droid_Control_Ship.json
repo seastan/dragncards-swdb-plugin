@@ -1,0 +1,59 @@
+{
+    "automation": {
+        "cards": {
+            "cw_scs3": {
+                "_comment": "Droid Control Ship",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Droid Control Ship's ability: Purchase a Droid from your exile pile."],
+                                ["LOOK_AT", "$THIS.controller", "sharedExiled", -1, true],
+                                ["PROMPT", "$THIS.controller", "cw_scs3_purchase", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Droid Control Ship's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_scs3_purchase": {
+            "args": ["$CARD"],
+            "message": "Select a Droid from your exile pile to purchase as if it were in the galaxy row.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedExiled"],
+                            ["LOG", "└── Selected card is not in your exile pile."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Droid."]],
+                            ["LOG", "└── Selected card is not a Droid."],
+                            ["TRUE"],
+                            [
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["BUY_CARD", "$TARGET_CARD"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

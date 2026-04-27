@@ -1,0 +1,54 @@
+{
+    "automation": {
+        "cards": {
+            "child_of_the_watch": {
+                "_comment": "Child of the Watch",
+                "rules": {
+                    "entersPlayChoice": {
+                        "_comment": "When you play Child of the Watch, choose: They gain 1 attack, 1 resource, or 1 force this turn.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Child of the Watch's ability: Choose a bonus."],
+                            ["PROMPT", "$PLAYER_N", "child_of_the_watch", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "child_of_the_watch": {
+            "args": ["$CARD"],
+            "message": "Choose to have Child of the Watch gain 1 attack, 1 resource, or 1 force.",
+            "options": [
+                {
+                    "label": "Gain 1 Attack",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Added 1 attack until the end of the round."],
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1],
+                        ["FADE_TEXT_CARD", "$CARD.id", "+1 token:attackModifier"]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Resource",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Gained 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+1 token:resource"]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Force",
+                    "hotkey": "3",
+                    "code": [
+                        ["LOG", "└── Gained 1 force."],
+                        ["GAIN_N_FORCE", "$CARD.controller", 1]
+                    ]
+                }
+            ]
+        }
+    }
+}

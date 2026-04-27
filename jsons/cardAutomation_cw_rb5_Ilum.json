@@ -1,0 +1,20 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb5": {
+                "_comment": "Ilum",
+                "rules": {
+                    "revealedGainForce": {
+                        "_comment": "When you reveal Ilum, gain 4 force.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Ilum's ability: Gain 4 force."],
+                            ["GAIN_N_FORCE", "$THIS.controller", 4]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "foundling": {
+                "_comment": "Foundling",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Foundling's ability: Exile this unit to add next Bounty Hunter or Trooper purchased to your hand."],
+                                ["EXILE_CARD", "$THIS"],
+                                ["SET", "/playerData/{{$THIS.controller}}/nextBountyHunterOrTrooperPurchaseToHand", true]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Foundling's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

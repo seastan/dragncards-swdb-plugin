@@ -1,0 +1,84 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g43": {
+                "_comment": "Protocol Droid",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Protocol Droid's ability: Exile this card. Discard from the galaxy deck until a faction card is on top, then swap it with a card in the galaxy row."],
+                                ["EXILE_CARD", "$THIS"],
+                                ["VAR", "$PLAYER_FACTION", ["GET_FACTION", "$THIS.controller"]],
+                                ["VAR", "$FOUND_FACTION", false],
+                                ["FOR_EACH_KEY_VAL", "$ITER_IDX", "$ITER_CARD", "$GAME.groupById.sharedGalaxyDeck.parentCards", [
+                                    ["COND",
+                                        ["EQUAL", "$FOUND_FACTION", false],
+                                        [
+                                            ["COND",
+                                                ["EQUAL", "$ITER_CARD.currentFace.faction", "$PLAYER_FACTION"],
+                                                ["UPDATE_VAR", "$FOUND_FACTION", true],
+                                                ["TRUE"],
+                                                [
+                                                    ["LOG", "└── Protocol Droid: Discarding {{$ITER_CARD.currentFace.name}} (not of your faction)."],
+                                                    ["MOVE_CARD", "$ITER_CARD.id", "sharedGalaxyDiscard", 0]
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$FOUND_FACTION",
+                                    [
+                                        ["LOOK_AT", "$THIS.controller", "sharedGalaxyDeck", 1, true],
+                                        ["PROMPT", "$THIS.controller", "protocolDroid_chooseGalaxyRowCard", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Protocol Droid: No {{$PLAYER_FACTION}} card found in the galaxy deck."]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Protocol Droid's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "protocolDroid_chooseGalaxyRowCard": {
+            "args": ["$CARD"],
+            "message": "Protocol Droid: Select a card in the galaxy row to replace with the faction card on top of the galaxy deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            ["LOG", "└── Selected card is not in the galaxy row."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Protocol Droid: {{$TARGET_CARD.currentFace.name}} replaced by faction card from galaxy deck."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_ID", "sharedGalaxyDiscard"],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["LOG", "└── Protocol Droid: Swap cancelled."],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

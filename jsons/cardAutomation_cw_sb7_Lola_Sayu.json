@@ -1,0 +1,97 @@
+{
+    "automation": {
+        "cards": {
+            "cw_sb7": {
+                "_comment": "Lola Sayu",
+                "rules": {
+                    "revealedEffect": {
+                        "_comment": "When you reveal Lola Sayu, place 1 card from your opponent's discard pile facedown under this base.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Lola Sayu's ability: Place 1 card from the opponent's discard pile under this base."],
+                            ["COND",
+                                ["EQUAL", "$THIS.controller", "player1"],
+                                [
+                                    ["PROMPT", "player2", "lolaSayu_placeUnderBase", "$THIS"]
+                                ],
+                                ["TRUE"],
+                                [
+                                    ["PROMPT", "player1", "lolaSayu_placeUnderBase", "$THIS"]
+                                ]
+                            ]
+                        ]
+                    },
+                    "destroyedTrigger": {
+                        "_comment": "When this base is destroyed, return the card under it to the opponent's discard pile.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/$THIS_ID/groupId"],
+                        "condition": [
+                            "AND",
+                            ["EQUAL", "$THIS.groupId", "$THIS.discardGroupId"],
+                            ["NOT_EQUAL", ["PREV", "$THIS.groupId"], "$THIS.discardGroupId"]
+                        ],
+                        "then": [
+                            ["COND",
+                                ["DEFINED", "/cardById/$THIS_ID/tokens/cardUnderBase"],
+                                [
+                                    ["VAR", "$STORED_CARD_ID", "$THIS.tokens.cardUnderBase"],
+                                    ["COND",
+                                        ["DEFINED", "/cardById/$STORED_CARD_ID"],
+                                        [
+                                            ["LOG", "└── Lola Sayu was destroyed. Returning the card under the base to the opponent's discard pile."],
+                                            ["COND",
+                                                ["EQUAL", "$THIS.controller", "player1"],
+                                                [
+                                                    ["MOVE_CARD", "$STORED_CARD_ID", "player2Discard", 0]
+                                                ],
+                                                ["TRUE"],
+                                                [
+                                                    ["MOVE_CARD", "$STORED_CARD_ID", "player1Discard", 0]
+                                                ]
+                                            ],
+                                            ["SET", "/cardById/$THIS_ID/tokens/cardUnderBase", null]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "lolaSayu_placeUnderBase": {
+            "args": ["$BASE_CARD"],
+            "message": "Lola Sayu: Select 1 card from your discard pile to place under the opponent's base.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$CHOSEN_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$CHOSEN_CARD", "$GAME.cardById.{{$CHOSEN_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$CHOSEN_CARD.groupId", "{{$PLAYER_N}}Discard"],
+                            [
+                                ["LOG", "└── Selected card is not in your discard pile."]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} placed {{$CHOSEN_CARD.sides.A.name}} under Lola Sayu."],
+                                ["MOVE_CARD", "$CHOSEN_ID", "sharedSetAside", 0],
+                                ["SET", "/cardById/$BASE_CARD.id/tokens/cardUnderBase", "$CHOSEN_ID"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g23": {
+                "_comment": "Padmé Amidala",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$BASE_CARD", ["GET_BASE", "$THIS.controller"]],
+                                ["COND",
+                                    ["EQUAL", "$BASE_CARD.sides.A.name", "Naboo"],
+                                    [
+                                        ["LOG", "└── Padmé Amidala's ability: Base is Naboo, drew 2 cards."],
+                                        ["DRAW_CARD", 2, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Padmé Amidala's ability: Drew 1 card."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Padmé Amidala's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

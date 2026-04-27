@@ -2,7 +2,8 @@
     "hotkeys": {
         "token": [
             {"key": "1", "tokenType": "damage", "label": "id:damageIcon"},
-            {"key": "2", "tokenType": "attackModifier", "label": "id:attackModifierIcon"}
+            {"key": "2", "tokenType": "attackModifier", "label": "id:attackModifierIcon"},
+            {"key": "3", "tokenType": "hpModifier", "label": "id:hpModifierIcon"}
         ],
         "game": [
             {"key": "D", "actionList": "drawCard", "label": "id:drawCard"},

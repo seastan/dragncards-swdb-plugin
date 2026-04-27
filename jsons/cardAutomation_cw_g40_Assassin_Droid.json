@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g40": {
+                "_comment": "Assassin Droid",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} activated Assassin Droid's ability. Your next bounty hunt targets a neutral unit using its cost as the target value."],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntUsingCost", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Assassin Droid's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

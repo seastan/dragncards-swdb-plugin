@@ -1,0 +1,85 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g27": {
+                "_comment": "Delta-7B",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                        ["LOG", "└── Delta-7B's ability: Revealed {{$TOP_CARD.sides.A.name}}."],
+                                        ["PROMPT", "$THIS.controller", "cw_g27_choice", "$THIS", "$TOP_CARD"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Delta-7B's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g27_choice": {
+            "args": ["$CARD", "$TOP_CARD"],
+            "message": "You revealed the top card of your deck. If it is a Jedi, you may draw it. If it is not, you may discard it.",
+            "options": [
+                {
+                    "label": "Draw it (Jedi only)",
+                    "hotkey": "1",
+                    "code": [
+                        ["COND",
+                            ["IN_STRING", "$TOP_CARD.sides.A.traits", "Jedi."],
+                            [
+                                ["LOG", "└── Drew {{$TOP_CARD.sides.A.name}} (Jedi)."],
+                                ["DRAW_CARD", 1, "$CARD.controller"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Card is not a Jedi, cannot draw it."],
+                                ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"]
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "label": "Discard it (non-Jedi only)",
+                    "hotkey": "2",
+                    "code": [
+                        ["COND",
+                            ["NOT", ["IN_STRING", "$TOP_CARD.sides.A.traits", "Jedi."]],
+                            [
+                                ["LOG", "└── Discarded {{$TOP_CARD.sides.A.name}} (not a Jedi)."],
+                                ["DISCARD_CARD", "$TOP_CARD"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Card is a Jedi, cannot discard it here."],
+                                ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"]
+                            ]
+                        ]
+                    ]
+                },
+                {
+                    "label": "Leave on top",
+                    "hotkey": "3",
+                    "code": [
+                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "B"],
+                        ["LOG", "└── Left card on top of deck."]
+                    ]
+                }
+            ]
+        }
+    }
+}

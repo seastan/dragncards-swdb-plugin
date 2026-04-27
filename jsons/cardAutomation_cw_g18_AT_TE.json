@@ -1,0 +1,60 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g18": {
+                "_comment": "AT-TE",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered AT-TE's ability: Place another unit you have in play on top of your deck."],
+                                ["PROMPT", "$THIS.controller", "cw_g18_return", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use AT-TE's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g18_return": {
+            "args": ["$CARD"],
+            "message": "Select another unit you have in play to place on top of your deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["EQUAL", "$TARGET_CARD.id", "$CARD.id"],
+                            ["LOG", "└── Cannot select AT-TE itself."],
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$CARD.controller"],
+                            ["LOG", "└── Selected card is not yours."],
+                            ["NOT_EQUAL", "$TARGET_CARD.inPlay", true],
+                            ["LOG", "└── Selected card is not in play."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Placed {{$TARGET_CARD.currentFace.name}} on top of your deck."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck", 0],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

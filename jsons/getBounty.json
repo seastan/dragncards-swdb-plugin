@@ -197,6 +197,277 @@
                         ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
                         ["GAIN_N_FORCE", "$PLAYER_N", 3]
                     ],
+                    ["EQUAL", "$NAME", "AAT"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile up to 2 cards from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Admiral Trench"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 2 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Asajj Ventress"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may purchase a card of their faction from the galaxy row for free."],
+                        ["LOOK_AT", "$PLAYER_N", "sharedGalaxyRow", -1, true],
+                        ["PROMPT", "$PLAYER_N", "millennium_falcon_bounty", "$PLAYER_N"]
+                    ],
+                    ["EQUAL", "$NAME", "Count Dooku"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 resources and 4 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 4]
+                    ],
+                    ["EQUAL", "$NAME", "General Grievous"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 2 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Nute Gunray"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 1 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Wat Tambor"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Droideka"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Magnaguard"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "MTT"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Stap"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Tri-Fighter"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "B2 Battle Droid"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+1 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Vulture Droid"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Aayla Secura"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Ahsoka Tano"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Anakin Skywalker"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 2 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "AT-TE"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may purchase a card of their faction from the galaxy row for free."],
+                        ["LOOK_AT", "$PLAYER_N", "sharedGalaxyRow", -1, true],
+                        ["PROMPT", "$PLAYER_N", "millennium_falcon_bounty", "$PLAYER_N"]
+                    ],
+                    ["EQUAL", "$NAME", "Captain Rex"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Clone Commander Cody"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Mace Windu"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 force and 4 resources."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 4],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Obi-Wan Kenobi"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 3 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Padmé Amidala"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force and 2 resources."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 2],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+2 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "ARC-170"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile up to 2 cards from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "AT-RT"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Barc Trooper"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Delta-7B"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "LAAT Gunship"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "V-19 Torrent"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+1 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Arc Trooper"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Axe Woves"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Balutar Swoop Rider"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Bo-Katan"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 resources and 4 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 4]
+                    ],
+                    ["EQUAL", "$NAME", "Clan Kryze Commando"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile 1 card from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Din's Starfighter"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 3 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Foundling"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+1 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Gauntlet Dropship"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may exile up to 2 cards from hand or discard pile."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Grogu"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 2 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Koska Reeves"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Mandalorian Hijacker"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "Mandalorian Hunter"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 2 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
+                    ["EQUAL", "$NAME", "Paz Vizsla"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 1 force."],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 1]
+                    ],
+                    ["EQUAL", "$NAME", "Protectorate Fighter"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 4 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 4],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+4 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "Razor Crest"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} may purchase a card of their faction from the galaxy row for free."],
+                        ["LOOK_AT", "$PLAYER_N", "sharedGalaxyRow", -1, true],
+                        ["PROMPT", "$PLAYER_N", "millennium_falcon_bounty", "$PLAYER_N"]
+                    ],
+                    ["EQUAL", "$NAME", "Survivor Langskib"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"]
+                    ],
+                    ["EQUAL", "$NAME", "The Armorer"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 3 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 3]
+                    ],
+                    ["EQUAL", "$NAME", "The Mandalorian"],
+                    [
+                        ["LOG", "└── Reward: {{$ALIAS_N}} gained 3 resources and 2 force."],
+                        ["INCREASE_VAL", "/playerData/{{$PLAYER_N}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$PLAYER_N", "+3 token:resource"],
+                        ["GAIN_N_FORCE", "$PLAYER_N", 2]
+                    ],
                     ["TRUE"],
                     ["LOG", "└── This card either has no reward or it has not been implemented yet."]
                 ]

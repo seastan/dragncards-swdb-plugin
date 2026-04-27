@@ -1,0 +1,54 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rs3": {
+                "_comment": "Jedi Knight",
+                "rules": {
+                    "entersPlayChoice": {
+                        "_comment": "When you play Jedi Knight, choose: They gain 1 attack, 1 resource, or 1 force this turn.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Jedi Knight's ability: Choose a bonus."],
+                            ["PROMPT", "$PLAYER_N", "cw_rs3", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rs3": {
+            "args": ["$CARD"],
+            "message": "Choose to have Jedi Knight gain 1 attack, 1 resource, or 1 force.",
+            "options": [
+                {
+                    "label": "Gain 1 Attack",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Added 1 attack until the end of the round."],
+                        ["INCREASE_VAL", "/cardById/{{$CARD.id}}/tokens/attackModifier", 1],
+                        ["FADE_TEXT_CARD", "$CARD.id", "+1 token:attackModifier"]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Resource",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Gained 1 resource."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 1],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+1 token:resource"]
+                    ]
+                },
+                {
+                    "label": "Gain 1 Force",
+                    "hotkey": "3",
+                    "code": [
+                        ["LOG", "└── Gained 1 force."],
+                        ["GAIN_N_FORCE", "$CARD.controller", 1]
+                    ]
+                }
+            ]
+        }
+    }
+}

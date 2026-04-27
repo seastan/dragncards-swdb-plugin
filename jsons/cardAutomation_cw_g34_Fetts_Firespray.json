@@ -1,0 +1,70 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g34": {
+                "_comment": "Fett's Firespray",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} triggered Fett's Firespray's ability: Add a neutral unit from discard to hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "cw_g34_select", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Fett's Firespray's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g34_select": {
+            "args": ["$CARD"],
+            "message": "Select a neutral unit from your discard pile to add to your hand. If it is a Bounty Hunter, it gains 2 attack while attacking a galaxy row target this turn.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"],
+                            ["LOG", "└── Selected card is not a neutral card."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "Unit"],
+                            ["LOG", "└── Selected card is not a unit."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0],
+                                ["COND",
+                                    ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Bounty Hunter."],
+                                    [
+                                        ["LOG", "└── It is a Bounty Hunter. It gains 2 attack while attacking a galaxy row target this turn."],
+                                        ["INCREASE_VAL", "/cardById/{{$TARGET_CARD_ID}}/tokens/attackModifier", 2]
+                                    ]
+                                ],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

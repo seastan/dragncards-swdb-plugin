@@ -1,0 +1,30 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g45": {
+                "_comment": "Underworld Contact",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["COND",
+                                    ["IS_FORCE_WITH_YOU", "$THIS.controller"],
+                                    [
+                                        ["LOG", "└── Underworld Contact's ability: The Force is with you. Next neutral card purchased costs 2 fewer resources."],
+                                        ["SET", "/playerData/{{$THIS.controller}}/nextNeutralPurchaseDiscount", 2],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── Underworld Contact's ability: The Force is not with you. No discount."]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Underworld Contact's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

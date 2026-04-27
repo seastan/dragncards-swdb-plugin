@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g6": {
+                "_comment": "Nute Gunray",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Nute Gunray's ability: Next time a card leaves the galaxy row this turn, replace it with a non-starter card from your exile pile."],
+                                ["SET", "/playerData/{{$THIS.controller}}/nuteGunrayActive", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Nute Gunray's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

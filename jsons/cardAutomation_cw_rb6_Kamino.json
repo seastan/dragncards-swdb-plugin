@@ -1,0 +1,78 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb6": {
+                "_comment": "Kamino",
+                "rules": {
+                    "trooperBonus": {
+                        "_comment": "When you play a Trooper for the first time each turn, add a Trooper from your discard pile to your hand.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["OR",
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player1"],
+                                    ["EQUAL", "$TARGET.groupId", "player1Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]]
+                                ],
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["EQUAL", "$TARGET.groupId", "player2Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player2Play"]]
+                                ]
+                            ],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."],
+                            ["EQUAL", "$THIS.abilityUsedThisTurn", false]
+                        ],
+                        "then": [
+                            ["LOG", "└── Kamino's ability: Played first Trooper this turn. Add a Trooper from discard to hand."],
+                            ["SET", "/cardById/$THIS_ID/abilityUsedThisTurn", true],
+                            ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                            ["PROMPT", "$THIS.controller", "cw_rb6_trooper", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rb6_trooper": {
+            "args": ["$CARD"],
+            "message": "Select a Trooper from your discard pile to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["NOT", ["IN_STRING", "$TARGET_CARD.currentFace.traits", "Trooper."]],
+                            ["LOG", "└── Selected card is not a Trooper."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD.id", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Add to hand (select a card)"
+                },
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "functions": {
+        "TRIGGER_JANGO_FETT": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["LOG", "└── Jango Fett's ability triggered: Draw 1 card."],
+                        ["DRAW_CARD", 1, "$CARD.controller"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

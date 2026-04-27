@@ -1,0 +1,29 @@
+{
+    "functions": {
+        "TRIGGER_LATTS_RAZZI": {
+            "args": ["$CARD", "$DESTROYED_CARD"],
+            "code": [
+                ["COND",
+                    ["EQUAL", "$DESTROYED_CARD.groupId", "sharedGalaxyRow"],
+                    [
+                        ["VAR", "$BOUNTY_HUNTER_COUNT", 0],
+                        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$BH_CARD", "$GAME.cardById", [
+                            ["COND",
+                                ["AND",
+                                    ["IN_STRING", "$BH_CARD.currentFace.traits", "Bounty Hunter."],
+                                    ["OR",
+                                        "$BH_CARD.inPlay",
+                                        ["EQUAL", "$BH_CARD.groupId", "sharedGalaxyRow"]
+                                    ]
+                                ],
+                                ["INCREASE_VAR", "$BOUNTY_HUNTER_COUNT", 1]
+                            ]
+                        ]],
+                        ["LOG", "└── Latts Razzi's ability triggered: Gained {{$BOUNTY_HUNTER_COUNT}} resource(s) (1 per Bounty Hunter in play or galaxy row)."],
+                        ["GAIN_N_RESOURCES", "$CARD.controller", "$BOUNTY_HUNTER_COUNT"]
+                    ]
+                ]
+            ]
+        }
+    }
+}

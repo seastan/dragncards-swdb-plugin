@@ -1,0 +1,46 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g19": {
+                "_comment": "Captain Rex",
+                "rules": {
+                    "uniqueUnitBonus": {
+                        "_comment": "Captain Rex gains 1 attack for each unique unit in play and in the galaxy row.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById"],
+                        "condition": ["TRUE"],
+                        "then": [
+                            ["COND",
+                                "$THIS.inPlay",
+                                [
+                                    ["VAR", "$UNIQUE_COUNT", 0],
+                                    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                        ["COND",
+                                            ["AND",
+                                                ["EQUAL", "$CARD.currentFace.unique", true],
+                                                ["OR",
+                                                    "$CARD.inPlay",
+                                                    ["EQUAL", "$CARD.groupId", "sharedGalaxyRow"]
+                                                ]
+                                            ],
+                                            ["INCREASE_VAR", "$UNIQUE_COUNT", 1]
+                                        ]
+                                    ]],
+                                    ["VAR", "$CURRENT_BONUS", "$GAME.cardById.$THIS.id.tokens.captainRexBonus"],
+                                    ["COND",
+                                        ["NOT_EQUAL", "$CURRENT_BONUS", "$UNIQUE_COUNT"],
+                                        [
+                                            ["VAR", "$BONUS_CHANGE", ["SUBTRACT", "$UNIQUE_COUNT", "$CURRENT_BONUS"]],
+                                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", "$BONUS_CHANGE"],
+                                            ["SET", "/cardById/$THIS.id/tokens/captainRexBonus", "$UNIQUE_COUNT"]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

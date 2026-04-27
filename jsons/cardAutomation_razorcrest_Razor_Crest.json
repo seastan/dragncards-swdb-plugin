@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "razorcrest": {
+                "_comment": "Razor Crest",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Razor Crest's ability: Add next Bounty Hunter or Trooper purchased to your hand."],
+                                ["SET", "/playerData/{{$THIS.controller}}/nextBountyHunterOrTrooperPurchaseToHand", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Razor Crest's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "automation": {
+        "cards": {
+            "concord_dawn": {
+                "_comment": "Concord Dawn - Start the game with this base in play. No automation needed - handled by preBuiltDecks."
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "automation": {
+        "cards": {
+            "kalevala": {
+                "_comment": "Kalevala",
+                "rules": {
+                    "trooperRepair": {
+                        "_comment": "When you play a Trooper, repair 1 damage from this base.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/*/groupId"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["OR",
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player1"],
+                                    ["EQUAL", "$TARGET.groupId", "player1Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player1Play"]]
+                                ],
+                                ["AND",
+                                    ["EQUAL", "$THIS.controller", "player2"],
+                                    ["EQUAL", "$TARGET.groupId", "player2Play"],
+                                    ["PREV", ["NOT_EQUAL", "$TARGET.groupId", "player2Play"]]
+                                ]
+                            ],
+                            ["IN_STRING", "$TARGET.currentFace.traits", "Trooper."]
+                        ],
+                        "then": [
+                            ["LOG", "└── Kalevala's ability: Played a Trooper, repair 1 damage from Kalevala."],
+                            ["REPAIR_DAMAGE", "$THIS.controller", 1]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

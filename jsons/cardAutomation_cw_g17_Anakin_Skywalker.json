@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g17": {
+                "_comment": "Anakin Skywalker",
+                "rules": {
+                    "forceAttackBonus": {
+                        "_comment": "While the Force is with you, Anakin Skywalker gains 3 attack.",
+                        "type": "passive",
+                        "listenTo": ["/trackerValue", "/cardById/$THIS_ID/inPlay"],
+                        "condition": ["AND",
+                            "$THIS.inPlay",
+                            ["IS_FORCE_WITH_YOU", "$THIS.controller"]
+                        ],
+                        "onDo": [
+                            ["LOG", "└── The Force is with you, so Anakin Skywalker gains 3 attack."],
+                            ["INCREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 3]
+                        ],
+                        "offDo": [
+                            ["LOG", "└── The Force is not with you, so Anakin Skywalker loses 3 attack."],
+                            ["DECREASE_VAL", "/cardById/$THIS.id/tokens/attackModifier", 3]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

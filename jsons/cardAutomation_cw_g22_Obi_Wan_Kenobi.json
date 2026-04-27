@@ -1,0 +1,25 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g22": {
+                "_comment": "Obi-Wan Kenobi",
+                "rules": {
+                    "drawnFromDeckTrigger": {
+                        "_comment": "When Obi-Wan Kenobi is drawn from the deck to the hand, draw 1 additional card.",
+                        "type": "trigger",
+                        "listenTo": ["/cardById/$THIS_ID/groupId"],
+                        "condition": [
+                            "AND",
+                            ["EQUAL", "$THIS.groupId", "{{$THIS.controller}}Hand"],
+                            ["EQUAL", ["PREV", "$THIS.groupId"], "{{$THIS.controller}}Deck"]
+                        ],
+                        "then": [
+                            ["LOG", "└── Obi-Wan Kenobi was drawn from the deck. Draw 1 additional card."],
+                            ["DRAW_CARD", 1, "$THIS.controller"]
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

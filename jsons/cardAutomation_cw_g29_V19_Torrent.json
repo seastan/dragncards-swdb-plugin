@@ -1,0 +1,56 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g29": {
+                "_comment": "V-19 Torrent",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$DECK_ID", "{{$THIS.controller}}Deck"],
+                                ["COND",
+                                    ["GROUP_NOT_EMPTY", "$DECK_ID"],
+                                    [
+                                        ["VAR", "$TOP_CARD", "$GAME.groupById.$DECK_ID.parentCards.[0]"],
+                                        ["SET", "/cardById/{{$TOP_CARD.id}}/currentSide", "A"],
+                                        ["LOG", "└── V-19 Torrent's ability: Revealed {{$TOP_CARD.sides.A.name}}."],
+                                        ["PROMPT", "$THIS.controller", "cw_g29_discard", "$THIS", "$TOP_CARD"]
+                                    ],
+                                    ["TRUE"],
+                                    ["LOG", "└── No cards in your deck."]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use V-19 Torrent's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g29_discard": {
+            "args": ["$CARD", "$TOP_CARD"],
+            "message": "You revealed the top card of your deck. You may discard it.",
+            "options": [
+                {
+                    "label": "Discard it",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Discarded {{$TOP_CARD.sides.A.name}}."],
+                        ["DISCARD_CARD", "$TOP_CARD"]
+                    ]
+                },
+                {
+                    "label": "Keep on top",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Kept card on top of deck."]
+                    ]
+                }
+            ]
+        }
+    }
+}

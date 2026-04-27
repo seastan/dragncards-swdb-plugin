@@ -1,16 +1,16 @@
 {
     "phases": {
-        "empireTurn": {
-            "label" : "Empire Turn",
-            "height" : "50%"
+        "player1Turn": {
+            "label": "Player 1 Turn",
+            "height": "50%"
         },
-        "rebelTurn": {
-            "label" : "Rebel Turn",
-            "height" : "50%"
+        "player2Turn": {
+            "label": "Player 2 Turn",
+            "height": "50%"
         }
     },
     "phaseOrder": [
-        "empireTurn",
-        "rebelTurn"
+        "player1Turn",
+        "player2Turn"
     ]
 }

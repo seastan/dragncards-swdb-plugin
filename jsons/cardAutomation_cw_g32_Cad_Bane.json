@@ -1,0 +1,108 @@
+{
+    "automation": {
+        "cards": {
+            "cw_g32": {
+                "_comment": "Cad Bane",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$NEUTRAL_COUNT", 0],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["EQUAL", "$CARD.currentFace.faction", "Neutral"]
+                                        ],
+                                        ["INCREASE_VAR", "$NEUTRAL_COUNT", 1]
+                                    ]
+                                ]],
+                                ["COND",
+                                    ["GREATER_THAN", "$NEUTRAL_COUNT", 2],
+                                    [
+                                        ["LOG", "└── Cad Bane's ability: Have at least 3 neutral cards in play. Choose an effect."],
+                                        ["PROMPT", "$THIS.controller", "cw_g32_choice", "$THIS"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Cad Bane's ability: Do not have at least 3 neutral cards in play (have {{$NEUTRAL_COUNT}})."],
+                                        ["SET", "/cardById/$THIS.id/rotation", -20]
+                                    ]
+                                ]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Cad Bane's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_g32_choice": {
+            "args": ["$CARD"],
+            "message": "Cad Bane: Choose an effect.",
+            "options": [
+                {
+                    "label": "Destroy a capital ship",
+                    "hotkey": "1",
+                    "code": [
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["LOOK_AT", "$CARD.controller", "{{$OPPONENT}}Play", -1, true],
+                        ["PROMPT", "$CARD.controller", "cw_g32_destroy", "$CARD"]
+                    ]
+                },
+                {
+                    "label": "Exile 1 card",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Chose to exile 1 card."],
+                        ["EXILE_UP_TO_N_FROM_HAND_OR_DISCARD", "$CARD.controller", 1],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        },
+        "cw_g32_destroy": {
+            "args": ["$CARD"],
+            "message": "Select a capital ship your opponent has in play to destroy.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                            ["LOG", "└── Selected card is not your opponent's."],
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── Selected card is not a capital ship."],
+                            ["NOT_EQUAL", "$TARGET_CARD.inPlay", true],
+                            ["LOG", "└── Selected card is not in play."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Destroyed {{$TARGET_CARD.currentFace.name}}."],
+                                ["DESTROY_CARD", "$TARGET_CARD"],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

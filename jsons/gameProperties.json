@@ -1,8 +1,8 @@
 {
     "gameProperties": {
-        "forceBalance": {
+        "trackerValue": {
             "type": "integer",
-            "default": 0
+            "default": 3
         },
         "victoryState": {
             "type": "string",
@@ -15,6 +15,14 @@
         "started": {
             "type": "boolean",
             "default": false
+        },
+        "player1Faction": {
+            "type": "string",
+            "default": ""
+        },
+        "player2Faction": {
+            "type": "string",
+            "default": ""
         }
     }
 }

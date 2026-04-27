@@ -1,0 +1,44 @@
+{
+    "automation": {
+        "cards": {
+            "grogu": {
+                "_comment": "Grogu",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$HAS_MANDALORIAN", false],
+                                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+                                    ["COND",
+                                        ["AND",
+                                            ["EQUAL", "$CARD.controller", "$THIS.controller"],
+                                            ["EQUAL", "$CARD.inPlay", true],
+                                            ["EQUAL", "$CARD.sides.A.name", "The Mandalorian"]
+                                        ],
+                                        ["UPDATE_VAR", "$HAS_MANDALORIAN", true]
+                                    ]
+                                ]],
+                                ["COND",
+                                    "$HAS_MANDALORIAN",
+                                    [
+                                        ["LOG", "└── Grogu's ability: The Mandalorian is in play. Drew 2 cards."],
+                                        ["DRAW_CARD", 2, "$THIS.controller"]
+                                    ],
+                                    ["TRUE"],
+                                    [
+                                        ["LOG", "└── Grogu's ability: Drew 1 card."],
+                                        ["DRAW_CARD", 1, "$THIS.controller"]
+                                    ]
+                                ],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Grogu's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

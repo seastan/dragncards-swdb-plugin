@@ -1,0 +1,93 @@
+{
+    "automation": {
+        "cards": {
+            "cw_rb10": {
+                "_comment": "Ryloth",
+                "rules": {
+                    "revealedAbility": {
+                        "_comment": "When you reveal Ryloth, exile 1 enemy card from the galaxy row and place 1 card from your discard pile on top of your deck.",
+                        "type": "entersPlay",
+                        "side": "A",
+                        "then": [
+                            ["LOG", "└── Ryloth's ability: Exile 1 enemy card from the galaxy row and place 1 card from your discard pile on top of your deck."],
+                            ["PROMPT", "$THIS.controller", "cw_rb10_exile", "$THIS"]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "prompts": {
+        "cw_rb10_exile": {
+            "args": ["$CARD"],
+            "message": "Select an enemy card from the galaxy row to exile.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$MY_FACTION", ["GET_FACTION", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "sharedGalaxyRow"],
+                            [
+                                ["LOG", "└── Selected card is not in the galaxy row. Please select again."],
+                                ["PROMPT", "$CARD.controller", "cw_rb10_exile", "$CARD"]
+                            ],
+                            ["OR",
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "$MY_FACTION"],
+                                ["EQUAL", "$TARGET_CARD.currentFace.faction", "Neutral"]
+                            ],
+                            [
+                                ["LOG", "└── Selected card is not an enemy card. Please select again."],
+                                ["PROMPT", "$CARD.controller", "cw_rb10_exile", "$CARD"]
+                            ],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Exiled {{$TARGET_CARD.currentFace.name}} from the galaxy row."],
+                                ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "sharedExiled"],
+                                ["LOOK_AT", "$CARD.controller", "{{$CARD.controller}}Discard", -1, true],
+                                ["PROMPT", "$CARD.controller", "cw_rb10_deckTop", "$CARD"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": []
+        },
+        "cw_rb10_deckTop": {
+            "args": ["$CARD"],
+            "message": "Select a card from your discard pile to place on top of your deck.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Placed {{$TARGET_CARD.currentFace.name}} on top of your deck."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck", 0],
+                                ["STOP_LOOKING", "$CARD.controller"]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip",
+                    "code": [
+                        ["LOG", "└── Skipped placing a card on top of deck."],
+                        ["STOP_LOOKING", "$CARD.controller"]
+                    ]
+                }
+            ]
+        }
+    }
+}
