@@ -44,11 +44,7 @@
                                     ["IS_FORCE_WITH_YOU", "$CARD.controller"],
                                     [
                                         ["LOG", "└── The Force is with you, placing card on top of your deck."],
-                                        ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck"]
-                                    ],
-                                    ["TRUE"],
-                                    [
-                                        ["MOVE_FROM_GALAXY_ROW", "$TARGET_CARD_ID", "{{$CARD.controller}}Discard"]
+                                        ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Deck", 0]
                                     ]
                                 ],
                                 ["SET", "/cardById/{{$CARD.id}}/rotation", -20],
