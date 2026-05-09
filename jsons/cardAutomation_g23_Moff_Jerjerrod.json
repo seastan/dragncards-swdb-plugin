@@ -26,7 +26,7 @@
                                     ["TRUE"],
                                     ["LOG", "└── Galaxy deck is empty, cannot look at top card."]
                                 ],
-                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
                             ],
                             ["TRUE"],
                             ["LOG", "{{$ALIAS_N}} tried to use Moff Jerjerrod's ability but it cannot be activated."]
