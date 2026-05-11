@@ -1295,17 +1295,17 @@
             "cards": [
                 {
                     "databaseId": "mandalorian_soldier",
-                    "quantity": 7,
-                    "loadGroupId": "player1Deck"
-                },
-                {
-                    "databaseId": "child_of_the_watch",
                     "quantity": 2,
                     "loadGroupId": "player1Deck"
                 },
                 {
-                    "databaseId": "mandalorian_shuttle",
+                    "databaseId": "child_of_the_watch",
                     "quantity": 1,
+                    "loadGroupId": "player1Deck"
+                },
+                {
+                    "databaseId": "mandalorian_shuttle",
+                    "quantity": 7,
                     "loadGroupId": "player1Deck"
                 },
                 {
@@ -1460,17 +1460,17 @@
             "cards": [
                 {
                     "databaseId": "mandalorian_soldier",
-                    "quantity": 7,
-                    "loadGroupId": "player2Deck"
-                },
-                {
-                    "databaseId": "child_of_the_watch",
                     "quantity": 2,
                     "loadGroupId": "player2Deck"
                 },
                 {
-                    "databaseId": "mandalorian_shuttle",
+                    "databaseId": "child_of_the_watch",
                     "quantity": 1,
+                    "loadGroupId": "player2Deck"
+                },
+                {
+                    "databaseId": "mandalorian_shuttle",
+                    "quantity": 7,
                     "loadGroupId": "player2Deck"
                 },
                 {
