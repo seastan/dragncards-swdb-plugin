@@ -15,7 +15,6 @@
             {"key": "L", "actionList": ["FLIP_CARD", "$ACTIVE_CARD"], "label": "id:flip"},
             {"key": "X", "actionList": ["DISCARD_CARD", "$ACTIVE_CARD"], "label": "id:discard"},
             {"key": "E", "actionList": ["EXILE_CARD", "$ACTIVE_CARD"], "label": "id:exileCard"},
-            {"key": "Q", "actionList": ["USE_CARD_ABILITY", "$ACTIVE_CARD"], "label": "id:useAbility"},
             {"key": "A", "actionList": ["ATTACK_WITH_CARD", "$ACTIVE_CARD"], "label": "id:attackWithCard"},
             {"key": "S", "actionList": ["ATTACK_ON_CARD", "$ACTIVE_CARD"], "label": "id:attackOnCard"},
             {"key": "B", "actionList": ["BUY_CARD", "$ACTIVE_CARD"], "label": "id:buyCard"},
