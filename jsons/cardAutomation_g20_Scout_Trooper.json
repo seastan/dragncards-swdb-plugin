@@ -8,11 +8,10 @@
                         ["COND",
                             ["ABILITY_UNUSED", "$THIS"],
                             [
-                                ["VAR", "$DECK_SIZE", ["LENGTH", "$GAME.groupById.sharedGalaxyDeck.stackIds"]],
                                 ["COND",
-                                    ["GREATER_THAN", "$DECK_SIZE", 0],
+                                    ["GROUP_NOT_EMPTY", "sharedGalaxyDeck"],
                                     [
-                                        ["VAR", "$TOP_CARD_ID", "$GAME.groupById.sharedGalaxyDeck.stackIds.[0]"],
+                                        ["VAR", "$TOP_CARD_ID", "$GAME.groupById.sharedGalaxyDeck.parentCardIds.[0]"],
                                         ["VAR", "$TOP_CARD", "$GAME.cardById.{{$TOP_CARD_ID}}"],
                                         ["LOG", "└── {{$ALIAS_N}} triggered Scout Trooper's ability: Revealed {{$TOP_CARD.sides.A.name}}."],
                                         ["COND",
