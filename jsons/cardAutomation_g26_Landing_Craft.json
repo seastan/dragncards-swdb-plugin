@@ -22,7 +22,8 @@
                     "code": [
                         ["LOG", "└── Landing Craft's ability: Gain 4 resources."],
                         ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 4],
-                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+4 token:resource"]
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+4 token:resource"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
                     ]
                 },
                 {
@@ -30,7 +31,8 @@
                     "hotkey": "2",
                     "code": [
                         ["LOG", "└── Landing Craft's ability: Repair 4 damage."],
-                        ["REPAIR_DAMAGE", "$CARD.controller", 4]
+                        ["REPAIR_DAMAGE", "$CARD.controller", 4],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
                     ]
                 },
                 {
