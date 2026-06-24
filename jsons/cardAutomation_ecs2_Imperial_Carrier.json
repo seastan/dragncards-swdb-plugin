@@ -32,7 +32,7 @@
                                     ["AND",
                                         "$TARGET.inPlay",
                                         ["EQUAL", "$TARGET.controller", "$THIS.controller"],
-                                        ["PREV", ["IN_STRING", "$TARGET.currentFace.traits", "Fighter."]]
+                                        ["IN_STRING", "$TARGET.currentFace.traits", "Fighter."]
                                     ],
                                     [
                                         ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
