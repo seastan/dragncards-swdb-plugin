@@ -26,7 +26,7 @@
                     "label": "Spend 2 resources",
                     "hotkey": "1",
                     "code": [
-                        ["VAR", "$CARD", "$GAME.cardsById.$CARD_ID"],
+                        ["VAR", "$CARD", "$GAME.cardById.{{$CARD_ID}}"],
                         ["COND",
                             ["GREATER_THAN", "$GAME.playerData.{{$CARD.controller}}.resources", 1],
                             [
