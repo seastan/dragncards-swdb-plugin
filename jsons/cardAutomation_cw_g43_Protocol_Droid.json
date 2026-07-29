@@ -63,12 +63,12 @@
                                 ["LOG", "└── Selected card is not in the galaxy row."],
                                 ["PROMPT", "$ABILITY_CARD.controller", "protocolDroid_chooseGalaxyRowCard", "$ABILITY_CARD", "$TOP_CARD"]
                             ],
-                            ["NOT_EQUAL", "$TARGET_CARD.sides.A.faction", "neutral"],
+                            ["NOT_EQUAL", "$TARGET_CARD.sides.A.faction", "Neutral"],
                             [
                                 ["LOG", "└── Selected card is not neutral."],
                                 ["PROMPT", "$ABILITY_CARD.controller", "protocolDroid_chooseGalaxyRowCard", "$ABILITY_CARD", "$TOP_CARD"]
                             ],
-                            ["NOT_EQUAL", "$TARGET_CARD.sides.A.type", "unit"],
+                            ["NOT_EQUAL", "$TARGET_CARD.sides.A.type", "Unit"],
                             [
                                 ["LOG", "└── Selected card is not a unit."],
                                 ["PROMPT", "$ABILITY_CARD.controller", "protocolDroid_chooseGalaxyRowCard", "$ABILITY_CARD", "$TOP_CARD"]
