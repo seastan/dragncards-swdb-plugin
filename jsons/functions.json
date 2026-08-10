@@ -1463,6 +1463,49 @@
             ],
             "code": [
                 [
+                    "VAR",
+                    "$CARD_COST",
+                    "$CARD.currentFace.cost"
+                ],
+                [
+                    "COND",
+                    [
+                        "AND",
+                        [
+                            "EQUAL",
+                            "$CARD.currentFace.faction",
+                            "Neutral"
+                        ],
+                        [
+                            "DEFINED",
+                            "$GAME.playerData.$PLAYER_N.nextNeutralPurchaseDiscount"
+                        ],
+                        [
+                            "GREATER_THAN",
+                            "$GAME.playerData.$PLAYER_N.nextNeutralPurchaseDiscount",
+                            0
+                        ]
+                    ],
+                    [
+                        [
+                            "UPDATE_VAR",
+                            "$CARD_COST",
+                            [
+                                "MAX",
+                                [
+                                    "LIST",
+                                    0,
+                                    [
+                                        "SUBTRACT",
+                                        "$CARD_COST",
+                                        "$GAME.playerData.$PLAYER_N.nextNeutralPurchaseDiscount"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
                     "COND",
                     [
                         "NOT_EQUAL",
@@ -1527,21 +1570,16 @@
                     [
                         "LESS_THAN",
                         "$GAME.playerData.$PLAYER_N.resources",
-                        "$CARD.currentFace.cost"
+                        "$CARD_COST"
                     ],
                     [
                         "LOG",
-                        "{{$ALIAS_N}} tried to buy {{$CARD.currentFace.name}} for {{$CARD.currentFace.cost}} resources but they only have {{$GAME.playerData.$PLAYER_N.resources}} resources."
+                        "{{$ALIAS_N}} tried to buy {{$CARD.currentFace.name}} for {{$CARD_COST}} resources but they only have {{$GAME.playerData.$PLAYER_N.resources}} resources."
                     ],
                     [
                         "TRUE"
                     ],
                     [
-                        [
-                            "VAR",
-                            "$CARD_COST",
-                            "$CARD.currentFace.cost"
-                        ],
                         [
                             "COND",
                             [
@@ -1574,6 +1612,33 @@
                                     "SET",
                                     "/playerData/{{$PLAYER_N}}/glavisDiscountAvailable",
                                     false
+                                ]
+                            ]
+                        ],
+                        [
+                            "COND",
+                            [
+                                "AND",
+                                [
+                                    "EQUAL",
+                                    "$CARD.currentFace.faction",
+                                    "Neutral"
+                                ],
+                                [
+                                    "DEFINED",
+                                    "$GAME.playerData.$PLAYER_N.nextNeutralPurchaseDiscount"
+                                ],
+                                [
+                                    "GREATER_THAN",
+                                    "$GAME.playerData.$PLAYER_N.nextNeutralPurchaseDiscount",
+                                    0
+                                ]
+                            ],
+                            [
+                                [
+                                    "SET",
+                                    "/playerData/{{$PLAYER_N}}/nextNeutralPurchaseDiscount",
+                                    0
                                 ]
                             ]
                         ],
