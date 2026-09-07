@@ -12,7 +12,7 @@
                             "$THIS.inPlay",
                             [
                                 ["VAR", "$BOUNTY_HUNTER_PRESENT", false],
-                                ["FOR_EACH_KEY_VAL", "$CARD", "$GAME.groupById.sharedGalaxyRow.parentCards", [
+                                ["FOR_EACH_VAL", "$CARD", "$GAME.groupById.sharedGalaxyRow.parentCards", [
                                     ["COND",
                                         ["IN_STRING", "$CARD.sides.A.traits", "Bounty Hunter."],
                                         ["UPDATE_VAR", "$BOUNTY_HUNTER_PRESENT", true]

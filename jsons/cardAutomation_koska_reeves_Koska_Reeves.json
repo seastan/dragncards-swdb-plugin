@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "koska_reeves": {
+                "_comment": "Koska Reeves",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── {{$ALIAS_N}} activated Koska Reeves's ability. Your next bounty hunt targets a neutral unit using its cost as the target value."],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntUsingCost", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Koska Reeves's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}
