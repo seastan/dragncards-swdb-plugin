@@ -126,7 +126,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -146,7 +146,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -166,7 +166,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -186,7 +186,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 }
@@ -212,7 +212,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -232,7 +232,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -252,7 +252,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -272,7 +272,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 }
@@ -298,7 +298,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -318,7 +318,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -338,7 +338,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -358,7 +358,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 }
@@ -384,7 +384,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -404,7 +404,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -424,7 +424,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -444,7 +444,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 }
@@ -470,7 +470,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -490,7 +490,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -510,7 +510,7 @@
                         [
                             "PROMPT",
                             "player1",
-                            "selectNeutralDeck"
+                            "selectBasesToWin"
                         ]
                     ]
                 },
@@ -526,6 +526,87 @@
                             "SET",
                             "/playerData/player2/label",
                             "Separatist Alliance"
+                        ],
+                        [
+                            "PROMPT",
+                            "player1",
+                            "selectBasesToWin"
+                        ]
+                    ]
+                }
+            ]
+        },
+        "selectBasesToWin": {
+            "args": [],
+            "message": "Player 1, choose how many bases a player must destroy to win:",
+            "options": [
+                {
+                    "label": "1 base",
+                    "code": [
+                        [
+                            "SET",
+                            "/basesToWin",
+                            1
+                        ],
+                        [
+                            "PROMPT",
+                            "player1",
+                            "selectNeutralDeck"
+                        ]
+                    ]
+                },
+                {
+                    "label": "2 bases",
+                    "code": [
+                        [
+                            "SET",
+                            "/basesToWin",
+                            2
+                        ],
+                        [
+                            "PROMPT",
+                            "player1",
+                            "selectNeutralDeck"
+                        ]
+                    ]
+                },
+                {
+                    "label": "3 bases",
+                    "code": [
+                        [
+                            "SET",
+                            "/basesToWin",
+                            3
+                        ],
+                        [
+                            "PROMPT",
+                            "player1",
+                            "selectNeutralDeck"
+                        ]
+                    ]
+                },
+                {
+                    "label": "4 bases",
+                    "code": [
+                        [
+                            "SET",
+                            "/basesToWin",
+                            4
+                        ],
+                        [
+                            "PROMPT",
+                            "player1",
+                            "selectNeutralDeck"
+                        ]
+                    ]
+                },
+                {
+                    "label": "5 bases",
+                    "code": [
+                        [
+                            "SET",
+                            "/basesToWin",
+                            5
                         ],
                         [
                             "PROMPT",

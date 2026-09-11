@@ -8,6 +8,10 @@
             "type": "string",
             "default": ""
         },
+        "basesToWin": {
+            "type": "integer",
+            "default": 3
+        },
         "currentPlayer": {
             "type": "string",
             "default": "player1"

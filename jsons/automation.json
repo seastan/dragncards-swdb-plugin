@@ -165,12 +165,12 @@
                         [
                             "GREATER_EQUAL",
                             "$GAME.playerData.player1.score",
-                            3
+                            "$GAME.basesToWin"
                         ],
                         [
                             "GREATER_EQUAL",
                             "$GAME.playerData.player2.score",
-                            3
+                            "$GAME.basesToWin"
                         ]
                     ]
                 ],
@@ -180,7 +180,7 @@
                         [
                             "GREATER_EQUAL",
                             "$GAME.playerData.player1.score",
-                            3
+                            "$GAME.basesToWin"
                         ],
                         [
                             [
@@ -190,7 +190,7 @@
                             ],
                             [
                                 "LOG",
-                                "[game] {{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                                "[game] {{$WINNER_NAME}} has destroyed {{$GAME.basesToWin}} base(s) and wins the game!"
                             ],
                             [
                                 "SET",
@@ -204,13 +204,13 @@
                                 "PROMPT",
                                 "$PLAYER_ORDER",
                                 "restartGame",
-                                "{{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                                "{{$WINNER_NAME}} has destroyed {{$GAME.basesToWin}} base(s) and wins the game!"
                             ]
                         ],
                         [
                             "GREATER_EQUAL",
                             "$GAME.playerData.player2.score",
-                            3
+                            "$GAME.basesToWin"
                         ],
                         [
                             [
@@ -220,7 +220,7 @@
                             ],
                             [
                                 "LOG",
-                                "[game] {{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                                "[game] {{$WINNER_NAME}} has destroyed {{$GAME.basesToWin}} base(s) and wins the game!"
                             ],
                             [
                                 "SET",
@@ -234,7 +234,7 @@
                                 "PROMPT",
                                 "$PLAYER_ORDER",
                                 "restartGame",
-                                "{{$WINNER_NAME}} has destroyed 3 bases and wins the game!"
+                                "{{$WINNER_NAME}} has destroyed {{$GAME.basesToWin}} base(s) and wins the game!"
                             ]
                         ]
                     ]
