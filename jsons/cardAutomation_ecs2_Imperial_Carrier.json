@@ -55,7 +55,7 @@
                         "listenTo": ["/cardById/*/inPlay", "/cardById/*/currentSide"],
                         "onDo": [
                             "COND",
-                            ["AND", "$THIS.inPlay"],
+                            ["AND", "$TARGET.inPlay"],
                             [
                                 ["LOG", "└── Imperial Carrier added 1 attack to {{$TARGET.currentFace.name}}."],
                                 ["INCREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
@@ -63,7 +63,7 @@
                         ],
                         "offDo": [
                             "COND",
-                            ["AND", "$THIS.inPlay"],
+                            ["AND", "$TARGET.inPlay"],
                             [
                                 ["LOG", "└── Imperial Carrier no longer adds 1 attack to {{$TARGET.currentFace.name}}."],
                                 ["DECREASE_VAL", "/cardById/$TARGET_ID/tokens/attackModifier", 1]
