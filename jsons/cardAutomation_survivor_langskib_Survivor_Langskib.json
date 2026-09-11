@@ -1,0 +1,49 @@
+{
+    "automation": {
+        "cards": {
+            "survivor_langskib": {
+                "_comment": "Survivor Langskib",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Survivor Langskib's ability: Choose to move the Force marker to the neutral space, or gain 3 resources."],
+                                ["PROMPT", "$THIS.controller", "survivor_langskib_choice", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Survivor Langskib's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "survivor_langskib_choice": {
+            "args": ["$CARD"],
+            "message": "Choose: move the Force marker to the neutral space, or gain 3 resources.",
+            "options": [
+                {
+                    "label": "Move the Force marker to neutral",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Moved the Force marker to the neutral space."],
+                        ["SET_TRACKER_VALUE", 0],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                },
+                {
+                    "label": "Gain 3 resources",
+                    "hotkey": "2",
+                    "code": [
+                        ["LOG", "└── Gained 3 resources."],
+                        ["INCREASE_VAL", "/playerData/{{$CARD.controller}}/resources", 3],
+                        ["FADE_TEXT_PLAYER", "$CARD.controller", "+3 token:resource"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -901,7 +901,7 @@
                             [
                                 [
                                     "LOG",
-                                    "\u2514\u2500\u2500 Trask: adding the captured ship to hand."
+                                    "\u2514\u2500\u2500 Adding the captured ship to hand."
                                 ],
                                 [
                                     "MOVE_CARD",
@@ -913,6 +913,36 @@
                                     "SET",
                                     "/playerData/{{$PLAYER_N}}/bountyHuntPurchaseOnDestroy",
                                     false
+                                ]
+                            ]
+                        ],
+                        [
+                            "COND",
+                            [
+                                "AND",
+                                [
+                                    "DEFINED",
+                                    "$GAME.playerData.$PLAYER_N.hijackerExileCardId"
+                                ],
+                                [
+                                    "NOT_EQUAL",
+                                    "$GAME.playerData.$PLAYER_N.hijackerExileCardId",
+                                    null
+                                ]
+                            ],
+                            [
+                                [
+                                    "LOG",
+                                    "\u2514\u2500\u2500 Mandalorian Hijacker is exiled after hijacking the ship."
+                                ],
+                                [
+                                    "EXILE_CARD_ID",
+                                    "$GAME.playerData.$PLAYER_N.hijackerExileCardId"
+                                ],
+                                [
+                                    "SET",
+                                    "/playerData/{{$PLAYER_N}}/hijackerExileCardId",
+                                    null
                                 ]
                             ]
                         ],
@@ -1080,22 +1110,9 @@
                         "TRUE"
                     ],
                     [
-                        [
-                            "LOG",
-                            [
-                                "GET_ALIAS",
-                                "$PLAYER_I"
-                            ],
-                            " begins their turn."
-                        ],
-                        [
-                            "FADE_TEXT_GAME",
-                            [
-                                "GET_ALIAS",
-                                "$PLAYER_I"
-                            ],
-                            "'s Turn"
-                        ],
+                        ["VAR", "$ALIAS_N", ["GET_ALIAS", "$PLAYER_I"]],
+                        ["LOG", "{{$ALIAS_N}} begins their turn."],
+                        ["FADE_TEXT_GAME", "{{$ALIAS_N}}'s Turn"],
                         [
                             "COND",
                             [
@@ -1303,6 +1320,11 @@
                             "SET",
                             "/playerData/{{$PLAYER_I}}/bountyHuntPurchaseOnDestroy",
                             false
+                        ],
+                        [
+                            "SET",
+                            "/playerData/{{$PLAYER_I}}/hijackerExileCardId",
+                            null
                         ],
                         [
                             "SET",

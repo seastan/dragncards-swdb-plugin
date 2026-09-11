@@ -1,0 +1,67 @@
+{
+    "automation": {
+        "cards": {
+            "bo-katan": {
+                "_comment": "Bo-Katan",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["NOT", ["ABILITY_UNUSED", "$THIS"]],
+                            ["LOG", "{{$ALIAS_N}} tried to use Bo-Katan's ability but it cannot be activated."],
+
+                            ["NOT_EQUAL", "$GAME.trackerValue", 0],
+                            ["LOG", "└── Bo-Katan's ability did nothing: the Force marker is not on the neutral space."],
+
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Bo-Katan's ability: Add a Mandalorian card in your discard pile to your hand."],
+                                ["LOOK_AT", "$THIS.controller", "{{$THIS.controller}}Discard", -1, true],
+                                ["PROMPT", "$THIS.controller", "bo_katan_select", "$THIS"]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "bo_katan_select": {
+            "args": ["$CARD"],
+            "message": "Select a Mandalorian card in your discard pile to add to your hand.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.groupId", "{{$CARD.controller}}Discard"],
+                            ["LOG", "└── Selected card is not in your discard pile."],
+
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.faction", "Mandalorian"],
+                            ["LOG", "└── Selected card is not a Mandalorian card."],
+
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Added {{$TARGET_CARD.currentFace.name}} to hand."],
+                                ["MOVE_CARD", "$TARGET_CARD_ID", "{{$CARD.controller}}Hand", 0],
+                                ["STOP_LOOKING", "$CARD.controller"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Skip (no Mandalorian card)",
+                    "code": [
+                        ["STOP_LOOKING", "$CARD.controller"],
+                        ["SET", "/cardById/$CARD.id/rotation", -20]
+                    ]
+                }
+            ]
+        }
+    }
+}

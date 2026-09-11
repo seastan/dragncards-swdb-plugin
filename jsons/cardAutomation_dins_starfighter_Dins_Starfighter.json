@@ -1,0 +1,65 @@
+{
+    "automation": {
+        "cards": {
+            "din's_starfighter": {
+                "_comment": "Din's Starfighter",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["NOT", ["ABILITY_UNUSED", "$THIS"]],
+                            ["LOG", "{{$ALIAS_N}} tried to use Din's Starfighter's ability but it cannot be activated."],
+
+                            ["NOT_EQUAL", "$GAME.trackerValue", 0],
+                            ["LOG", "└── Din's Starfighter's ability did nothing: the Force marker is not on the neutral space."],
+
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Din's Starfighter's ability: Destroy a capital ship your opponent has in play."],
+                                ["PROMPT", "$THIS.controller", "dins_starfighter_destroy", "$THIS"]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "dins_starfighter_destroy": {
+            "args": ["$CARD"],
+            "message": "Select a capital ship your opponent has in play to destroy.",
+            "input": {
+                "type": "selectCards",
+                "autoSubmit": {
+                    "numCards": 1,
+                    "code": [
+                        ["VAR", "$TARGET_CARD_ID", "$PROMPT_INPUT.[0]"],
+                        ["VAR", "$TARGET_CARD", "$GAME.cardById.{{$TARGET_CARD_ID}}"],
+                        ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$CARD.controller"]],
+                        ["COND",
+                            ["NOT_EQUAL", "$TARGET_CARD.currentFace.type", "CapitalShip"],
+                            ["LOG", "└── Selected card is not a capital ship."],
+
+                            ["NOT_EQUAL", "$TARGET_CARD.controller", "$OPPONENT"],
+                            ["LOG", "└── Selected capital ship is not controlled by your opponent."],
+
+                            ["NOT", "$TARGET_CARD.inPlay"],
+                            ["LOG", "└── Selected capital ship is not in play."],
+
+                            ["TRUE"],
+                            [
+                                ["LOG", "└── Destroyed {{$TARGET_CARD.currentFace.name}}."],
+                                ["DESTROY_CARD", "$TARGET_CARD"],
+                                ["SET", "/cardById/$CARD.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "label": "Cancel"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "automation": {
+        "cards": {
+            "balutar_swoop_rider": {
+                "_comment": "Balutar Swoop Rider - 'When you purchase a card, move the force marker 1 space toward neutral.' The trigger itself lives in gotPurchased.json (GOT_PURCHASED), which is the only hook that sees purchases, alongside the equivalent Hondo Ohnaka trigger."
+            }
+        }
+    }
+}

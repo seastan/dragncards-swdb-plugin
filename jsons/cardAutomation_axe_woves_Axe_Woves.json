@@ -1,0 +1,43 @@
+{
+    "automation": {
+        "cards": {
+            "axe_woves": {
+                "_comment": "Axe Woves",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Axe Woves' ability: Place Axe Woves on top of the galaxy deck to move the Force marker to the neutral space."],
+                                ["PROMPT", "$THIS.controller", "axe_woves_place", "$THIS"]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Axe Woves' ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    },
+    "prompts": {
+        "axe_woves_place": {
+            "args": ["$CARD"],
+            "message": "Place Axe Woves on top of the galaxy deck to move the Force marker to the neutral space?",
+            "options": [
+                {
+                    "label": "Place on top of galaxy deck",
+                    "hotkey": "1",
+                    "code": [
+                        ["LOG", "└── Placed Axe Woves on top of the galaxy deck. The Force marker moves to the neutral space."],
+                        ["MOVE_CARD", "$CARD.id", "sharedGalaxyDeck", 0],
+                        ["SET_TRACKER_VALUE", 0]
+                    ]
+                },
+                {
+                    "label": "Cancel",
+                    "hotkey": "2"
+                }
+            ]
+        }
+    }
+}

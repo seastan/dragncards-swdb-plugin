@@ -1,0 +1,23 @@
+{
+    "automation": {
+        "cards": {
+            "koska_reeves": {
+                "_comment": "Koska Reeves. Setting bountyHuntUsingCost makes neutral galaxy-row units legal targets and uses their cost as the target value; GET_BOUNTY already pays out resources equal to cost for neutral cards.",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Koska Reeves' ability: You can attack a neutral unit in the galaxy row using its cost as its target value. If you defeat it, gain resources equal to its cost."],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntUsingCost", true],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Koska Reeves' ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

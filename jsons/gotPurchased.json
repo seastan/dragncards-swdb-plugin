@@ -102,6 +102,18 @@
                   ["LOG", "\u2514\u2500\u2500 Hondo Ohnaka: draw 1 card for purchasing a card costing 4 or more."],
                   ["DRAW_CARD", 1, "$PLAYER_N"]
                 ]
+              ],
+              ["COND",
+                ["AND",
+                  "$H.inPlay",
+                  ["EQUAL", "$H.controller", "$PLAYER_N"],
+                  ["EQUAL", "$H.databaseId", "balutar_swoop_rider"],
+                  ["NOT_EQUAL", "$GAME.trackerValue", 0]
+                ],
+                [
+                  ["LOG", "\u2514\u2500\u2500 Balutar Swoop Rider: move the Force marker 1 space toward neutral."],
+                  ["MOVE_FORCE_TOWARD_NEUTRAL"]
+                ]
               ]]
             ],
             ["COND",

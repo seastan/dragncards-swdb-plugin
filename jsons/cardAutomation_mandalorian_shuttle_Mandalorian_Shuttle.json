@@ -1,0 +1,9 @@
+{
+    "automation": {
+        "cards": {
+            "mandalorian_shuttle": {
+                "_comment": "Mandalorian Shuttle - No special ability (starter card, no card text)."
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "automation": {
+        "cards": {
+            "mandalorian_hijacker": {
+                "_comment": "Mandalorian Hijacker. Mirrors Trask's flags so a galaxy-row capital ship becomes a legal target and is added to hand on destruction; hijackerExileCardId tells BOUNTY_HUNT to exile this unit when that happens.",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["LOG", "└── Mandalorian Hijacker's ability: You can attack a capital ship in the galaxy row this turn. If you destroy it, Mandalorian Hijacker is exiled and you purchase that ship for free, adding it to your hand."],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntCapitalShips", true],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntPurchaseOnDestroy", true],
+                                ["SET", "/playerData/{{$THIS.controller}}/bountyHuntUsingCost", true],
+                                ["SET", "/playerData/{{$THIS.controller}}/hijackerExileCardId", "$THIS.id"],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use Mandalorian Hijacker's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

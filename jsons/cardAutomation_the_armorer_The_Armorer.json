@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "the_armorer": {
+                "_comment": "The Armorer",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["ABILITY_UNUSED", "$THIS"],
+                            [
+                                ["VAR", "$REPAIR_AMOUNT", 3],
+                                ["COND",
+                                    ["EQUAL", "$GAME.trackerValue", 0],
+                                    ["UPDATE_VAR", "$REPAIR_AMOUNT", 5]
+                                ],
+                                ["LOG", "└── The Armorer's ability: Repair {{$REPAIR_AMOUNT}} damage from your base."],
+                                ["REPAIR_DAMAGE", "$THIS.controller", "$REPAIR_AMOUNT"],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ],
+                            ["TRUE"],
+                            ["LOG", "{{$ALIAS_N}} tried to use The Armorer's ability but it cannot be activated."]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}

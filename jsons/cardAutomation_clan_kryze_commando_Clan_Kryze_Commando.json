@@ -1,0 +1,28 @@
+{
+    "automation": {
+        "cards": {
+            "clan_kryze_commando": {
+                "_comment": "Clan Kryze Commando",
+                "ability": {
+                    "A": [
+                        ["COND",
+                            ["NOT", ["ABILITY_UNUSED", "$THIS"]],
+                            ["LOG", "{{$ALIAS_N}} tried to use Clan Kryze Commando's ability but it cannot be activated."],
+
+                            ["NOT_EQUAL", "$GAME.trackerValue", 0],
+                            ["LOG", "└── Clan Kryze Commando's ability did nothing: the Force marker is not on the neutral space."],
+
+                            ["TRUE"],
+                            [
+                                ["VAR", "$OPPONENT", ["NEXT_PLAYER", "$THIS.controller"]],
+                                ["LOG", "└── Clan Kryze Commando's ability: Deal 2 damage to your opponent's base."],
+                                ["DAMAGE_BASE", "$OPPONENT", 2],
+                                ["SET", "/cardById/$THIS.id/rotation", -20]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}
